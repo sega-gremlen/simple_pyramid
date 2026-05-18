@@ -1,0 +1,19 @@
+from dotenv import load_dotenv
+import os
+
+
+class Settings:
+    def __init__(self, env_file=".env"):
+        load_dotenv(env_file)
+        
+        self.PYRAMID_USERNAME = os.getenv("PYRAMID_USERNAME")
+        self.PYRAMID_PSW = os.getenv("PYRAMID_PSW")
+        self.PYRAMID_ROOT_API_URL = os.getenv("PYRAMID_ROOT_API_URL")
+        
+    def __str__(self):
+        return f"{self.PYRAMID_USERNAME=}\n" \
+    f"{self.PYRAMID_PSW=}\n" \
+    f"{self.PYRAMID_ROOT_API_URL=}" \
+        
+        
+settings = Settings()

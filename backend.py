@@ -49,13 +49,7 @@ class PyramidApiClient:
         self.power_url = f"{self.base_url}{power_endpoint}"
         self.timezone_offset = timezone_offset
 
-        # Сессия для поддержки кук и переиспользования заголовков
-        self.session = requests.Session()
-        self.session.verify = False
-        # Базовые заголовки (можно расширить при необходимости)
-        self.session.headers.update({
-            "Content-Type": "application/json"
-        })
+
 
         # Храним токен отдельно (на всякий случай)
         self.access_token: Optional[str] = None
@@ -66,6 +60,18 @@ class PyramidApiClient:
     def _build_login_url(self) -> str:
         """Добавляет параметр timeZoneOffset к URL логина."""
         return f"{self.login_url}?timeZoneOffset={self.timezone_offset}"
+    
+    
+    def create_session(self):
+        """Создаём аргументы для сесии"""
+        # Сессия для поддержки кук и переиспользования заголовков
+        self.session = requests.Session()
+        self.session.verify = False
+        # Базовые заголовки (можно расширить при необходимости)
+        self.session.headers.update({
+            "Content-Type": "application/json"
+        })
+        
 
     def login(self) -> bool:
         """
@@ -80,6 +86,8 @@ class PyramidApiClient:
             "password": self.password,
             "tokens": None
         }
+        
+        self.create_session()
 
         try:
             response = self.session.post(
@@ -106,68 +114,7 @@ class PyramidApiClient:
         self.session.headers.update({
             "Authorization": f"Bearer {self.access_token}"
         })
-        print("Авторизация успешна. Токен получен.")
         return True
-
-    def _request(self, method: str, endpoint: str, **kwargs) -> Optional[requests.Response]:
-        """
-        Выполняет HTTP-запрос, автоматически подставляя токен (если он есть).
-        При получении 401 пытается перелогиниться (если известны учётные данные).
-
-        :param method: HTTP метод (GET, POST, PUT, DELETE и т.д.)
-        :param endpoint: Относительный путь эндпоинта (начинается с '/')
-        :param kwargs: Дополнительные параметры для requests (json, params, data и т.д.)
-        :return: Объект Response или None при фатальной ошибке
-        """
-        url = f"{self.base_url}{endpoint}"
-        try:
-            response = self.session.request(method, url, verify=False, **kwargs)
-            # Если токен протух (401) и у нас есть логин/пароль – пытаемся перелогиниться
-            if response.status_code == 401 and hasattr(self, '_username') and hasattr(self, '_password'):
-                print("Токен истёк, выполняем повторный вход...")
-                if self.login(self._username, self._password):
-                    # Повторяем исходный запрос с новым токеном
-                    response = self.session.request(method, url, **kwargs)
-                else:
-                    print("Не удалось обновить токен.")
-                    return None
-            response.raise_for_status()
-            return response
-        except requests.exceptions.RequestException as e:
-            print(f"Ошибка при {method} {endpoint}: {e}")
-            if hasattr(e, 'response') and e.response is not None:
-                print(f"Статус: {e.response.status_code}, тело: {e.response.text}")
-            return None
-
-    def get(self, endpoint: str, params: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
-        """
-        GET-запрос, возвращает JSON-ответ или None при ошибке.
-        """
-        response = self._request("GET", endpoint, params=params)
-        if response and response.status_code == 200:
-            return response.json()
-        return None
-
-    def post(self, endpoint: str, data: Optional[Dict] = None, json: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
-        """
-        POST-запрос, возвращает JSON-ответ или None при ошибке.
-        """
-        response = self._request("POST", endpoint, json=json, data=data)
-        if response and response.status_code in (200, 201):
-            return response.json() if response.text else {}
-        return None
-
-    def put(self, endpoint: str, json: Optional[Dict] = None) -> Optional[Dict[str, Any]]:
-        """PUT-запрос."""
-        response = self._request("PUT", endpoint, json=json)
-        if response and response.status_code in (200, 204):
-            return response.json() if response.text else {}
-        return None
-
-    def delete(self, endpoint: str) -> bool:
-        """DELETE-запрос, возвращает True при успехе."""
-        response = self._request("DELETE", endpoint)
-        return response is not None and response.status_code == 204
     
     
     def authorized(self) -> bool:
@@ -176,18 +123,34 @@ class PyramidApiClient:
             if "Bearer" in self.session.headers.get("Authorization"):
                 return True
             else:
-                
                 print("Заголовок авторизации есть, токена нет")
                 print(self.session.headers.get("Authorization"))
         else:
             print("Заголовка авторизации нет")
         return False
-        
     
+    
+    @staticmethod
+    def relogin(func, *args, **kwargs):
+        """Обертка для перелогина"""
+        def wrapper(self, *args, **kwargs):
+            if not self.authorized():
+                self.login()
+            try:
+                return func(self, *args, **kwargs)
+            except requests.exceptions.HTTPError as e:
+                print("Ошибка при запросе")
+                if e.response.status_code == 401:
+                    print("Отсутствует авторизация, делаем перелогин")
+                    self.login()
+                    return func(self, *args, **kwargs)
+                raise
+        return wrapper
+            
+            
+    @relogin
     def get_meter_instance_data(self, meter_num) -> dict | None:
         """Запрос основных данных прибора учета"""
-        if not self.authorized():
-            self.login()
         
         payload = {
         "classId": -1646,
@@ -226,11 +189,9 @@ class PyramidApiClient:
         
         return res
     
+    @relogin
     def get_rd_instance_data(self, meter_id):
         """Получение адреса и лицеового счета точки учета"""
-        
-        if not self.authorized():
-            self.login()
             
         payload = f"instanceId={meter_id}"
         
@@ -251,12 +212,9 @@ class PyramidApiClient:
         
         return res
     
-    
+    @relogin
     def get_meter_data(self, instance_id):
         """Получение последних показаний прибора учета"""
-        
-        if not self.authorized():
-            self.login()
         
         now = datetime.now().isoformat(timespec='milliseconds')
         # now будет например "2026-04-29T18:00:00.123"
@@ -264,7 +222,8 @@ class PyramidApiClient:
         payload = {
             "classifierId": 2481,
             "instancesIds": [instance_id],
-            "parameters": [4727155, 4726253, 4726811, 4726243, 4726801, 4726239, 4726797, 4726597],
+            #"parameters": [4727155, 4726253, 4726811, 4726243, 4726801, 4726239, 4726797, 4726597],
+            "parameters": [-2139, 4726239, 4726797, -1973, 4726597, -2143, 4726253, 4726811, -2141, 4726243, 4726801, 4727155],
             "start": now,
             "finish": now,   # по заданию обе даты - текущее время
             "sources": [[-3718]],
@@ -287,8 +246,10 @@ class PyramidApiClient:
             try:
                 float(float_str)
                 return True
-            except ValueError:
+            except TypeError:
                 return False
+            
+        
         
         meter_values = {
             key: round(float(meter_values[key] / 1000), 2)
@@ -310,17 +271,21 @@ class PyramidApiClient:
             }
         
         for value in meter_values:
-            if "А+" in value and "день" in value.lower():
+            if "Энергия А+ текущая, Тарифная зона \"День Двухзонный\"" in value:
                 fine_meter_values["A+"]["T1"] = meter_values[value]
-            elif "А+" in value and "ночь" in value.lower():
+            elif "Энергия А+ текущая, Тарифная зона \"Ночь Двухзонный\"" in value:
                 fine_meter_values["A+"]["T2"] = meter_values[value]
-            elif "А-" in value and "день" in value.lower():
+            elif "Энергия А+ текущая" in value:
+                fine_meter_values["A+"]["TO"] = meter_values[value]
+            elif "Энергия А- текущая, Тарифная зона \"День Двухзонный\"" in value:
                 fine_meter_values["A-"]["T1"] = meter_values[value]
-            elif "А-" in value and "ночь" in value.lower():
+            elif "Энергия А- текущая, Тарифная зона \"Ночь Двухзонный\"" in value:
                 fine_meter_values["A-"]["T2"] = meter_values[value]
+            elif "Энергия А- текущая" in value:
+                fine_meter_values["A-"]["TO"] = meter_values[value]
                 
-        fine_meter_values["A+"]["TO"] = round(float(fine_meter_values["A+"]["T1"] + fine_meter_values["A+"]["T2"]), 2)
-        fine_meter_values["A-"]["TO"] = round(float(fine_meter_values["A-"]["T1"] + fine_meter_values["A-"]["T2"]), 2)
+        #fine_meter_values["A+"]["TO"] = round(float(fine_meter_values["A+"]["T1"] + fine_meter_values["A+"]["T2"]), 2)
+        #fine_meter_values["A-"]["TO"] = round(float(fine_meter_values["A-"]["T1"] + fine_meter_values["A-"]["T2"]), 2)
         
         meter_value_register_datetime = response.json()[0]["parametersData"][0]["values"][0]["registerDt"]
         dt_part = meter_value_register_datetime.split('.')[0] # "2026-04-29T07:01:16"
@@ -335,12 +300,9 @@ class PyramidApiClient:
         return res
         
         
-    
+    @relogin
     def _get_meter_route_data(self, meter_id):
         """Запрос данных маршрута прибора учета"""
-        
-        if not self.authorized():
-            client.login()
             
         payload = [meter_id]
         
@@ -440,5 +402,6 @@ if __name__ == "__main__":
     #print(client.get_meter_instance_data("04101959"))
     #print(client.get_rd_instance_data("19609718"))
     #print(client.get_meter_data("19609718"))
-    print(client.power_test("20844272")) #пу 021250471434
+    print(client.get_meter_data("20156606"))
+    #print(client.power_test("20844272")) #пу 021250471434
     #https://s00-pml-web1.hq.vlmrk.corp:8080/api/v1/rdinstance/getinstanceinfo/?instanceId=19609718

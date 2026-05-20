@@ -6,7 +6,6 @@ import os
 import re
 import logging
 
-
 from backend import PyramidApiClient
 from pinger import PingWorker
 
@@ -72,7 +71,7 @@ class PyramidApp:
         main_info_row.pack(fill="x", padx=10, pady=5)
 
         # Левая панель
-        self.info_frame = tk.LabelFrame(main_info_row, text="Информация о приборе учета", padx=10, pady=10)
+        self.info_frame = tk.LabelFrame(main_info_row, text="Информация о точке", padx=10, pady=10)
         self.info_frame.pack(side=tk.LEFT, fill="both", expand=True, padx=(0, 5))
 
         self.meter_model_var = tk.StringVar(value="—")
@@ -83,21 +82,24 @@ class PyramidApp:
         tk.Label(self.info_frame, textvariable=self.meter_model_var, font=("Arial", 9)).grid(row=0, column=1, sticky="w", padx=(10, 0), pady=2)
 
         tk.Label(self.info_frame, text="Место установки:", font=("Arial", 9, "bold")).grid(row=1, column=0, sticky="w", pady=2)
-        tk.Label(self.info_frame, textvariable=self.address_var, font=("Arial", 9)).grid(row=1, column=1, sticky="w", padx=(10, 0), pady=2)
+        # Для адреса ограничим отображение: если текст длинный — он обрезается, а полный адрес можно увидеть при наведении
+        lbl_address = tk.Label(self.info_frame, textvariable=self.address_var, font=("Arial", 9), anchor="w")
+        lbl_address.grid(row=1, column=1, sticky="w", padx=(10, 0), pady=2)
+        # Добавим подсказку с полным текстом (обновим позже при изменении)
+        self.lbl_address = lbl_address
+        self._full_address = ""
 
         tk.Label(self.info_frame, text="Лицевой счет:", font=("Arial", 9, "bold")).grid(row=2, column=0, sticky="w", pady=2)
         tk.Label(self.info_frame, textvariable=self.account_var, font=("Arial", 9)).grid(row=2, column=1, sticky="w", padx=(10, 0), pady=2)
 
-        # Правая панель — показания
         # Правая панель — показания (фиксированная ширина)
         self.readings_frame = tk.LabelFrame(main_info_row, text="Показания, кВт·ч", padx=10, pady=10, width=280)
         self.readings_frame.pack(side=tk.RIGHT, fill="both", padx=(5, 0))
-        #self.readings_frame.pack_propagate(False)  # запрещаем изменение размера по содержимому
 
         # Строка заголовков (A+ и A-)
         header_row = tk.Frame(self.readings_frame)
         header_row.pack(fill=tk.X, pady=(0, 5))
-        tk.Label(header_row, text="", width=8).pack(side=tk.LEFT)
+        tk.Label(header_row, text="", width=6).pack(side=tk.LEFT)  # место под тарифы
         self.lbl_a_plus = tk.Label(header_row, text="A+", font=("Arial", 9, "bold"), anchor="center")
         self.lbl_a_plus.pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
         self.lbl_a_minus = tk.Label(header_row, text="A−", font=("Arial", 9, "bold"), anchor="center")
@@ -108,7 +110,8 @@ class PyramidApp:
         for tariff in ["TO", "T1", "T2"]:
             row_frame = tk.Frame(self.readings_frame)
             row_frame.pack(fill=tk.X, pady=2)
-            tk.Label(row_frame, text=tariff, font=("Arial", 9), width=8, anchor="w").pack(side=tk.LEFT)
+            # Метка тарифа: уменьшена ширина, выровнена вправо, чтобы прижать к значениям
+            tk.Label(row_frame, text=tariff, font=("Arial", 9), width=3, anchor="e").pack(side=tk.LEFT, padx=(0, 2))
             for direction in ["A+", "A-"]:
                 var = tk.StringVar(value="—")
                 lbl = tk.Label(row_frame, textvariable=var, font=("Arial", 9), width=12, anchor="center",
@@ -332,6 +335,8 @@ class PyramidApp:
         self.meter_model_var.set("—")
         self.address_var.set("—")
         self.account_var.set("—")
+        self._full_address = ""
+        self.lbl_address.config(text="—")  # для подсказки сбросим
         self.update_readings_panel(None)
 
         try:
@@ -357,8 +362,18 @@ class PyramidApp:
                     rd_data = self.client.get_rd_instance_data(instance_id)
                     if rd_data:
                         if rd_data.get("address"):
-                            self.address_var.set(rd_data["address"])
-                            logger.debug(f"Адрес: {rd_data['address']}")
+                            raw_addr = rd_data["address"]
+                            self._full_address = raw_addr
+                            # Обрезаем, если слишком длинный (45 символов)
+                            if len(raw_addr) > 71:
+                                display_addr = "..." + raw_addr[len(raw_addr) - 68:len(raw_addr)]
+                            else:
+                                display_addr = raw_addr
+                            self.address_var.set(display_addr)
+                            # Устанавливаем подсказку с полным адресом
+                            self.lbl_address.config(text=display_addr)
+                            self.lbl_address.tooltip = raw_addr  # для возможности показа (не обязательно)
+                            logger.debug(f"Адрес: {raw_addr} (отображается: {display_addr})")
                         if rd_data.get("account_id"):
                             self.account_var.set(rd_data["account_id"])
                             logger.debug(f"Лицевой счет: {rd_data['account_id']}")
@@ -400,6 +415,11 @@ class PyramidApp:
         entry_route.insert(0, route_text)
         entry_route.configure(state='readonly')
         entry_route.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 0), pady=3)
+
+        # Бинды для копирования, работающие независимо от раскладки
+        entry_route.bind('<Control-c>', lambda e: e.widget.event_generate('<<Copy>>'))
+        entry_route.bind('<Control-C>', lambda e: e.widget.event_generate('<<Copy>>'))
+        entry_route.bind('<Control-Insert>', lambda e: e.widget.event_generate('<<Copy>>'))
 
         vert_sep = ttk.Separator(row_frame, orient='vertical')
         vert_sep.pack(side=tk.LEFT, fill=tk.Y, padx=5, pady=3)
@@ -470,5 +490,5 @@ class PyramidApp:
         worker.start()
         
 if __name__ == "__main__":
-    ...
-    
+    app = PyramidApp()
+    app.start()

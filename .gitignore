@@ -18,3 +18,9 @@
 !/pyinstaller_command.txt
 !/config.py
 !/favicon.ico
+# Разрешаем папку utils (чтобы Git вообще в неё заходил)
+!/utils/
+
+# Затем разрешаем конкретные файлы
+!/utils/pinger.py
+!/utils/xlsx_exporter.py

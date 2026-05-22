@@ -1,13 +1,15 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 from tkinter import PhotoImage
 import pickle
 import os
 import re
 import logging
+import threading
+from datetime import datetime, date
 
 from backend import PyramidApiClient
-from pinger import PingWorker
+from utils.pinger import PingWorker
 
 # Настройка логирования
 logging.basicConfig(
@@ -30,6 +32,7 @@ class PyramidApp:
 
         self.client = PyramidApiClient()
         self.current_user = None
+        self.current_instance_id = None
         self.route_rows = []
 
         self.create_widgets()
@@ -54,6 +57,8 @@ class PyramidApp:
         # Рамка параметров поиска (теперь в одну строку)
         frame_meter = tk.LabelFrame(self.root, text="Параметры поиска", padx=10, pady=5)
         frame_meter.pack(fill="x", padx=10, pady=5)
+        
+
 
         # Размещаем в одной строке: метка, поле ввода, кнопка
         tk.Label(frame_meter, text="Номер прибора учета (ПУ):").grid(row=0, column=0, sticky="w", padx=(0, 10))
@@ -65,6 +70,12 @@ class PyramidApp:
         self.btn_get = tk.Button(frame_meter, text="Получить данные", command=self.fetch_meter_data,
                                  bg="#4CAF50", fg="white", font=("Arial", 10, "bold"))
         self.btn_get.grid(row=0, column=2)
+        
+        #Кнопка выгрузки (изначально недоступна)
+        self.btn_export = tk.Button(frame_meter, text="Сделать выгрузку", command=self.open_export_dialog,
+                                    bg="#2196F3", fg="white", font=("Arial", 10, "bold"),
+                                    state=tk.DISABLED)
+        self.btn_export.grid(row=0, column=3, padx=(10, 0))
 
         # Горизонтальная панель: информация о приборе и показания
         main_info_row = tk.Frame(self.root)
@@ -318,6 +329,10 @@ class PyramidApp:
         if not meter_num:
             messagebox.showerror("Ошибка", "Введите номер прибора учета")
             return
+        
+        # Сброс instance_id и блокировка кнопки выгрузки на время нового поиска
+        self.current_instance_id = None
+        self.btn_export.config(state=tk.DISABLED)
 
         logger.info(f"Запрос данных для прибора: {meter_num}")
         self.status_var.set("Поиск данных...")
@@ -355,6 +370,8 @@ class PyramidApp:
                     logger.debug(f"Модель счетчика: {response['meter_model']}")
 
                 instance_id = response.get("instance_id") or meter_num
+                self.current_instance_id = instance_id
+                self.btn_export.config(state=tk.NORMAL)
                 logger.debug(f"instance_id = {instance_id}")
 
                 # Получение адреса и лицевого счета
@@ -488,6 +505,113 @@ class PyramidApp:
         if row_obj:
             row_obj.ping_worker = worker
         worker.start()
+        
+        
+    def open_export_dialog(self):
+        """Диалоговое окно для выбора дат и папки сохранения отчёта."""
+        if not self.current_instance_id:
+            messagebox.showerror("Ошибка", "Сначала получите данные прибора")
+            return
+
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Параметры выгрузки")
+        dialog.geometry("350x250")
+        dialog.resizable(False, False)
+        dialog.grab_set()
+
+        # Изменено на ДД.ММ.ГГГГ
+        tk.Label(dialog, text="Начальная дата (ДД.ММ.ГГГГ):").pack(pady=(15, 0))
+        entry_start = tk.Entry(dialog, width=20)
+        entry_start.pack(pady=5)
+        entry_start.insert(0, date.today().strftime("%d.%m.%Y"))   # теперь ДД.ММ.ГГГГ
+
+        tk.Label(dialog, text="Конечная дата (ДД.ММ.ГГГГ):").pack(pady=(5, 0))
+        entry_finish = tk.Entry(dialog, width=20)
+        entry_finish.pack(pady=5)
+        entry_finish.insert(0, date.today().strftime("%d.%m.%Y"))
+
+        tk.Label(dialog, text="Папка для сохранения:").pack(pady=(10, 0))
+        frame_dir = tk.Frame(dialog)
+        frame_dir.pack(pady=5)
+        entry_dir = tk.Entry(frame_dir, width=25)
+        entry_dir.pack(side=tk.LEFT)
+        btn_browse = tk.Button(frame_dir, text="Обзор", command=lambda: self._browse_folder(entry_dir))
+        btn_browse.pack(side=tk.LEFT, padx=5)
+
+        def on_submit():
+            start_str = entry_start.get().strip()
+            finish_str = entry_finish.get().strip()
+            output_dir = entry_dir.get().strip()
+
+            if not start_str or not finish_str or not output_dir:
+                messagebox.showerror("Ошибка", "Заполните все поля")
+                return
+
+            # Валидация с новым форматом
+            try:
+                start_date = datetime.strptime(start_str, "%d.%m.%Y").date()
+                finish_date = datetime.strptime(finish_str, "%d.%m.%Y").date()
+            except ValueError:
+                messagebox.showerror("Ошибка", "Неверный формат даты. Используйте ДД.ММ.ГГГГ")
+                return
+
+            if not os.path.isdir(output_dir):
+                messagebox.showerror("Ошибка", "Указанная папка не существует")
+                return
+
+            dialog.destroy()
+            self.start_export(start_date, finish_date, output_dir)
+
+        btn_ok = tk.Button(dialog, text="Выгрузить", command=on_submit, bg="#4CAF50", fg="white", width=15)
+        btn_ok.pack(pady=15)
+
+    def _browse_folder(self, entry_widget):
+        folder_selected = filedialog.askdirectory()
+        if folder_selected:
+            entry_widget.delete(0, tk.END)
+            entry_widget.insert(0, folder_selected)
+            
+    def start_export(self, start_date, finish_date, output_path):
+        """Запуск выгрузки в отдельном потоке с индикатором выполнения."""
+        # Создаём окно прогресса
+        progress_win = tk.Toplevel(self.root)
+        progress_win.title("Выгрузка...")
+        progress_win.geometry("300x100")
+        progress_win.resizable(False, False)
+        progress_win.grab_set()
+        progress_win.transient(self.root)
+
+        tk.Label(progress_win, text="Идёт формирование отчёта, подождите...").pack(pady=(15, 5))
+        progress_bar = ttk.Progressbar(progress_win, mode='indeterminate')
+        progress_bar.pack(pady=10, padx=30, fill=tk.X)
+        progress_bar.start()
+
+        def run_export():
+            try:
+                saved_path = self.client.get_meter_data_v2(
+                    instance_id=self.current_instance_id,
+                    start_date=start_date,
+                    finish_date=finish_date,
+                    output_path=output_path
+                )
+                # После завершения обновляем GUI в основном потоке
+                self.root.after(0, _on_export_success, saved_path)
+            except Exception as e:
+                self.root.after(0, _on_export_error, str(e))
+
+        def _on_export_success(path):
+            progress_bar.stop()
+            progress_win.destroy()
+            messagebox.showinfo("Готово", f"Отчёт сохранён:\n{path}")
+            logger.info(f"Выгрузка завершена: {path}")
+
+        def _on_export_error(error_msg):
+            progress_bar.stop()
+            progress_win.destroy()
+            messagebox.showerror("Ошибка выгрузки", f"Не удалось выполнить выгрузку:\n{error_msg}")
+            logger.error(f"Ошибка выгрузки: {error_msg}")
+
+        threading.Thread(target=run_export, daemon=True).start()
         
 if __name__ == "__main__":
     app = PyramidApp()

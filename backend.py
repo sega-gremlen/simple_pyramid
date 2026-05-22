@@ -3,10 +3,13 @@ import re
 import urllib3
 from datetime import datetime
 import os
+from pathlib import Path
+
 
 import requests
 
 from config import settings
+from utils.xlsx_exporter import create_excel_from_json
 
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -214,7 +217,7 @@ class PyramidApiClient:
     
     @relogin
     def get_meter_data(self, instance_id):
-        """Получение последних показаний прибора учета"""
+        """Получение текущих последних показаний прибора учета"""
         
         now = datetime.now().isoformat(timespec='milliseconds')
         # now будет например "2026-04-29T18:00:00.123"
@@ -249,8 +252,6 @@ class PyramidApiClient:
             except TypeError:
                 return False
             
-        
-        
         meter_values = {
             key: round(float(meter_values[key] / 1000), 2)
             for key in meter_values.keys()  # или просто for key in meter_values
@@ -298,6 +299,44 @@ class PyramidApiClient:
             }
         
         return res
+    
+    
+    @relogin
+    def get_meter_data_v2(self,
+                          instance_id,
+                          start_date,
+                          finish_date,
+                          output_path
+                          ):
+        """Получение показаний прибора учета на начало суток"""
+        
+        start_date = start_date.isoformat(timespec='milliseconds')
+        finish_date = finish_date.isoformat(timespec='milliseconds')
+        
+        payload = {
+            "classifierId": 2481,
+            "instancesIds": [instance_id],
+            "parameters": [-2161, 4726233, 4726791],
+            "start": start_date,
+            "finish": finish_date,   # по заданию обе даты - текущее время
+            "sources": [[-3718]],
+            "requireRatio": False,
+            "requireLoses": False
+        }
+        
+        response = self.session.post(
+            self.meterdata_url,
+            json=payload
+        )
+        response.raise_for_status()
+        
+        
+        response = response.json()
+        meter_caption = response[0]["pointWithMeter"]["meter"]["caption"]
+        file_output_title = f"Показания на начало суток по {meter_caption}.xlsx"
+        full_output_path = Path(output_path) / file_output_title
+        create_excel_from_json(response, full_output_path)
+        return
         
         
     @relogin
@@ -399,9 +438,14 @@ if __name__ == "__main__":
     client = PyramidApiClient()
     client.login()
     
+    start_date = datetime(year=2026, month=4, day=1)
+    finish_date = datetime.now()
+    out_path = "C:/Users/FilippovAS/Desktop"
+    
     #print(client.get_meter_instance_data("04101959"))
     #print(client.get_rd_instance_data("19609718"))
     #print(client.get_meter_data("19609718"))
-    print(client.get_meter_data("20156606"))
+    #print(client.get_meter_data("20156606"))
+    print(client.get_meter_data_v2("20156606", start_date, finish_date, out_path))
     #print(client.power_test("20844272")) #пу 021250471434
     #https://s00-pml-web1.hq.vlmrk.corp:8080/api/v1/rdinstance/getinstanceinfo/?instanceId=19609718

@@ -1,7 +1,9 @@
 altgraph==0.17.5
 certifi==2026.4.22
 charset-normalizer==3.4.7
+et_xmlfile==2.0.0
 idna==3.13
+openpyxl==3.1.5
 packaging==26.2
 pefile==2024.8.26
 pyinstaller==6.20.0

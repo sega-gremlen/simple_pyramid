@@ -1,0 +1,1081 @@
+[
+    {
+        "pointWithMeter": {
+            "isMeterPointDisabled": null,
+            "meter": {
+                "id": 20808601,
+                "caption": "Нартис-И100 (СПОДЭС), №021250474192"
+            },
+            "id": 20808603,
+            "caption": "Самарская обл\\Жигулевское ПО/Сызранский РЭС/Сызранский р-н\\село Рамено\\ул Почтовая\\д 32\\Нартис-И100 (СПОДЭС), №021250474192"
+        },
+        "parametersData": [
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": -2161,
+                    "caption": "Энергия А+ на начало суток"
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-04-01T07:32:15.402",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-01T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-02T07:54:42.019",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-02T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-03T08:02:44.761",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-03T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-04T08:34:01.784",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-04T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-05T08:06:43.462",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-05T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-06T08:01:20.322",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-06T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-07T07:57:41.666",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-07T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-08T07:57:39.826",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-08T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-09T08:07:24.067",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-09T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-10T07:19:01.347",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-10T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-11T07:23:14.431",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-11T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-12T07:24:08.658",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-12T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-13T07:21:18.847",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-13T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-14T07:21:22.779",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-14T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-15T07:20:04.096",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-15T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-16T07:34:15.976",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-16T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-17T07:22:28.69",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-17T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-18T07:25:52.84",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-18T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-19T07:36:54.646",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-19T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-20T07:12:21.028",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-20T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-21T07:07:07.808",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-21T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-22T07:27:32.935",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-22T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-23T07:06:29.829",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-23T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-24T07:27:08.654",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-24T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-25T07:14:45.116",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-25T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-26T07:23:41.955",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-26T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-27T07:29:50.596",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-27T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-28T07:31:40.378",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 107.0,
+                        "valueDt": "2026-04-28T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-29T07:16:18.054",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 239.0,
+                        "valueDt": "2026-04-29T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-04-30T07:35:35.489",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 239.0,
+                        "valueDt": "2026-04-30T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-05-01T07:06:03.222",
+                        "sourceKind": -3718,
+                        "sourceInfo": "Нартис-И100 (СПОДЭС), №021250474192",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 239.0,
+                        "valueDt": "2026-05-01T00:00:00"
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726233,
+                    "caption": "Энергия А+ на начало суток, Тарифная зона \"День Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-01T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-02T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-03T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-04T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-05T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-06T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-07T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-08T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-09T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-10T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-11T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-12T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-13T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-14T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-15T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-16T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-17T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-18T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-19T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-20T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-21T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-22T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-23T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-24T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-25T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-26T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-27T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-28T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-29T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-30T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-05-01T00:00:00"
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726791,
+                    "caption": "Энергия А+ на начало суток, Тарифная зона \"Ночь Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-01T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-02T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-03T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-04T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-05T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-06T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-07T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-08T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-09T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-10T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-11T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-12T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-13T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-14T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-15T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-16T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-17T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-18T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-19T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-20T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-21T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-22T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-23T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-24T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-25T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-26T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-27T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-28T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-29T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-04-30T00:00:00"
+                    },
+                    {
+                        "registerDt": null,
+                        "sourceKind": null,
+                        "sourceInfo": null,
+                        "personalizedSourceInfo": null,
+                        "statuses": null,
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": null,
+                        "valueDt": "2026-05-01T00:00:00"
+                    }
+                ]
+            }
+        ],
+        "lossesInfo": []
+    }
+]

@@ -12,7 +12,7 @@ DisableFinishedPage=yes
 SetupIconFile=favicon.ico
 
 [Files]
-Source: "simple_pyramid\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\simple_pyramid\*"; DestDir: "{app}"; Flags: recursesubdirs
 
 [Icons]
 Name: "{userdesktop}\Простая Пирамида"; Filename: "{app}\simple_pyramid.exe"

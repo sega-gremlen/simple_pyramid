@@ -13,14 +13,18 @@
 !/main.py
 !/pinger.py
 !/backend.py
-!/.gitignore
 !/req.txt
 !/pyinstaller_command.txt
 !/config.py
 !/favicon.ico
-# Разрешаем папку utils (чтобы Git вообще в неё заходил)
-!/utils/
+!/.github/
+!/updater.py
+!/version.py
+!/agents.md
 
-# Затем разрешаем конкретные файлы
+# utils
+!/utils/
 !/utils/pinger.py
 !/utils/xlsx_exporter.py
+/utils/input.json
+/utils/output.xlsx

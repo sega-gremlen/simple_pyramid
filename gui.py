@@ -10,6 +10,8 @@ from datetime import datetime, date
 
 from backend import PyramidApiClient
 from utils.pinger import PingWorker
+import updater
+from version import __version__
 
 # Настройка логирования
 logging.basicConfig(
@@ -37,6 +39,7 @@ class PyramidApp:
 
         self.create_widgets()
         self.root.after(100, self.initial_login)
+        self.root.after(500, self.check_for_updates)  # Проверка обновлений
         logger.info("Приложение запущено")
         
     def start(self):
@@ -58,8 +61,6 @@ class PyramidApp:
         frame_meter = tk.LabelFrame(self.root, text="Параметры поиска", padx=10, pady=5)
         frame_meter.pack(fill="x", padx=10, pady=5)
         
-
-
         # Размещаем в одной строке: метка, поле ввода, кнопка
         tk.Label(frame_meter, text="Номер прибора учета (ПУ):").grid(row=0, column=0, sticky="w", padx=(0, 10))
         self.entry_meter_num = tk.Entry(frame_meter, width=30)
@@ -93,10 +94,8 @@ class PyramidApp:
         tk.Label(self.info_frame, textvariable=self.meter_model_var, font=("Arial", 9)).grid(row=0, column=1, sticky="w", padx=(10, 0), pady=2)
 
         tk.Label(self.info_frame, text="Место установки:", font=("Arial", 9, "bold")).grid(row=1, column=0, sticky="w", pady=2)
-        # Для адреса ограничим отображение: если текст длинный — он обрезается, а полный адрес можно увидеть при наведении
         lbl_address = tk.Label(self.info_frame, textvariable=self.address_var, font=("Arial", 9), anchor="w")
         lbl_address.grid(row=1, column=1, sticky="w", padx=(10, 0), pady=2)
-        # Добавим подсказку с полным текстом (обновим позже при изменении)
         self.lbl_address = lbl_address
         self._full_address = ""
 
@@ -107,21 +106,18 @@ class PyramidApp:
         self.readings_frame = tk.LabelFrame(main_info_row, text="Показания, кВт·ч", padx=10, pady=10, width=280)
         self.readings_frame.pack(side=tk.RIGHT, fill="both", padx=(5, 0))
 
-        # Строка заголовков (A+ и A-)
         header_row = tk.Frame(self.readings_frame)
         header_row.pack(fill=tk.X, pady=(0, 5))
-        tk.Label(header_row, text="", width=6).pack(side=tk.LEFT)  # место под тарифы
+        tk.Label(header_row, text="", width=6).pack(side=tk.LEFT)
         self.lbl_a_plus = tk.Label(header_row, text="A+", font=("Arial", 9, "bold"), anchor="center")
         self.lbl_a_plus.pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
         self.lbl_a_minus = tk.Label(header_row, text="A−", font=("Arial", 9, "bold"), anchor="center")
         self.lbl_a_minus.pack(side=tk.LEFT, padx=2, fill=tk.X, expand=True)
 
-        # Строки тарифов
         self.reading_vars = {}
         for tariff in ["TO", "T1", "T2"]:
             row_frame = tk.Frame(self.readings_frame)
             row_frame.pack(fill=tk.X, pady=2)
-            # Метка тарифа: уменьшена ширина, выровнена вправо, чтобы прижать к значениям
             tk.Label(row_frame, text=tariff, font=("Arial", 9), width=3, anchor="e").pack(side=tk.LEFT, padx=(0, 2))
             for direction in ["A+", "A-"]:
                 var = tk.StringVar(value="—")
@@ -147,11 +143,18 @@ class PyramidApp:
 
         self.create_table_header()
 
-        # Статусная строка (внизу) с цветным фоном
+        # Статусная строка (внизу) с цветным фоном и версией
+        status_frame = tk.Frame(self.root, bg="#f0f0f0")
+        status_frame.pack(side=tk.BOTTOM, fill=tk.X)
+
         self.status_var = tk.StringVar(value="Готов")
-        status_bar = tk.Label(self.root, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W,
+        status_bar = tk.Label(status_frame, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W,
                               bg="#f0f0f0", font=("Arial", 9))
-        status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+        status_bar.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        version_label = tk.Label(status_frame, text=f"Версия: {__version__}", bd=1, relief=tk.SUNKEN, anchor=tk.E,
+                                 bg="#f0f0f0", font=("Arial", 9))
+        version_label.pack(side=tk.RIGHT, padx=(5, 2))
 
     def create_table_header(self):
         """Заголовки таблицы маршрутов"""
@@ -290,7 +293,6 @@ class PyramidApp:
     def update_readings_panel(self, reading_data):
         """Обновляет панель показаний. Дата добавляется в заголовок."""
         logger.debug(f"Обновление панели показаний: {reading_data is not None}")
-        # Сброс значений
         for (direction, tariff), var in self.reading_vars.items():
             var.set("—")
         self.readings_frame.config(text="Показания, кВт·ч")
@@ -330,7 +332,6 @@ class PyramidApp:
             messagebox.showerror("Ошибка", "Введите номер прибора учета")
             return
         
-        # Сброс instance_id и блокировка кнопки выгрузки на время нового поиска
         self.current_instance_id = None
         self.btn_export.config(state=tk.DISABLED)
 
@@ -339,19 +340,17 @@ class PyramidApp:
         self.btn_get.config(state=tk.DISABLED)
         self.root.update()
 
-        # Очистка старых маршрутов
         for row_frame, sep in self.route_rows:
             row_frame.destroy()
             if sep:
                 sep.destroy()
         self.route_rows.clear()
 
-        # Сброс информационной панели
         self.meter_model_var.set("—")
         self.address_var.set("—")
         self.account_var.set("—")
         self._full_address = ""
-        self.lbl_address.config(text="—")  # для подсказки сбросим
+        self.lbl_address.config(text="—")
         self.update_readings_panel(None)
 
         try:
@@ -374,22 +373,19 @@ class PyramidApp:
                 self.btn_export.config(state=tk.NORMAL)
                 logger.debug(f"instance_id = {instance_id}")
 
-                # Получение адреса и лицевого счета
                 try:
                     rd_data = self.client.get_rd_instance_data(instance_id)
                     if rd_data:
                         if rd_data.get("address"):
                             raw_addr = rd_data["address"]
                             self._full_address = raw_addr
-                            # Обрезаем, если слишком длинный (45 символов)
                             if len(raw_addr) > 71:
                                 display_addr = "..." + raw_addr[len(raw_addr) - 68:len(raw_addr)]
                             else:
                                 display_addr = raw_addr
                             self.address_var.set(display_addr)
-                            # Устанавливаем подсказку с полным адресом
                             self.lbl_address.config(text=display_addr)
-                            self.lbl_address.tooltip = raw_addr  # для возможности показа (не обязательно)
+                            self.lbl_address.tooltip = raw_addr
                             logger.debug(f"Адрес: {raw_addr} (отображается: {display_addr})")
                         if rd_data.get("account_id"):
                             self.account_var.set(rd_data["account_id"])
@@ -397,7 +393,6 @@ class PyramidApp:
                 except Exception as e:
                     logger.error(f"Ошибка получения данных точки учета: {e}")
 
-                # Получение показаний
                 try:
                     reading_data = self.client.get_meter_data(instance_id)
                     self.update_readings_panel(reading_data)
@@ -433,7 +428,6 @@ class PyramidApp:
         entry_route.configure(state='readonly')
         entry_route.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(5, 0), pady=3)
 
-        # Бинды для копирования, работающие независимо от раскладки
         entry_route.bind('<Control-c>', lambda e: e.widget.event_generate('<<Copy>>'))
         entry_route.bind('<Control-C>', lambda e: e.widget.event_generate('<<Copy>>'))
         entry_route.bind('<Control-Insert>', lambda e: e.widget.event_generate('<<Copy>>'))
@@ -505,10 +499,8 @@ class PyramidApp:
         if row_obj:
             row_obj.ping_worker = worker
         worker.start()
-        
-        
+
     def open_export_dialog(self):
-        """Диалоговое окно для выбора дат и папки сохранения отчёта."""
         if not self.current_instance_id:
             messagebox.showerror("Ошибка", "Сначала получите данные прибора")
             return
@@ -519,11 +511,10 @@ class PyramidApp:
         dialog.resizable(False, False)
         dialog.grab_set()
 
-        # Изменено на ДД.ММ.ГГГГ
         tk.Label(dialog, text="Начальная дата (ДД.ММ.ГГГГ):").pack(pady=(15, 0))
         entry_start = tk.Entry(dialog, width=20)
         entry_start.pack(pady=5)
-        entry_start.insert(0, date.today().strftime("%d.%m.%Y"))   # теперь ДД.ММ.ГГГГ
+        entry_start.insert(0, date.today().strftime("%d.%m.%Y"))
 
         tk.Label(dialog, text="Конечная дата (ДД.ММ.ГГГГ):").pack(pady=(5, 0))
         entry_finish = tk.Entry(dialog, width=20)
@@ -547,7 +538,6 @@ class PyramidApp:
                 messagebox.showerror("Ошибка", "Заполните все поля")
                 return
 
-            # Валидация с новым форматом
             try:
                 start_date = datetime.strptime(start_str, "%d.%m.%Y").date()
                 finish_date = datetime.strptime(finish_str, "%d.%m.%Y").date()
@@ -572,8 +562,6 @@ class PyramidApp:
             entry_widget.insert(0, folder_selected)
             
     def start_export(self, start_date, finish_date, output_path):
-        """Запуск выгрузки в отдельном потоке с индикатором выполнения."""
-        # Создаём окно прогресса
         progress_win = tk.Toplevel(self.root)
         progress_win.title("Выгрузка...")
         progress_win.geometry("300x100")
@@ -594,7 +582,6 @@ class PyramidApp:
                     finish_date=finish_date,
                     output_path=output_path
                 )
-                # После завершения обновляем GUI в основном потоке
                 self.root.after(0, _on_export_success, saved_path)
             except Exception as e:
                 self.root.after(0, _on_export_error, str(e))
@@ -612,7 +599,67 @@ class PyramidApp:
             logger.error(f"Ошибка выгрузки: {error_msg}")
 
         threading.Thread(target=run_export, daemon=True).start()
+
+    def check_for_updates(self):
+        logger.info("Проверка наличия обновлений...")
+        threading.Thread(target=self._check_update_thread, daemon=True).start()
+
+    def _check_update_thread(self):
+        try:
+            update_info = updater.check_update()
+            if update_info:
+                logger.info("Найдено обновление")
+                self.root.after(0, self.show_update_dialog, update_info)
+            else:
+                logger.info("Нет доступных обновлений")
+        except Exception as e:
+            logger.error(f"Ошибка при проверке обновлений: {e}")
+
+    def show_update_dialog(self, update_info):
+        new_version = update_info["version"]
+        changelog = update_info["changelog"]
+        url = update_info["url"]
+
+        title = f"Доступна новая версия: {new_version}"
+        message = f"Вышла новая версия {new_version}!\n\nЧто нового:\n{changelog}\n\nЖелаете обновиться?"
+
+        if messagebox.askyesno(title, message):
+            self.start_update(url)
+
+    def start_update(self, url):
+        progress_win = tk.Toplevel(self.root)
+        progress_win.title("Загрузка обновления")
+        progress_win.geometry("400x150")
+        progress_win.resizable(False, False)
+        progress_win.grab_set()
+        progress_win.transient(self.root)
+
+        tk.Label(progress_win, text="Идёт загрузка новой версии...", font=("Arial", 10)).pack(pady=(15, 5))
         
+        progress_bar = ttk.Progressbar(progress_win, orient="horizontal", length=350, mode="determinate")
+        progress_bar.pack(pady=10, padx=25)
+        
+        progress_label = tk.Label(progress_win, text="0%", font=("Arial", 9))
+        progress_label.pack()
+
+        def update_progress(progress):
+            progress_bar['value'] = progress
+            progress_label.config(text=f"{int(progress)}%")
+            progress_win.update_idletasks()
+
+        def run_download():
+            try:
+                updater.download_and_install(url, lambda p: self.root.after(0, update_progress, p))
+                self.root.after(0, progress_win.destroy)
+            except Exception as e:
+                logger.error(f"Ошибка загрузки обновления: {e}")
+                self.root.after(0, lambda: [
+                    progress_win.destroy(),
+                    messagebox.showerror("Ошибка обновления", f"Не удалось загрузить обновление:\n{e}")
+                ])
+
+        threading.Thread(target=run_download, daemon=True).start()
+
 if __name__ == "__main__":
     app = PyramidApp()
     app.start()

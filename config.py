@@ -9,6 +9,7 @@ class Settings:
         self.PYRAMID_USERNAME = os.getenv("PYRAMID_USERNAME")
         self.PYRAMID_PSW = os.getenv("PYRAMID_PSW")
         self.PYRAMID_ROOT_API_URL = os.getenv("PYRAMID_ROOT_API_URL")
+        self.GITHUB_API = "https://api.github.com/repos/sega-gremlen/simple_pyramid/releases/latest"
         
     def __str__(self):
         return f"{self.PYRAMID_USERNAME=}\n" \

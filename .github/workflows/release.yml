@@ -1,0 +1,46 @@
+name: Build & Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Прописать версию
+        run: |
+          $v = "${{ github.ref_name }}".TrimStart("v")
+          "__version__ = `"$v`"" | Out-File -FilePath version.py -Encoding utf8
+        shell: pwsh
+
+      - name: Установка зависимостей
+        run: |
+          pip install pyinstaller
+          pip install -r reqs.txt
+
+      - name: Сборка PyInstaller
+        run: pyinstaller --noconsole --onedir --icon=favicon.ico --name "Простая Пирамида" --distpath . main.py
+
+      - name: Установка Inno Setup
+        run: choco install innosetup --yes
+
+      - name: Компиляция инсталлятора
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: src/setup.iss
+          options: /O+
+
+      - name: Создать GitHub Release и загрузить файл
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Output/simple_pyramid.exe
+          generate_release_notes: true

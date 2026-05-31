@@ -25,7 +25,7 @@ jobs:
       - name: Установка зависимостей
         run: |
           pip install pyinstaller
-          pip install -r reqs.txt
+          pip install -r req.txt
 
       - name: Сборка PyInstaller
         run: pyinstaller --noconsole --onedir --icon=favicon.ico --name "Простая Пирамида" --distpath . main.py

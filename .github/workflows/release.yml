@@ -43,5 +43,5 @@ jobs:
       - name: Создать GitHub Release и загрузить файл
         uses: softprops/action-gh-release@v2
         with:
-          files: Output/simple_pyramid.exe
+          files: src/Output/simple_pyramid.exe
           generate_release_notes: true

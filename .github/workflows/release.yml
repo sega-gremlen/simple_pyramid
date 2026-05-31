@@ -37,7 +37,8 @@ jobs:
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
           path: src/setup.iss
-          options: /O+
+          options: /O+ /DAppVersion=${{ github.ref_name }}
+
 
       - name: Создать GitHub Release и загрузить файл
         uses: softprops/action-gh-release@v2

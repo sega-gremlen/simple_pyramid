@@ -57,8 +57,11 @@ class PyramidApiClient:
         # Храним токен отдельно (на всякий случай)
         self.access_token: Optional[str] = None
         
-        self.username = settings.PYRAMID_USERNAME
-        self.password = settings.PYRAMID_PSW
+        # self.username = settings.PYRAMID_USERNAME
+        # self.password = settings.PYRAMID_PSW
+
+        self.username = None
+        self.password = None
 
     def _build_login_url(self) -> str:
         """Добавляет параметр timeZoneOffset к URL логина."""

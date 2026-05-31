@@ -28,3 +28,6 @@
 !/utils/xlsx_exporter.py
 /utils/input.json
 /utils/output.xlsx
+
+#src
+!/src/

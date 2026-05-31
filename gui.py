@@ -27,7 +27,7 @@ CRED_FILE = "pyramid_creds.pkl"
 class PyramidApp:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.iconbitmap('favicon.ico')
+        # self.root.iconbitmap('./src/favicon.ico')
         self.root.title("Простая Пирамида")
         self.root.geometry("850x620")
         self.root.resizable(False, False)

@@ -28,7 +28,7 @@ jobs:
           pip install -r req.txt
 
       - name: Сборка PyInstaller
-        run: pyinstaller --noconsole --onedir --icon=favicon.ico --name "Простая Пирамида" --distpath . main.py
+        run: pyinstaller --noconsole --onedir --icon=src/favicon.ico --name simple_pyramid --distpath . main.py
 
       - name: Установка Inno Setup
         run: choco install innosetup --yes

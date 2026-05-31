@@ -9,7 +9,7 @@ DisableProgramGroupPage=yes
 DisableWelcomePage=yes
 DisableReadyPage=yes
 DisableFinishedPage=yes
-SetupIconFile=src\favicon.ico
+SetupIconFile=favicon.ico
 
 [Files]
 Source: "simple_pyramid\*"; DestDir: "{app}"; Flags: recursesubdirs

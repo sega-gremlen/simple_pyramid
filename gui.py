@@ -539,8 +539,8 @@ class PyramidApp:
                 return
 
             try:
-                start_date = datetime.strptime(start_str, "%d.%m.%Y").date()
-                finish_date = datetime.strptime(finish_str, "%d.%m.%Y").date()
+                start_date = datetime.strptime(start_str, "%d.%m.%Y")
+                finish_date = datetime.strptime(finish_str, "%d.%m.%Y")
             except ValueError:
                 messagebox.showerror("Ошибка", "Неверный формат даты. Используйте ДД.ММ.ГГГГ")
                 return
@@ -590,7 +590,7 @@ class PyramidApp:
             progress_bar.stop()
             progress_win.destroy()
             messagebox.showinfo("Готово", f"Отчёт сохранён:\n{path}")
-            logger.info(f"Выгрузка завершена: {path}")
+            logger.info(f"Выгрузка завершена")
 
         def _on_export_error(error_msg):
             progress_bar.stop()

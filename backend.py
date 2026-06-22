@@ -242,10 +242,11 @@ class PyramidApiClient:
             json=payload
         )
         response.raise_for_status()
+        response_json = response.json()
         
         meter_values = {
             value["parameter"]["caption"]: value["values"][0]["value"]
-            for value in response.json()[0].get("parametersData")
+            for value in response_json[0].get("parametersData")
             }
         
         def isfloat(float_str):
@@ -291,7 +292,11 @@ class PyramidApiClient:
         #fine_meter_values["A+"]["TO"] = round(float(fine_meter_values["A+"]["T1"] + fine_meter_values["A+"]["T2"]), 2)
         #fine_meter_values["A-"]["TO"] = round(float(fine_meter_values["A-"]["T1"] + fine_meter_values["A-"]["T2"]), 2)
         
-        meter_value_register_datetime = response.json()[0]["parametersData"][0]["values"][0]["registerDt"]
+        # Ищем время
+        for parameter_data in response_json[0]["parametersData"]:
+            if meter_value_register_datetime := parameter_data["values"][0]["registerDt"]:
+                break
+            
         dt_part = meter_value_register_datetime.split('.')[0] # "2026-04-29T07:01:16"
         dt = datetime.strptime(dt_part, "%Y-%m-%dT%H:%M:%S")
         formatted = dt.strftime("%d.%m.%Y %H:%M")
@@ -437,18 +442,20 @@ class PyramidApiClient:
                     
 # Пример использования
 if __name__ == "__main__":
-    # Создаём клиент
+    # Создаём клиент и параметры
     client = PyramidApiClient()
     client.login()
-    
     start_date = datetime(year=2026, month=4, day=1)
     finish_date = datetime.now()
     out_path = "C:/Users/FilippovAS/Desktop"
     
-    #print(client.get_meter_instance_data("04101959"))
-    #print(client.get_rd_instance_data("19609718"))
-    #print(client.get_meter_data("19609718"))
-    #print(client.get_meter_data("20156606"))
-    print(client.get_meter_data_v2("20156606", start_date, finish_date, out_path))
-    #print(client.power_test("20844272")) #пу 021250471434
-    #https://s00-pml-web1.hq.vlmrk.corp:8080/api/v1/rdinstance/getinstanceinfo/?instanceId=19609718
+    # Получаем instance id
+    a = client.get_meter_instance_data("1304219")["instance_id"]
+    
+    # Получаем показания
+    b = client.get_meter_data(a)
+    
+    # Делаем json на начало суток
+    #print(client.get_meter_data_v2("20156606", start_date, finish_date, out_path))
+    
+    print(b)

@@ -35,7 +35,7 @@ class PyramidApiClient:
         
         #params
         timezone_offset: int = -240,
-    ):
+    ) -> None:
         """
         Инициализация клиента.
 
@@ -43,42 +43,49 @@ class PyramidApiClient:
         :param login_endpoint: Путь к эндпоинту логина (относительно base_url)
         :param timezone_offset: Смещение часового пояса в минутах (по умолчанию -240)
         """
-        self.base_url = base_url.rstrip('/')
-        self.login_url = f"{self.base_url}{login_endpoint}?timeZoneOffset=-240"
-        self.meter_instance_url = f"{self.base_url}{meter_instance_endpoint}"
-        self.meter_route_url = f"{self.base_url}{meter_route_endpoint}"
-        self.rd_instance_url = f"{self.base_url}{rd_instance_endpoint}"
-        self.meterdata_url = f"{self.base_url}{meterdata_endpoint}"
-        self.power_url = f"{self.base_url}{power_endpoint}"
-        self.timezone_offset = timezone_offset
+        self.base_url: str = base_url.rstrip('/')
+        self.login_url: str = f"{self.base_url}{login_endpoint}?timeZoneOffset=-240"
+        self.meter_instance_url: str = f"{self.base_url}{meter_instance_endpoint}"
+        self.meter_route_url: str = f"{self.base_url}{meter_route_endpoint}"
+        self.rd_instance_url: str = f"{self.base_url}{rd_instance_endpoint}"
+        self.meterdata_url: str = f"{self.base_url}{meterdata_endpoint}"
+        self.power_url: str = f"{self.base_url}{power_endpoint}"
+        self.timezone_offset: int = timezone_offset
 
-
-
-        # Храним токен отдельно (на всякий случай)
+        # Всё что касается сессии
+        self.session = requests.Session()
+        self.session.verify = False
+        self.session.headers.update({
+            "Content-Type": "application/json"
+        })
+        self.username: Optional[str] = None
+        self.password: Optional[str] = None
         self.access_token: Optional[str] = None
-        
-        # self.username = settings.PYRAMID_USERNAME
-        # self.password = settings.PYRAMID_PSW
-
-        self.username = None
-        self.password = None
 
     def _build_login_url(self) -> str:
         """Добавляет параметр timeZoneOffset к URL логина."""
         return f"{self.login_url}?timeZoneOffset={self.timezone_offset}"
     
     
-    def create_session(self):
-        """Создаём аргументы для сесии"""
-        # Сессия для поддержки кук и переиспользования заголовков
-        self.session = requests.Session()
-        self.session.verify = False
-        # Базовые заголовки (можно расширить при необходимости)
-        self.session.headers.update({
-            "Content-Type": "application/json"
-        })
-        
+    def _request(self, method: str, url: str, **kwargs) -> dict:
+        """
+        Универсальный метод для выполнения HTTP-запросов с обработкой ошибок.
 
+        Args:
+            method (str): HTTP-метод ('GET', 'POST', 'PUT', 'DELETE' и т.д.)
+            url (str): URL для запроса
+            **kwargs: Дополнительные параметры requests (params, json, data, headers и т.д.)
+
+        Returns:
+            dict: Распарсенный JSON-ответ
+
+        Raises:
+            requests.exceptions.HTTPError: При статусе 4xx/5xx
+        """
+        response = self.session.request(method.upper(), url, **kwargs)
+        response.raise_for_status()
+        return response.json()
+    
     def login(self) -> bool:
         """
         Выполняет вход и получает токены.
@@ -87,32 +94,25 @@ class PyramidApiClient:
         :param password: Пароль
         :return: True при успешной авторизации, иначе False
         """
+        
         payload = {
             "username": self.username,
             "password": self.password,
             "tokens": None
         }
-        
-        self.create_session()
 
         try:
-            response = self.session.post(
-                self.login_url,
-                json=payload
-            )
-            response.raise_for_status()  # выбросит исключение при статусе 4xx/5xx
+            data = self._request("POST", self.login_url, json=payload)
         except requests.exceptions.RequestException as e:
             print(f"Ошибка при запросе логина: {e}")
             if hasattr(e, 'response') and e.response is not None:
                 print(f"Ответ сервера: {e.response.text}")
             return False
 
-        # Извлекаем токены из ответа (предполагаем структуру, адаптируйте под реальный API)
-        data = response.json()
+        # Извлекаем токены из ответа
         access_token = data.get("tokens").get("accessToken")
         if not access_token:
-            print("Не удалось найти access_token в ответе сервера.")
-            print(f"Ответ: {data}")
+            print(f"Не удалось найти access_token в ответе сервера: {data=}")
             return False
 
         self.access_token = access_token
@@ -122,9 +122,9 @@ class PyramidApiClient:
         })
         return True
     
-    
     def authorized(self) -> bool:
-        """Проверяем наличия токена авторизации"""
+        """Проверяет наличия токена авторизации"""
+        
         if "Authorization" in self.session.headers:
             if "Bearer" in self.session.headers.get("Authorization"):
                 return True
@@ -135,10 +135,10 @@ class PyramidApiClient:
             print("Заголовка авторизации нет")
         return False
     
-    
     @staticmethod
     def relogin(func, *args, **kwargs):
         """Обертка для перелогина"""
+        
         def wrapper(self, *args, **kwargs):
             if not self.authorized():
                 self.login()
@@ -152,11 +152,10 @@ class PyramidApiClient:
                     return func(self, *args, **kwargs)
                 raise
         return wrapper
-            
-            
+
     @relogin
-    def get_meter_instance_data(self, meter_num) -> dict | None:
-        """Запрос основных данных прибора учета"""
+    def fetch_meter_instance_data(self, meter_num: str) -> dict | None:
+        """Выполняет POST-запрос к API для получения данных прибора учета по номеру прибора учета"""
         
         payload = {
         "classId": -1646,
@@ -165,16 +164,15 @@ class PyramidApiClient:
             "take": "1",
             "sort": '[{"selector":"id","desc":false}]',
             "filter": f'["-1494","contains","{meter_num}"]'  # подставляем номер прибора
+            }
         }
-    }
             
-        response = self.session.post(
-                self.meter_instance_url,
-                json=payload
-            )
-        response.raise_for_status()  # выбросит исключение при статусе 4xx/5xx
+        return self._request("POST", self.meter_instance_url, json=payload)
         
-        data = response.json().get("data")[0]
+    def extract_meter_instance_data(self, json_data: dict) -> dict:
+        """Парсит JSON-ответ и извлекает id, модель счетчика и маршруты соеденения"""
+        
+        data = json_data.get("data")[0]
         
         if not data:
             print("Не нашли основные данные прибора учета")
@@ -183,31 +181,32 @@ class PyramidApiClient:
         instance_id = data.get('-8295').get('id')
         meter_model = data.get('-56855')
         meter_routes = [item.get('caption') for item in data.get('-3134')]
-        #address = data.get("-8295").get("caption").split("\\")[2:-1]
-        #address = ", ".join(address)
         
         res = {
             "instance_id": instance_id,
             "meter_model": meter_model,
             "meter_routes": meter_routes,
-            #"address": address,
             }
         
         return res
     
+    def get_meter_instance_data(self, meter_num) -> dict | None:
+        """Получает и обрабатывает данные прибора учёта по его номеру"""
+        raw_data = self.fetch_meter_instance_data(meter_num)
+        extracted_data = self.extract_meter_instance_data(raw_data)
+        return extracted_data
+        
     @relogin
-    def get_rd_instance_data(self, meter_id):
-        """Получение адреса и лицеового счета точки учета"""
-            
-        payload = f"instanceId={meter_id}"
-        
-        response = self.session.get(
-            self.rd_instance_url,
-            params={"instanceId": meter_id}
-            )
-        response.raise_for_status()  # выбросит исключение при статусе 4xx/5xx
-        
-        instance = response.json().get("instance")
+    def fetch_rd_instance_data(self, meter_id: str):
+        """Выполняет GET-запрос к API для получения данных точки учёта по id прибора учета"""
+        params = {"instanceId": meter_id}
+        return self._request("GET", self.rd_instance_url, params=params)
+
+    
+    def extract_rd_instance_data(self, json_data: dict):
+        """Парсит JSON-ответ и извлекает лицевой счёт и адрес точки учёта"""
+                
+        instance = json_data.get("instance")
         account_id = instance.get("-10024")[0].get("caption")
         address = instance.get("-13379").split("/")[-1]
         
@@ -217,51 +216,59 @@ class PyramidApiClient:
             }
         
         return res
+        
+    def get_rd_instance_data(self, meter_id: str):
+        """Получает и обрабатывает данные точки учёта"""
+        raw_data = self.fetch_rd_instance_data(meter_id)
+        extracted_data = self.extract_rd_instance_data(raw_data)
+        return extracted_data
     
     @relogin
-    def get_meter_data(self, instance_id):
-        """Получение текущих последних показаний прибора учета"""
+    def fetch_meter_data(self, instance_id: str):
+        """
+        Получение текущих последних показаний прибора учета.
+        Используется фильтр "Самарские РС - Показания текущие общие и 2-х зонные 4 канала".
+        """
         
-        now = datetime.now().isoformat(timespec='milliseconds')
-        # now будет например "2026-04-29T18:00:00.123"
+        now = datetime.now().isoformat(timespec='milliseconds') # Что-то типа "2026-04-29T18:00:00.123"
         
         payload = {
             "classifierId": 2481,
             "instancesIds": [instance_id],
-            #"parameters": [4727155, 4726253, 4726811, 4726243, 4726801, 4726239, 4726797, 4726597],
             "parameters": [-2139, 4726239, 4726797, -1973, 4726597, -2143, 4726253, 4726811, -2141, 4726243, 4726801, 4727155],
             "start": now,
-            "finish": now,   # по заданию обе даты - текущее время
+            "finish": now,
             "sources": [[-3718]],
             "requireRatio": False,
             "requireLoses": False
         }
         
-        response = self.session.post(
-            self.meterdata_url,
-            json=payload
-        )
-        response.raise_for_status()
-        response_json = response.json()
+        return self._request("POST", self.meterdata_url, json=payload)
+    
+    def extract_meter_data(self, json_data: dict):
+        """Парсит JSON-ответ и извлекает дату последних показаний и сами показания прибора учета"""
         
         meter_values = {
             value["parameter"]["caption"]: value["values"][0]["value"]
-            for value in response_json[0].get("parametersData")
+            for value in json_data[0].get("parametersData")
             }
         
         def isfloat(float_str):
+            """Функция проверки строки на float"""
             try:
                 float(float_str)
                 return True
             except TypeError:
                 return False
-            
+        
+        # Меняем строки во float
         meter_values = {
             key: round(float(meter_values[key] / 1000), 2)
-            for key in meter_values.keys()  # или просто for key in meter_values
+            for key in meter_values.keys()
             if isfloat(meter_values[key])
             }
         
+        # Трансформируем полученный json
         fine_meter_values = {
             "A+": {
                 "TO": 0,
@@ -275,52 +282,70 @@ class PyramidApiClient:
                 },
             }
         
-        for value in meter_values:
-            if "Энергия А+ текущая, Тарифная зона \"День Двухзонный\"" in value:
-                fine_meter_values["A+"]["T1"] = meter_values[value]
-            elif "Энергия А+ текущая, Тарифная зона \"Ночь Двухзонный\"" in value:
-                fine_meter_values["A+"]["T2"] = meter_values[value]
-            elif "Энергия А+ текущая" in value:
-                fine_meter_values["A+"]["TO"] = meter_values[value]
-            elif "Энергия А- текущая, Тарифная зона \"День Двухзонный\"" in value:
-                fine_meter_values["A-"]["T1"] = meter_values[value]
-            elif "Энергия А- текущая, Тарифная зона \"Ночь Двухзонный\"" in value:
-                fine_meter_values["A-"]["T2"] = meter_values[value]
-            elif "Энергия А- текущая" in value:
-                fine_meter_values["A-"]["TO"] = meter_values[value]
-                
-        #fine_meter_values["A+"]["TO"] = round(float(fine_meter_values["A+"]["T1"] + fine_meter_values["A+"]["T2"]), 2)
-        #fine_meter_values["A-"]["TO"] = round(float(fine_meter_values["A-"]["T1"] + fine_meter_values["A-"]["T2"]), 2)
+        t1_a_plus = "Энергия А+ текущая, Тарифная зона \"День Двухзонный\""
+        t2_a_plus = "Энергия А+ текущая, Тарифная зона \"Ночь Двухзонный\""
+        a_plus = "Энергия А+ текущая"
+        t1_a_minus = "Энергия А- текущая, Тарифная зона \"День Двухзонный\""
+        t2_a_minus = "Энергия А- текущая, Тарифная зона \"Ночь Двухзонный\""
+        a_minus = "Энергия А- текущая"
         
-        # Ищем время
-        for parameter_data in response_json[0]["parametersData"]:
-            if meter_value_register_datetime := parameter_data["values"][0]["registerDt"]:
-                break
+        if t1_a_plus in meter_values:
+            fine_meter_values["A+"]["T1"] = meter_values[t1_a_plus]
             
-        dt_part = meter_value_register_datetime.split('.')[0] # "2026-04-29T07:01:16"
+        if t2_a_plus in meter_values:
+            fine_meter_values["A+"]["T2"] = meter_values[t2_a_plus]
+            
+        if t1_a_minus in meter_values:
+            fine_meter_values["A-"]["T1"] = meter_values[t1_a_minus]
+            
+        if t2_a_minus in meter_values:
+            fine_meter_values["A-"]["T2"] = meter_values[t2_a_minus]
+        
+        # Делаем через сумму потому что бывают разные значения там
+        if fine_meter_values["A+"]["T1"] or fine_meter_values["A+"]["T2"]:
+            fine_meter_values["A+"]["TO"] = fine_meter_values["A+"]["T1"] + fine_meter_values["A+"]["T2"]
+        else:
+            fine_meter_values["A+"]["TO"] = meter_values[a_plus]
+        
+        if fine_meter_values["A-"]["T1"] or fine_meter_values["A-"]["T2"]:
+            fine_meter_values["A-"]["TO"] = fine_meter_values["A-"]["T1"] + fine_meter_values["A-"]["T2"]
+        else:
+            fine_meter_values["A-"]["TO"] = meter_values[a_minus]
+        
+        # Извлекаем даты, берем из всех самую последнюю
+        datetimes = []
+        for parameter_data in json_data[0]["parametersData"]:
+            if meter_value_register_datetime := parameter_data["values"][0]["registerDt"]:
+                datetimes.append(meter_value_register_datetime)
+        max_datetime = max(datetimes)
+        dt_part = max_datetime.split('.')[0] # "2026-04-29T07:01:16"
         dt = datetime.strptime(dt_part, "%Y-%m-%dT%H:%M:%S")
         formatted = dt.strftime("%d.%m.%Y %H:%M")
         
+        # Результат
         res = {
             "register_datetime": formatted,
             "fine_meter_values": fine_meter_values,
             }
-        
         return res
     
-    
+    def get_meter_data(self, instance_id: str) -> dict:
+        """Получает и обрабатывает данные прибора учета"""
+        raw_data = self.fetch_meter_data(instance_id)
+        extracted_data = self.extract_meter_data(raw_data)
+        return extracted_data
+        
     @relogin
-    def get_meter_data_v2(self,
-                          instance_id,
-                          start_date,
-                          finish_date,
-                          output_path
+    def fetch_meter_daily_data(self,
+                          instance_id: str,
+                          start_date: datetime,
+                          finish_date: datetime,
+                          output_path: str,
                           ):
-        """Получение показаний прибора учета на начало суток"""
+        """Получение показаний прибора учета на начало суток за определенный диапазон"""
         
         start_date = start_date.isoformat(timespec='milliseconds')
         finish_date = finish_date.isoformat(timespec='milliseconds')
-        
         payload = {
             "classifierId": 2481,
             "instancesIds": [instance_id],
@@ -331,67 +356,21 @@ class PyramidApiClient:
             "requireRatio": False,
             "requireLoses": False
         }
-        
-        response = self.session.post(
-            self.meterdata_url,
-            json=payload
-        )
-        response.raise_for_status()
-        
-        
-        response = response.json()
+        return self._request("POST", self.meterdata_url, json=payload)
+    
+    def create_meter_daily_data_report(self,
+                                       instance_id: str,
+                                       start_date: datetime,
+                                       finish_date: datetime,
+                                       output_path: str,
+                                       ) -> None:
+        """Создаёт файл с показаниям на начало суток за определенный период в формате xlsx"""
+        json_data = fetch_meter_daily_data(instance_id, start_date, finish_date, output_path)
         meter_caption = response[0]["pointWithMeter"]["meter"]["caption"]
         file_output_title = f"Показания на начало суток по {meter_caption}.xlsx"
         full_output_path = Path(output_path) / file_output_title
         create_excel_from_json(response, full_output_path)
         return
-        
-        
-    @relogin
-    def _get_meter_route_data(self, meter_id):
-        """Запрос данных маршрута прибора учета"""
-            
-        payload = [meter_id]
-        
-        
-        response = self.session.post(
-                self.meter_route_url,
-                json=payload
-            )
-        response.raise_for_status()  # выбросит исключение при статусе 4xx/5xx
-        
-        data = response.json()
-        if data:
-            print("Получили данные маршрута прибора учета")
-            return data[0]
-        else:
-            return None
-        
-    def get_meter_route_captions(self, meter_num: str) -> list:
-        """Запрос ip прибора учета"""
-        
-        meter_instance = self._get_meter_instance_data(meter_num)
-        if not meter_instance:
-            print("Не нашел прибор учета")
-            return []
-        
-        meter_id = meter_instance.get("id")
-        if not meter_id:
-            print("Не нашел ID прибора учета")
-            return []
-        
-        meter_route = self._get_meter_route_data(meter_id)
-        if meter_route:
-            meter_routes = meter_route.get("routes")
-            if meter_routes:
-                meter_routes_captions = [meter_route.get("caption") for meter_route in meter_routes]
-                return meter_routes_captions
-            else:
-                print("В маршруте нет данных об IP")
-                return []
-        else:
-            print("Не найдены данные маршрута по данному ПУ")
-            return []
         
     @staticmethod
     def extract_ip(text: str) -> str | None:
@@ -405,19 +384,10 @@ class PyramidApiClient:
         
         raw_ip = match.group(1)
         return raw_ip
-
-
-    def get_meter_routes(self, meter_num: str) -> list:
-        """Формируем список параметров для подключений на GUI"""
-        res = []
-        note = None
-        meter_route_captions = self.get_meter_route_captions(meter_num)
-        for i in meter_route_captions:
-            print(i)
             
             
     def power_test(self, meter_id: str) -> list:
-        """Управление нагрузкой"""
+        """Управление нагрузкой. Метод не используется так как нет прав на это действие."""
         
         meters_ids = [meter_id]   # замените на фактические ID
         state = False               # True = включить, False = выключить
@@ -436,26 +406,37 @@ class PyramidApiClient:
                 self.power_url,
                 json=payload
             )
-        
-        print(response.text)
                     
                     
 # Пример использования
 if __name__ == "__main__":
     # Создаём клиент и параметры
     client = PyramidApiClient()
+    
+    if client.username is None and client.password is None:
+        client.username = settings.PYRAMID_USERNAME
+        client.password = settings.PYRAMID_PSW
+    
+    
     client.login()
     start_date = datetime(year=2026, month=4, day=1)
     finish_date = datetime.now()
     out_path = "C:/Users/FilippovAS/Desktop"
+
+    
+    # Сюда номер ПУ котоырй хотим протестить
+    pu_number = '1536145'
     
     # Получаем instance id
-    a = client.get_meter_instance_data("1304219")["instance_id"]
+    #a = client.get_meter_instance_data(pu_number)["instance_id"]
     
     # Получаем показания
-    b = client.get_meter_data(a)
+    #b = client.get_meter_data(a)
+    
+    c = client.get_meter_instance_data(pu_number)
     
     # Делаем json на начало суток
     #print(client.get_meter_data_v2("20156606", start_date, finish_date, out_path))
     
-    print(b)
+    #print(b)
+    print(c)

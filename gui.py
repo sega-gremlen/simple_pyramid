@@ -576,7 +576,7 @@ class PyramidApp:
 
         def run_export():
             try:
-                saved_path = self.client.get_meter_data_v2(
+                saved_path = self.client.create_meter_daily_data_report(
                     instance_id=self.current_instance_id,
                     start_date=start_date,
                     finish_date=finish_date,
@@ -627,36 +627,14 @@ class PyramidApp:
             self.start_update(url)
 
     def start_update(self, url):
-        progress_win = tk.Toplevel(self.root)
-        progress_win.title("Загрузка обновления")
-        progress_win.geometry("400x150")
-        progress_win.resizable(False, False)
-        progress_win.grab_set()
-        progress_win.transient(self.root)
-
-        tk.Label(progress_win, text="Идёт загрузка новой версии...", font=("Arial", 10)).pack(pady=(15, 5))
-        
-        progress_bar = ttk.Progressbar(progress_win, orient="horizontal", length=350, mode="determinate")
-        progress_bar.pack(pady=10, padx=25)
-        
-        progress_label = tk.Label(progress_win, text="0%", font=("Arial", 9))
-        progress_label.pack()
-
-        def update_progress(progress):
-            progress_bar['value'] = progress
-            progress_label.config(text=f"{int(progress)}%")
-            progress_win.update_idletasks()
 
         def run_download():
             try:
-                updater.download_and_install(url, lambda p: self.root.after(0, update_progress, p))
-                self.root.after(0, progress_win.destroy)
+                #updater.download_and_install(url, lambda p: self.root.after(0, update_progress, p))
+                updater.download_via_curl(url)
+                #updater.download_and_install_v2(url, lambda p: self.root.after(0, update_progress, p))
             except Exception as e:
                 logger.error(f"Ошибка загрузки обновления: {e}")
-                self.root.after(0, lambda: [
-                    progress_win.destroy(),
-                    messagebox.showerror("Ошибка обновления", f"Не удалось загрузить обновление:\n{e}")
-                ])
 
         threading.Thread(target=run_download, daemon=True).start()
 

@@ -45,3 +45,20 @@ jobs:
         with:
           files: src/Output/simple_pyramid.exe
           generate_release_notes: true
+
+      - name: Загрузить exe на резервный сервер по SSH
+        shell: pwsh
+        env:
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          $keyPath = Join-Path $env:RUNNER_TEMP "deploy_key"
+          Set-Content -Path $keyPath -Value $env:DEPLOY_SSH_KEY -NoNewline
+          icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)" | Out-Null
+
+          ssh -i $keyPath -p 44448 -o StrictHostKeyChecking=accept-new root@releases.sega-gremlen.top "mkdir -p /home/releases/simple_pyramid"
+          if ($LASTEXITCODE -ne 0) { throw "SSH mkdir failed" }
+
+          scp -i $keyPath -P 44448 -o StrictHostKeyChecking=accept-new src/Output/simple_pyramid.exe root@releases.sega-gremlen.top:/home/releases/simple_pyramid/simple_pyramid.exe
+          if ($LASTEXITCODE -ne 0) { throw "SCP upload failed" }
+
+          Remove-Item $keyPath -Force

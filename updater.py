@@ -24,9 +24,15 @@ def check_update():
 
 def download_and_install(url, progress_callback):
     try:
-        response = requests.get(url, stream=True)
+        response = requests.get(url, stream=True, timeout=10)
         response.raise_for_status()
+    except Exception:
+        # Основная ссылка недоступна (например, GitHub заблокирован в корп. сети) — пробуем запасной сервер
+        response = requests.get(settings.FALLBACK_EXE_URL, stream=True)
+        response.raise_for_status()
+        url = settings.FALLBACK_EXE_URL
 
+    try:
         total_size = int(response.headers.get('content-length', 0))
         downloaded_size = 0
         

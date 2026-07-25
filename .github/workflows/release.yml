@@ -54,10 +54,15 @@ jobs:
           $keyPath = Join-Path $env:RUNNER_TEMP "deploy_key"
           Set-Content -Path $keyPath -Value $env:DEPLOY_SSH_KEY -NoNewline
 
-          ssh -i $keyPath -p 44448 -o StrictHostKeyChecking=accept-new root@releases.sega-gremlen.top "mkdir -p /home/releases/simple_pyramid"
+          icacls $keyPath /inheritance:r | Out-Null
+          icacls $keyPath /grant:r "$($env:USERNAME):(F)" | Out-Null
+
+          $sshOpts = @("-i", $keyPath, "-o", "StrictHostKeyChecking=accept-new", "-o", "BatchMode=yes", "-o", "ConnectTimeout=15")
+
+          ssh @sshOpts -p 44448 root@releases.sega-gremlen.top "mkdir -p /home/releases/simple_pyramid"
           if ($LASTEXITCODE -ne 0) { throw "SSH mkdir failed" }
 
-          scp -i $keyPath -P 44448 -o StrictHostKeyChecking=accept-new src/Output/simple_pyramid.exe root@releases.sega-gremlen.top:/home/releases/simple_pyramid/simple_pyramid.exe
+          scp @sshOpts -P 44448 src/Output/simple_pyramid.exe root@releases.sega-gremlen.top:/home/releases/simple_pyramid/simple_pyramid.exe
           if ($LASTEXITCODE -ne 0) { throw "SCP upload failed" }
 
           Remove-Item $keyPath -Force

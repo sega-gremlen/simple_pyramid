@@ -53,7 +53,6 @@ jobs:
         run: |
           $keyPath = Join-Path $env:RUNNER_TEMP "deploy_key"
           Set-Content -Path $keyPath -Value $env:DEPLOY_SSH_KEY -NoNewline
-          icacls $keyPath /inheritance:r /grant:r "$($env:USERNAME):(R)" | Out-Null
 
           ssh -i $keyPath -p 44448 -o StrictHostKeyChecking=accept-new root@releases.sega-gremlen.top "mkdir -p /home/releases/simple_pyramid"
           if ($LASTEXITCODE -ne 0) { throw "SSH mkdir failed" }

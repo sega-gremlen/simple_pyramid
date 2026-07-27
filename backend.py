@@ -153,13 +153,13 @@ class PyramidApiClient:
 
     @relogin
     def fetch_instances(self, meter_num: str) -> dict | None:
-        """Выполняет POST-запрос к API для получения данных прибора учета по номеру прибора учета"""
+        """Выполняет POST-запрос к API для получения id, модели счетчика и маршрутов соеденения по номеру прибора учета"""
         
         payload = {
         "classId": -1646,
         "userCustomized": False,
         "options": {
-            "take": "1",
+            "take": "2",
             "sort": '[{"selector":"id","desc":false}]',
             "filter": f'["-1494","contains","{meter_num}"]'  # подставляем номер прибора
             }
@@ -170,7 +170,15 @@ class PyramidApiClient:
     def extract_instances(self, json_data: dict) -> dict:
         """Парсит JSON-ответ и извлекает id, модель счетчика и маршруты соеденения"""
         
-        data = json_data.get("data")[0]
+        meter_data = json_data.get("data")
+        
+        if not meter_data:
+            raise ValueError("Прибора учета не существует\nПопробуйте убрать первый 0 в номере прибора учета")
+        
+        if len(meter_data) > 1:
+            raise ValueError("Найдено более одного прибора учета\nПопробуйте уточнить поиск")
+        
+        data = meter_data[0]
         
         if not data:
             print("Не нашли основные данные прибора учета")
@@ -188,7 +196,7 @@ class PyramidApiClient:
         
         return res
     
-    def get_instances(self, meter_num) -> dict | None:
+    def get_instances(self, meter_num: str) -> dict | None:
         """Получает и вытаскивает instance_id, модель, маршруты прибора учёта по его номеру"""
         
         raw_data = self.fetch_instances(meter_num)
@@ -197,7 +205,7 @@ class PyramidApiClient:
         
     @relogin
     def fetch_instance_info(self, meter_id: str):
-        """Выполняет GET-запрос к API для получения данных точки учёта по id прибора учета"""
+        """Выполняет GET-запрос к API для получения лицевого счёт и адреса точки учёта по id прибора учета"""
         
         params = {"instanceId": meter_id}
         return self._request("GET", self.get_instance_info_url, params=params)

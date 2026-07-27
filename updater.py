@@ -62,7 +62,7 @@ def download_and_install(progress_callback=None, status_callback=None):
     try:
         total_size = int(response.headers.get('content-length', 0))
         downloaded_size = 0
-        filename = url.split('/')[-1]
+        filename = f"{url.split('/')[-1][:-4]}_update.exe"
         filepath = os.path.join(os.getcwd(), filename)
 
         with open(filepath, 'wb') as f:

@@ -304,12 +304,12 @@ class PyramidApiClient:
         
         # Делаем через сумму потому что бывают разные значения там
         if fine_meter_values["A+"]["T1"] or fine_meter_values["A+"]["T2"]:
-            fine_meter_values["A+"]["TO"] = fine_meter_values["A+"]["T1"] + fine_meter_values["A+"]["T2"]
+            fine_meter_values["A+"]["TO"] = round(fine_meter_values["A+"]["T1"] + fine_meter_values["A+"]["T2"], 2)
         else:
             fine_meter_values["A+"]["TO"] = meter_values[a_plus]
         
         if fine_meter_values["A-"]["T1"] or fine_meter_values["A-"]["T2"]:
-            fine_meter_values["A-"]["TO"] = fine_meter_values["A-"]["T1"] + fine_meter_values["A-"]["T2"]
+            fine_meter_values["A-"]["TO"] = round(fine_meter_values["A-"]["T1"] + fine_meter_values["A-"]["T2"], 2)
         else:
             fine_meter_values["A-"]["TO"] = meter_values[a_minus]
         
@@ -369,12 +369,12 @@ class PyramidApiClient:
                                        output_path: str,
                                        ) -> None:
         """Создаёт файл с показаниям на начало суток за определенный период в формате xlsx"""
-        json_data = fetch_meter_daily_data(instance_id, start_date, finish_date, output_path)
-        meter_caption = response[0]["pointWithMeter"]["meter"]["caption"]
+        json_data = self.fetch_meter_daily_data(instance_id, start_date, finish_date, output_path)
+        meter_caption = json_data[0]["pointWithMeter"]["meter"]["caption"]
         file_output_title = f"Показания на начало суток по {meter_caption}.xlsx"
         full_output_path = Path(output_path) / file_output_title
-        create_excel_from_json(response, full_output_path)
-        return
+        create_excel_from_json(json_data, full_output_path)
+        return full_output_path
         
     @staticmethod
     def extract_ip(text: str) -> str | None:

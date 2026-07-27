@@ -627,14 +627,56 @@ class PyramidApp:
             self.start_update(url)
 
     def start_update(self, url):
+        progress_win = tk.Toplevel(self.root)
+        progress_win.title("Обновление")
+        progress_win.geometry("300x120")
+        progress_win.resizable(False, False)
+        progress_win.grab_set()
+        progress_win.transient(self.root)
+
+        # Центрирование
+        self.root.update_idletasks()
+        main_x = self.root.winfo_x()
+        main_y = self.root.winfo_y()
+        main_w = self.root.winfo_width()
+        main_h = self.root.winfo_height()
+        win_w, win_h = 300, 120
+        x = main_x + (main_w - win_w) // 2
+        y = main_y + (main_h - win_h) // 2
+        progress_win.geometry(f"{win_w}x{win_h}+{x}+{y}")
+
+        # ВАЖНО: добавляем метку и прогресс-бар
+        tk.Label(progress_win, text="Загрузка обновления...").pack(pady=(15, 5))
+        progress_var = tk.DoubleVar()
+        progress_bar = ttk.Progressbar(
+            progress_win, variable=progress_var, maximum=100, mode='determinate'
+        )
+        progress_bar.pack(pady=10, padx=30, fill=tk.X)
+
+        def update_progress(percent):
+            progress_var.set(percent)
+
+        def on_download_finished(filepath):
+            progress_win.destroy()
+            if filepath:
+                try:
+                    subprocess.Popen([filepath])
+                except Exception as e:
+                    messagebox.showerror("Ошибка", f"Не удалось запустить установщик:\n{e}")
+            # Закрываем главное окно, выходим из приложения
+            self.root.quit()
+            self.root.destroy()
 
         def run_download():
             try:
-                #updater.download_and_install(url, lambda p: self.root.after(0, update_progress, p))
-                updater.download_via_curl(url)
-                #updater.download_and_install_v2(url, lambda p: self.root.after(0, update_progress, p))
+                filepath = updater.download_and_install(
+                    url, lambda p: self.root.after(0, update_progress, p)
+                )
+                self.root.after(0, on_download_finished, filepath)
             except Exception as e:
                 logger.error(f"Ошибка загрузки обновления: {e}")
+                self.root.after(0, progress_win.destroy)
+                self.root.after(0, messagebox.showerror, "Ошибка", f"Не удалось загрузить обновление:\n{e}")
 
         threading.Thread(target=run_download, daemon=True).start()
 

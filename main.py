@@ -1,6 +1,6 @@
-from gui import PyramidApp
+from gui import app
 
 
 if __name__ == "__main__":
-    PyramidApp().start()
+    app.start()
     

@@ -7,6 +7,7 @@ import re
 import logging
 import threading
 from datetime import datetime, date
+import subprocess
 
 from backend import backend_client
 from utils.pinger import PingWorker
@@ -626,35 +627,78 @@ class PyramidApp:
         if messagebox.askyesno(title, message):
             self.start_update(url)
 
-    def start_update(self, url):
+    def start_update(self, url, new_version=""):
         progress_win = tk.Toplevel(self.root)
-        progress_win.title("Обновление")
-        progress_win.geometry("300x120")
+        ver_str = f"Обновление до версии {new_version}" if new_version else "Обновление"
+        progress_win.title(ver_str)
+        win_w, win_h = 360, 180
+        progress_win.geometry(f"{win_w}x{win_h}")
         progress_win.resizable(False, False)
         progress_win.grab_set()
         progress_win.transient(self.root)
 
-        # Центрирование
+        # Центрирование окна относительно главного
         self.root.update_idletasks()
         main_x = self.root.winfo_x()
         main_y = self.root.winfo_y()
         main_w = self.root.winfo_width()
         main_h = self.root.winfo_height()
-        win_w, win_h = 300, 120
         x = main_x + (main_w - win_w) // 2
         y = main_y + (main_h - win_h) // 2
         progress_win.geometry(f"{win_w}x{win_h}+{x}+{y}")
 
-        # ВАЖНО: добавляем метку и прогресс-бар
-        tk.Label(progress_win, text="Загрузка обновления...").pack(pady=(15, 5))
-        progress_var = tk.DoubleVar()
-        progress_bar = ttk.Progressbar(
-            progress_win, variable=progress_var, maximum=100, mode='determinate'
-        )
-        progress_bar.pack(pady=10, padx=30, fill=tk.X)
+        status_font = ("Arial", 8)
+        wrap_length = win_w - 40
 
-        def update_progress(percent):
+        # Контейнер статуса подключения (показывается первым)
+        frame_status = tk.Frame(progress_win)
+        lbl_conn = tk.Label(frame_status, text="Подключение...", font=status_font,
+                            wraplength=wrap_length, justify="center")
+        lbl_conn.pack(pady=(5, 0))
+        lbl_attempt = tk.Label(frame_status, text="", font=status_font,
+                               wraplength=wrap_length, justify="center")
+        lbl_attempt.pack(pady=(2, 5))
+
+        # Контейнер прогресс-бара (появляется после установки соединения)
+        frame_progress = tk.Frame(progress_win)
+        progress_var = tk.DoubleVar()
+        progress_bar = ttk.Progressbar(frame_progress, variable=progress_var,
+                                       maximum=100, mode='determinate', length=300)
+        lbl_size = tk.Label(frame_progress, text="", font=status_font, justify="center")
+
+        # Упаковываем виджеты внутри frame_progress (сам frame_progress пока не показываем)
+        progress_bar.pack(pady=(0, 5))
+        lbl_size.pack(pady=(0, 10))
+
+        # Размещаем frame_status по центру окна
+        progress_win.update_idletasks()  # чтобы размеры фрейма рассчитались
+        frame_status.place(relx=0.5, rely=0.5, anchor='center')
+
+        def show_progress_widgets():
+            # Скрываем статус
+            frame_status.place_forget()
+            # Показываем прогресс-бар по центру
+            frame_progress.place(relx=0.5, rely=0.5, anchor='center')
+
+        def status_update(message, attempt):
+            if attempt == 0:
+                lbl_conn.config(text="Соединение установлено. Загрузка...")
+                lbl_attempt.config(text="")
+                progress_win.after(300, show_progress_widgets)
+            else:
+                lbl_conn.config(text=message)
+                lbl_attempt.config(text=f"Попытка {attempt}")
+
+        def update_progress(percent, downloaded_bytes, total_bytes):
             progress_var.set(percent)
+            def fmt(b):
+                for unit in ['Б', 'КБ', 'МБ', 'ГБ']:
+                    if b < 1024:
+                        return f"{b:.1f} {unit}" if unit != 'Б' else f"{int(b)} {unit}"
+                    b /= 1024
+                return f"{b:.1f} ТБ"
+            size_text = f"Скачано: {fmt(downloaded_bytes)} / {fmt(total_bytes)}"
+            lbl_size.config(text=size_text)
 
         def on_download_finished(filepath):
             progress_win.destroy()
@@ -663,14 +707,14 @@ class PyramidApp:
                     subprocess.Popen([filepath])
                 except Exception as e:
                     messagebox.showerror("Ошибка", f"Не удалось запустить установщик:\n{e}")
-            # Закрываем главное окно, выходим из приложения
             self.root.quit()
             self.root.destroy()
 
         def run_download():
             try:
                 filepath = updater.download_and_install(
-                    url, lambda p: self.root.after(0, update_progress, p)
+                    progress_callback=lambda p, d, t: self.root.after(0, update_progress, p, d, t),
+                    status_callback=lambda msg, attempt: self.root.after(0, status_update, msg, attempt)
                 )
                 self.root.after(0, on_download_finished, filepath)
             except Exception as e:
@@ -680,6 +724,9 @@ class PyramidApp:
 
         threading.Thread(target=run_download, daemon=True).start()
 
+
 if __name__ == "__main__":
     app = PyramidApp()
     app.start()
+else:
+    app = PyramidApp()

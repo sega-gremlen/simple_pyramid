@@ -27,10 +27,9 @@ class PyramidApiClient:
         
         #endpoints
         login_endpoint: str = "/auth/login/",
-        meter_instance_endpoint: str = "/rdinstance/getinstances/",
-        meter_route_endpoint: str = "/routes/getroutes/",
-        rd_instance_endpoint: str = "/rdinstance/getinstanceinfo/",
-        meterdata_endpoint: str = "/meterdata/read/",
+        get_instances_endpoint: str = "/rdinstance/getinstances/",
+        get_instance_info_endpoint: str = "/rdinstance/getinstanceinfo/",
+        meterdata_read_endpoint: str = "/meterdata/read/",
         power_endpoint: str = "/loadlimitmanagement/startasynctaskwriteloadstate/",
         
         #params
@@ -45,10 +44,9 @@ class PyramidApiClient:
         """
         self.base_url: str = base_url.rstrip('/')
         self.login_url: str = f"{self.base_url}{login_endpoint}?timeZoneOffset=-240"
-        self.meter_instance_url: str = f"{self.base_url}{meter_instance_endpoint}"
-        self.meter_route_url: str = f"{self.base_url}{meter_route_endpoint}"
-        self.rd_instance_url: str = f"{self.base_url}{rd_instance_endpoint}"
-        self.meterdata_url: str = f"{self.base_url}{meterdata_endpoint}"
+        self.get_instances_url: str = f"{self.base_url}{get_instances_endpoint}"
+        self.get_instance_info_url: str = f"{self.base_url}{get_instance_info_endpoint}"
+        self.meterdata_read_url: str = f"{self.base_url}{meterdata_read_endpoint}"
         self.power_url: str = f"{self.base_url}{power_endpoint}"
         self.timezone_offset: int = timezone_offset
 
@@ -154,7 +152,7 @@ class PyramidApiClient:
         return wrapper
 
     @relogin
-    def fetch_meter_instance_data(self, meter_num: str) -> dict | None:
+    def fetch_instances(self, meter_num: str) -> dict | None:
         """Выполняет POST-запрос к API для получения данных прибора учета по номеру прибора учета"""
         
         payload = {
@@ -167,9 +165,9 @@ class PyramidApiClient:
             }
         }
             
-        return self._request("POST", self.meter_instance_url, json=payload)
+        return self._request("POST", self.get_instances_url, json=payload)
         
-    def extract_meter_instance_data(self, json_data: dict) -> dict:
+    def extract_instances(self, json_data: dict) -> dict:
         """Парсит JSON-ответ и извлекает id, модель счетчика и маршруты соеденения"""
         
         data = json_data.get("data")[0]
@@ -178,7 +176,7 @@ class PyramidApiClient:
             print("Не нашли основные данные прибора учета")
             return None
         
-        instance_id = data.get('-8295').get('id')
+        instance_id = str(data.get('-8295').get('id'))
         meter_model = data.get('-56855')
         meter_routes = [item.get('caption') for item in data.get('-3134')]
         
@@ -190,20 +188,22 @@ class PyramidApiClient:
         
         return res
     
-    def get_meter_instance_data(self, meter_num) -> dict | None:
-        """Получает и обрабатывает данные прибора учёта по его номеру"""
-        raw_data = self.fetch_meter_instance_data(meter_num)
-        extracted_data = self.extract_meter_instance_data(raw_data)
+    def get_instances(self, meter_num) -> dict | None:
+        """Получает и вытаскивает instance_id, модель, маршруты прибора учёта по его номеру"""
+        
+        raw_data = self.fetch_instances(meter_num)
+        extracted_data = self.extract_instances(raw_data)
         return extracted_data
         
     @relogin
-    def fetch_rd_instance_data(self, meter_id: str):
+    def fetch_instance_info(self, meter_id: str):
         """Выполняет GET-запрос к API для получения данных точки учёта по id прибора учета"""
+        
         params = {"instanceId": meter_id}
-        return self._request("GET", self.rd_instance_url, params=params)
+        return self._request("GET", self.get_instance_info_url, params=params)
 
     
-    def extract_rd_instance_data(self, json_data: dict):
+    def extract_instance_info(self, json_data: dict):
         """Парсит JSON-ответ и извлекает лицевой счёт и адрес точки учёта"""
                 
         instance = json_data.get("instance")
@@ -217,14 +217,15 @@ class PyramidApiClient:
         
         return res
         
-    def get_rd_instance_data(self, meter_id: str):
-        """Получает и обрабатывает данные точки учёта"""
-        raw_data = self.fetch_rd_instance_data(meter_id)
-        extracted_data = self.extract_rd_instance_data(raw_data)
+    def get_instance_info(self, meter_id: str):
+        """Получает json и вытаскивает лицевой счёт и адрес точки учёта"""
+        
+        raw_data = self.fetch_instance_info(meter_id)
+        extracted_data = self.extract_instance_info(raw_data)
         return extracted_data
     
     @relogin
-    def fetch_meter_data(self, instance_id: str):
+    def fetch_meterdata_read(self, instance_id: str):
         """
         Получение текущих последних показаний прибора учета.
         Используется фильтр "Самарские РС - Показания текущие общие и 2-х зонные 4 канала".
@@ -243,9 +244,9 @@ class PyramidApiClient:
             "requireLoses": False
         }
         
-        return self._request("POST", self.meterdata_url, json=payload)
+        return self._request("POST", self.meterdata_read_url, json=payload)
     
-    def extract_meter_data(self, json_data: dict):
+    def extract_meterdata_read(self, json_data: dict):
         """Парсит JSON-ответ и извлекает дату последних показаний и сами показания прибора учета"""
         
         meter_values = {
@@ -329,10 +330,10 @@ class PyramidApiClient:
             }
         return res
     
-    def get_meter_data(self, instance_id: str) -> dict:
+    def get_meterdata_read(self, instance_id: str) -> dict:
         """Получает и обрабатывает данные прибора учета"""
-        raw_data = self.fetch_meter_data(instance_id)
-        extracted_data = self.extract_meter_data(raw_data)
+        raw_data = self.fetch_meterdata_read(instance_id)
+        extracted_data = self.extract_meterdata_read(raw_data)
         return extracted_data
         
     @relogin
@@ -342,7 +343,10 @@ class PyramidApiClient:
                           finish_date: datetime,
                           output_path: str,
                           ):
-        """Получение показаний прибора учета на начало суток за определенный диапазон"""
+        """
+        Получение показаний прибора учета на начало суток за определенный диапазон
+        В пирамиде используем фильтр "Самарские РС - Показания на начало суток общие и 2-х зонные А+"
+        """
         
         start_date = start_date.isoformat(timespec='milliseconds')
         finish_date = finish_date.isoformat(timespec='milliseconds')
@@ -356,7 +360,7 @@ class PyramidApiClient:
             "requireRatio": False,
             "requireLoses": False
         }
-        return self._request("POST", self.meterdata_url, json=payload)
+        return self._request("POST", self.meterdata_read_url, json=payload)
     
     def create_meter_daily_data_report(self,
                                        instance_id: str,
@@ -404,39 +408,7 @@ class PyramidApiClient:
         
         response = self.session.post(
                 self.power_url,
-                json=payload
+                json=payload,
             )
-                    
-                    
-# Пример использования
-if __name__ == "__main__":
-    # Создаём клиент и параметры
-    client = PyramidApiClient()
-    
-    if client.username is None and client.password is None:
-        client.username = settings.PYRAMID_USERNAME
-        client.password = settings.PYRAMID_PSW
-    
-    
-    client.login()
-    start_date = datetime(year=2026, month=4, day=1)
-    finish_date = datetime.now()
-    out_path = "C:/Users/FilippovAS/Desktop"
-
-    
-    # Сюда номер ПУ котоырй хотим протестить
-    pu_number = '1536145'
-    
-    # Получаем instance id
-    #a = client.get_meter_instance_data(pu_number)["instance_id"]
-    
-    # Получаем показания
-    #b = client.get_meter_data(a)
-    
-    c = client.get_meter_instance_data(pu_number)
-    
-    # Делаем json на начало суток
-    #print(client.get_meter_data_v2("20156606", start_date, finish_date, out_path))
-    
-    #print(b)
-    print(c)
+        
+backend_client = PyramidApiClient()

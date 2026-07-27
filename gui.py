@@ -8,7 +8,7 @@ import logging
 import threading
 from datetime import datetime, date
 
-from backend import PyramidApiClient
+from backend import backend_client
 from utils.pinger import PingWorker
 import updater
 from version import __version__
@@ -32,7 +32,7 @@ class PyramidApp:
         self.root.geometry("850x620")
         self.root.resizable(False, False)
 
-        self.client = PyramidApiClient()
+        self.client = backend_client
         self.current_user = None
         self.current_instance_id = None
         self.route_rows = []
@@ -354,7 +354,7 @@ class PyramidApp:
         self.update_readings_panel(None)
 
         try:
-            response = self.client.get_meter_instance_data(meter_num)
+            response = self.client.get_instances(meter_num)
             if not response:
                 logger.warning(f"Нет данных о приборе {meter_num}")
                 empty_frame = tk.Frame(self.routes_frame)
@@ -374,7 +374,7 @@ class PyramidApp:
                 logger.debug(f"instance_id = {instance_id}")
 
                 try:
-                    rd_data = self.client.get_rd_instance_data(instance_id)
+                    rd_data = self.client.get_instance_info(instance_id)
                     if rd_data:
                         if rd_data.get("address"):
                             raw_addr = rd_data["address"]
@@ -394,7 +394,7 @@ class PyramidApp:
                     logger.error(f"Ошибка получения данных точки учета: {e}")
 
                 try:
-                    reading_data = self.client.get_meter_data(instance_id)
+                    reading_data = self.client.get_meterdata_read(instance_id)
                     self.update_readings_panel(reading_data)
                     logger.info("Показания успешно получены")
                 except Exception as e:

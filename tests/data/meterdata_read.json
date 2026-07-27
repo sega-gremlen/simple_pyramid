@@ -1,0 +1,316 @@
+[
+    {
+        "pointWithMeter": {
+            "isMeterPointDisabled": null,
+            "meter": {
+                "id": 13516722,
+                "caption": "РиМ 489.26 (СПОДЭС), №01536145"
+            },
+            "id": 13516725,
+            "caption": "Самарская обл\\Жигулевское ПО/Сызранский РЭС/Сызранский р-н\\село Рамено\\ул Солнечная\\д 141\\РиМ 489.26 (СПОДЭС), №01536145"
+        },
+        "parametersData": [
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": -2139,
+                    "caption": "Энергия А- текущая"
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:27.802",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 16038710.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726239,
+                    "caption": "Энергия А- текущая, Тарифная зона \"День Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:18.321",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 120.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726797,
+                    "caption": "Энергия А- текущая, Тарифная зона \"Ночь Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:18.633",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 0.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": -1973,
+                    "caption": "Энергия А+ текущая"
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:27.802",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726597,
+                    "caption": "Энергия А+ текущая, Тарифная зона \"День Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:19.201",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "ВАр*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": -2143,
+                    "caption": "Энергия Р- текущая"
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:27.802",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 12738460.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "ВАр*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726253,
+                    "caption": "Энергия Р- текущая, Тарифная зона \"День Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:19.759",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 1545610.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "ВАр*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726811,
+                    "caption": "Энергия Р- текущая, Тарифная зона \"Ночь Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:20.481",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 555950.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "ВАр*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": -2141,
+                    "caption": "Энергия Р+ текущая"
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:27.802",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 13636800.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "ВАр*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726243,
+                    "caption": "Энергия Р+ текущая, Тарифная зона \"День Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:21.992",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 80590.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "ВАр*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726801,
+                    "caption": "Энергия Р+ текущая, Тарифная зона \"Ночь Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:23.459",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 9660.0,
+                        "valueDt": null
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4727155,
+                    "caption": "Энергия А+ текущая, Тарифная зона \"Ночь Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-07-24T05:31:24.88",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": null
+                    }
+                ]
+            }
+        ],
+        "lossesInfo": []
+    }
+]

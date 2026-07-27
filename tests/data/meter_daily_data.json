@@ -1,0 +1,1081 @@
+[
+    {
+        "pointWithMeter": {
+            "isMeterPointDisabled": null,
+            "meter": {
+                "id": 13516722,
+                "caption": "РиМ 489.26 (СПОДЭС), №01536145"
+            },
+            "id": 13516725,
+            "caption": "Самарская обл\\Жигулевское ПО/Сызранский РЭС/Сызранский р-н\\село Рамено\\ул Солнечная\\д 141\\РиМ 489.26 (СПОДЭС), №01536145"
+        },
+        "parametersData": [
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": -2161,
+                    "caption": "Энергия А+ на начало суток"
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-06-24T06:53:49.665",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-06-24T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-25T07:02:31.479",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-06-25T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-26T06:42:22.298",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-06-26T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-27T06:46:52.376",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-06-27T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-28T07:02:33.994",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-06-28T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-29T06:57:21.741",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-06-29T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-30T06:46:48.101",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-06-30T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-01T06:45:48.725",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-01T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-02T06:40:25.854",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-02T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-03T06:39:56.611",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-03T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-04T06:48:32.828",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-04T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-05T06:43:42.116",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-05T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-06T06:50:32.901",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-06T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-07T06:09:43.882",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-07T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-08T07:08:24.982",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-08T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-09T07:17:29.546",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-09T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-10T06:32:02.376",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-10T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-11T06:34:57.437",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-11T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-12T06:58:59.352",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-12T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-13T06:48:22.444",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-13T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-14T06:46:58.984",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-14T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-15T06:51:00.069",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-15T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-16T07:16:38.096",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-16T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-17T07:09:52.687",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-17T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-18T06:58:23.671",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-18T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-19T07:06:50.539",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-19T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-20T06:45:17.822",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-20T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-21T07:04:49.827",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-21T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-22T07:05:57.163",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-22T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-23T06:28:01.679",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-23T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-24T06:32:33.243",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 42412710.0,
+                        "valueDt": "2026-07-24T00:00:00"
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726233,
+                    "caption": "Энергия А+ на начало суток, Тарифная зона \"День Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-06-24T06:53:49.665",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-06-24T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-25T07:02:31.479",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-06-25T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-26T06:42:22.298",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-06-26T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-27T06:46:52.376",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-06-27T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-28T07:02:33.995",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-06-28T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-29T06:57:21.742",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-06-29T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-30T06:46:48.101",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-06-30T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-01T06:45:48.725",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-01T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-02T06:40:25.854",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-02T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-03T06:39:56.611",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-03T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-04T06:48:32.828",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-04T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-05T06:43:42.116",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-05T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-06T06:50:32.902",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-06T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-07T06:09:43.881",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-07T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-08T07:08:24.982",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-08T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-09T07:17:29.546",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-09T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-10T06:32:02.376",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-10T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-11T06:34:57.437",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-11T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-12T06:58:59.352",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-12T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-13T06:48:22.444",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-13T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-14T06:46:58.984",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-14T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-15T06:51:00.069",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-15T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-16T07:16:38.096",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-16T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-17T07:09:52.687",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-17T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-18T06:58:23.671",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-18T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-19T07:06:50.539",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-19T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-20T06:45:17.822",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-20T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-21T07:04:49.827",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-21T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-22T07:05:57.163",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-22T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-23T06:28:01.679",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-23T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-24T06:32:33.243",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 8301420.0,
+                        "valueDt": "2026-07-24T00:00:00"
+                    }
+                ]
+            },
+            {
+                "parameter": {
+                    "isViewMeasureSettingsApplying": true,
+                    "unit": "Вт*ч",
+                    "readonly": false,
+                    "discretValue": null,
+                    "discretType": null,
+                    "id": 4726791,
+                    "caption": "Энергия А+ на начало суток, Тарифная зона \"Ночь Двухзонный\""
+                },
+                "hasApprovedData": false,
+                "values": [
+                    {
+                        "registerDt": "2026-06-24T06:53:49.665",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-06-24T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-25T07:02:31.479",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-06-25T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-26T06:42:22.298",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-06-26T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-27T06:46:52.376",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-06-27T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-28T07:02:33.994",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-06-28T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-29T06:57:21.741",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-06-29T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-06-30T06:46:48.101",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-06-30T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-01T06:45:48.725",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-01T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-02T06:40:25.854",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-02T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-03T06:39:56.611",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-03T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-04T06:48:32.828",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-04T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-05T06:43:42.116",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-05T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-06T06:50:32.901",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-06T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-07T06:09:43.882",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-07T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-08T07:08:24.982",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-08T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-09T07:17:29.546",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-09T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-10T06:32:02.376",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-10T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-11T06:34:57.437",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-11T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-12T06:58:59.352",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-12T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-13T06:48:22.444",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-13T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-14T06:46:58.984",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-14T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-15T06:51:00.069",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-15T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-16T07:16:38.096",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-16T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-17T07:09:52.687",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-17T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-18T06:58:23.671",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-18T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-19T07:06:50.539",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-19T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-20T06:45:17.822",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-20T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-21T07:04:49.827",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-21T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-22T07:05:57.163",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-22T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-23T06:28:01.679",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-23T00:00:00"
+                    },
+                    {
+                        "registerDt": "2026-07-24T06:32:33.243",
+                        "sourceKind": -3718,
+                        "sourceInfo": "РиМ 489.26 (СПОДЭС), №01536145",
+                        "personalizedSourceInfo": null,
+                        "statuses": [],
+                        "commentData": null,
+                        "lossesInfo": null,
+                        "value": 34111290.0,
+                        "valueDt": "2026-07-24T00:00:00"
+                    }
+                ]
+            }
+        ],
+        "lossesInfo": []
+    }
+]

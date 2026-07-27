@@ -23,11 +23,15 @@
 !/agents.md
 
 # utils
-!/utils/
 !/utils/pinger.py
 !/utils/xlsx_exporter.py
-/utils/input.json
-/utils/output.xlsx
+
+# tests
+!/tests/data/
+!/tests/__init__.py
+!/tests/conftest.py
+!/tests/unit_tests.py
+
 
 #src
 !/src/

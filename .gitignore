@@ -9,8 +9,6 @@
 # ==============================================
 
 # Файлы в корне для загрузки
-!/gui.py
-!/main.py
 !/pinger.py
 !/backend.py
 !/req.txt
@@ -21,6 +19,7 @@
 !/updater.py
 !/version.py
 !/agents.md
+!/app.py
 
 # utils
 !/utils/
@@ -28,6 +27,11 @@
 !/utils/pinger.py
 !/utils/xlsx_exporter.py
 !/utils/payload_builder.py
+
+# ui
+!/ui/
+!/ui/*
+!/ui/index.html
 
 # tests
 !/tests/data/

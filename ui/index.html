@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Простая Пирамида</title>
+<style>
+:root{
+  --page:#FAFAF9; --card:#FFFFFF; --sunken:#F5F4F2;
+  --border:rgba(20,20,19,.10); --border-strong:rgba(20,20,19,.16);
+  --text:#141413; --muted:#6E6E69; --faint:#9A9A93;
+  --accent:#185FA5; --accent-bg:#E6F1FB;
+  --ok:#1D9E75; --warn:#BA7517; --err:#E24B4A;
+  --radius:8px; --card-radius:12px;
+  --sans:"Segoe UI Variable Text","Segoe UI",Inter,system-ui,sans-serif;
+  --mono:"Cascadia Mono",Consolas,"SF Mono",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --page:#1A1A19; --card:#232322; --sunken:#1E1E1D;
+    --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.18);
+    --text:#EDEDEB; --muted:#A3A39C; --faint:#7A7A74;
+    --accent:#85B7EB; --accent-bg:#0C447C;
+    --ok:#5DCAA5; --warn:#EF9F27; --err:#F09595;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans); font-size:13px; color:var(--text);
+  background:var(--page); display:flex; flex-direction:column;
+  overflow:hidden; user-select:none;
+  -webkit-font-smoothing:antialiased;
+}
+button{
+  font:inherit; font-size:13px; color:var(--text); cursor:default;
+  background:transparent; border:.5px solid var(--border-strong);
+  border-radius:var(--radius); padding:0 12px; height:32px;
+  display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+  transition:background .12s;
+}
+button:hover:not(:disabled){background:var(--sunken)}
+button:active:not(:disabled){transform:scale(.985)}
+button:disabled{opacity:.4}
+button.accent{background:var(--accent); border-color:transparent; color:#fff}
+@media (prefers-color-scheme: dark){button.accent{color:#04264A}}
+button.accent:hover:not(:disabled){filter:brightness(1.08); background:var(--accent)}
+button.icon{padding:0; width:28px; height:28px; justify-content:center;
+  border-color:transparent}
+button.icon:hover{border-color:var(--border-strong)}
+input{
+  font:inherit; font-size:13px; color:var(--text); background:var(--card);
+  border:.5px solid var(--border-strong); border-radius:var(--radius);
+  height:32px; padding:0 10px; outline:none; user-select:text;
+}
+input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg)}
+input.mono{font-family:var(--mono); letter-spacing:.02em}
+.mono{font-family:var(--mono)}
+
+header{display:flex; align-items:center; gap:10px; padding:12px 16px;
+  border-bottom:.5px solid var(--border)}
+#logo{width:28px; height:28px; flex:none; border-radius:6px;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--sunken)}
+#logo svg{width:18px; height:18px}
+.h-title{font-weight:500}
+.h-sub{font-size:12px; color:var(--muted)}
+header .spacer{flex:1}
+
+#bar{display:flex; align-items:center; gap:8px; padding:14px 16px 8px}
+#bar .spacer{flex:1}
+#hint{font-size:12px; color:var(--err); min-height:16px}
+
+#cards{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px;
+  padding:6px 16px 14px}
+.card{background:var(--card); border:.5px solid var(--border);
+  border-radius:var(--card-radius); padding:12px 14px}
+.card-label{font-size:12px; color:var(--faint); margin-bottom:8px}
+.kv{display:flex; justify-content:space-between; gap:16px; padding:4px 0}
+.kv .k{color:var(--muted); white-space:nowrap}
+.kv .v{text-align:right; font-weight:500}
+.kv .v.plain{font-weight:400}
+
+#readings-head{display:flex; justify-content:space-between; gap:16px;
+  margin-bottom:8px}
+#readings{border-collapse:collapse; font-size:13px}
+#readings th{font-weight:500; font-size:12px; color:var(--muted);
+  text-align:center; padding:0 0 4px 10px; min-width:74px}
+#readings th.corner{min-width:0; width:26px; padding-left:0}
+#readings td{font-family:var(--mono); text-align:right; padding:3px 0 3px 10px;
+  font-variant-numeric:tabular-nums}
+#readings td.t{font-family:var(--sans); font-weight:500; text-align:left;
+  color:var(--text); padding-left:0}
+
+#routes-wrap{flex:1; display:flex; flex-direction:column; min-height:0;
+  border-top:.5px solid var(--border)}
+#routes{flex:1; overflow-y:auto}
+#routes::-webkit-scrollbar{width:10px}
+#routes::-webkit-scrollbar-thumb{background:var(--border-strong);
+  border-radius:5px; border:3px solid var(--page)}
+.route{display:flex; align-items:center; gap:10px; padding:9px 16px;
+  border-bottom:.5px solid var(--border)}
+.route:hover{background:var(--sunken)}
+.dot{width:7px; height:7px; border-radius:50%; flex:none; background:var(--faint)}
+.dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)}
+.dot.err{background:var(--err)}
+.route .addr{flex:1; font-family:var(--mono); font-size:12px;
+  user-select:text; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.route .state{font-size:12px; color:var(--muted); min-width:64px;
+  text-align:right}
+.route .state.ok{color:var(--ok)} .route .state.warn{color:var(--warn)}
+.route .state.err{color:var(--err)}
+#empty{padding:28px 16px; text-align:center; color:var(--faint); font-size:13px}
+
+footer{display:flex; justify-content:space-between; padding:9px 16px;
+  border-top:.5px solid var(--border); font-size:12px; color:var(--faint)}
+
+.overlay{position:fixed; inset:0; background:rgba(0,0,0,.35);
+  display:none; align-items:center; justify-content:center; z-index:10}
+.overlay.show{display:flex}
+.modal{background:var(--card); border-radius:var(--card-radius);
+  border:.5px solid var(--border); padding:20px; width:340px;
+  box-shadow:0 12px 32px rgba(0,0,0,.18)}
+.modal h2{font-size:15px; font-weight:500; margin-bottom:14px}
+.field{margin-bottom:10px}
+.field label{display:block; font-size:12px; color:var(--muted);
+  margin-bottom:4px}
+.field input{width:100%}
+.row2{display:flex; align-items:center; gap:8px}
+.row2 input{flex:1; text-align:center}
+.modal-err{font-size:12px; color:var(--err); min-height:16px; margin-top:6px}
+.modal-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:14px}
+.bar-track{height:4px; background:var(--sunken); border-radius:2px;
+  overflow:hidden; margin:12px 0 6px}
+.bar-fill{height:100%; width:0; background:var(--accent);
+  transition:width .2s}
+.spin{width:14px; height:14px; border:2px solid var(--border-strong);
+  border-top-color:var(--accent); border-radius:50%;
+  animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<header>
+  <div id="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linejoin="round" style="color:var(--muted)">
+      <path d="M12 3 L21 20 H3 Z"/><path d="M7.5 13.5 h9"/>
+    </svg>
+  </div>
+  <div>
+    <div class="h-title">Простая Пирамида</div>
+    <div class="h-sub" id="user">не авторизован</div>
+  </div>
+  <div class="spacer"></div>
+  <button id="btn-user">Сменить пользователя</button>
+</header>
+
+<div id="bar">
+  <input id="meter" class="mono" maxlength="20" placeholder="номер ПУ"
+         style="width:300px" autocomplete="off">
+  <button id="btn-find" class="accent">Найти</button>
+  <div id="hint"></div>
+  <div class="spacer"></div>
+  <button id="btn-daily" disabled>Подневка</button>
+  <button id="btn-hourly" disabled>Почасовка</button>
+</div>
+
+<div id="cards">
+  <div class="card">
+    <div class="card-label">Точка учёта</div>
+    <div class="kv"><span class="k">Счётчик</span><span class="v" id="m-model">—</span></div>
+    <div class="kv"><span class="k">Установка</span><span class="v plain" id="m-address" title="">—</span></div>
+    <div class="kv"><span class="k">Лицевой счёт</span><span class="v mono" id="m-account">—</span></div>
+  </div>
+
+  <div class="card">
+    <div id="readings-head">
+      <span class="card-label" style="margin:0">Показания, кВт·ч</span>
+      <span class="card-label" style="margin:0" id="m-time"></span>
+    </div>
+    <table id="readings">
+      <thead><tr><th class="corner"></th><th>A+</th><th>A−</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="routes-wrap">
+  <div id="routes"><div id="empty">Введите номер ПУ, чтобы увидеть маршруты</div></div>
+</div>
+
+<footer><span id="status">Загрузка…</span><span id="version"></span></footer>
+
+<div class="overlay" id="ov-login">
+  <div class="modal">
+    <h2>Вход</h2>
+    <div class="field"><label>Логин</label><input id="li-login" autocomplete="off"></div>
+    <div class="field"><label>Пароль</label><input id="li-pass" type="password"></div>
+    <div class="modal-err" id="li-err"></div>
+    <div class="modal-actions"><button class="accent" id="li-ok">Войти</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-export">
+  <div class="modal">
+    <h2 id="ex-title">Выгрузка</h2>
+    <div class="field"><label>Период</label>
+      <div class="row2"><input id="ex-from" class="mono"><span
+        style="color:var(--muted)">—</span><input id="ex-to" class="mono"></div>
+    </div>
+    <div class="field"><label>Папка</label>
+      <div class="row2"><input id="ex-dir"><button id="ex-browse">Обзор</button></div>
+    </div>
+    <div class="modal-err" id="ex-err"></div>
+    <div class="modal-actions">
+      <button id="ex-cancel">Отмена</button>
+      <button class="accent" id="ex-ok">Выгрузить</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-progress">
+  <div class="modal">
+    <h2 id="pr-title">Формируется отчёт</h2>
+    <div style="display:flex;align-items:center;gap:10px;color:var(--muted)">
+      <div class="spin"></div><span id="pr-text">Подождите…</span>
+    </div>
+    <div class="bar-track hidden" id="pr-track"><div class="bar-fill" id="pr-fill"></div></div>
+    <div class="modal-actions hidden" id="pr-actions">
+      <button id="pr-open">Открыть папку</button>
+      <button class="accent" id="pr-close">Готово</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-update">
+  <div class="modal">
+    <h2 id="up-title">Доступно обновление</h2>
+    <div style="color:var(--muted); white-space:pre-wrap; max-height:160px;
+      overflow:auto" id="up-log"></div>
+    <div class="modal-actions">
+      <button id="up-later">Позже</button>
+      <button class="accent" id="up-now">Обновить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const api = () => window.pywebview.api;
+const TARIFFS = ["TO","T1","T2"];
+let routes = [], lastPath = null;
+
+function today(){
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()}`;
+}
+function show(id,on){ $(id).classList.toggle("show",on); }
+function hint(text){
+  $("#hint").textContent = text || "";
+  if(text) setTimeout(()=>{ if($("#hint").textContent===text) $("#hint").textContent=""; },4000);
+}
+function fmtBytes(b){
+  const u=["Б","КБ","МБ","ГБ"]; let i=0;
+  while(b>=1024 && i<u.length-1){ b/=1024; i++; }
+  return i===0 ? `${Math.round(b)} ${u[i]}` : `${b.toFixed(1)} ${u[i]}`;
+}
+
+function renderReadings(data){
+  const body = $("#readings tbody");
+  body.innerHTML = TARIFFS.map(t=>{
+    const plus = data ? data["A+"][t] : null;
+    const minus = data ? data["A-"][t] : null;
+    const cell = v => v===null||v===undefined ? "—" : Number(v).toLocaleString("ru-RU");
+    return `<tr><td class="t">${t}</td><td>${cell(plus)}</td><td>${cell(minus)}</td></tr>`;
+  }).join("");
+}
+
+function renderRoutes(){
+  const box = $("#routes");
+  if(!routes.length){
+    box.innerHTML = `<div id="empty">Маршруты не найдены</div>`;
+    return;
+  }
+  box.innerHTML = routes.map(r=>`
+    <div class="route" data-id="${r.id}">
+      <span class="dot"></span>
+      <span class="addr" title="${r.text}">${r.text}</span>
+      <span class="state">—</span>
+      <button class="icon" data-retry="${r.id}" title="Повторить пинг">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
+          stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+      </button>
+    </div>`).join("");
+}
+
+// ---- события из Python --------------------------------------------
+window.onStatus = d => $("#status").textContent = d.text;
+window.onHint = d => hint(d.text);
+window.onLoading = d => $("#btn-find").disabled = d.on;
+
+window.onAuth = d => {
+  if(d.ok){
+    show("#ov-login", false);
+    $("#user").textContent = `${d.login} · сессия активна`;
+  }else{
+    show("#ov-login", true);
+    $("#li-err").textContent = d.error;
+    $("#user").textContent = "не авторизован";
+  }
+};
+
+window.onMeter = m => {
+  const on = !!m;
+  $("#btn-daily").disabled = !on;
+  $("#btn-hourly").disabled = !on;
+  $("#m-model").textContent = on ? m.model : "—";
+  $("#m-address").textContent = on ? m.address : "—";
+  $("#m-address").title = on ? (m.fullPath || "") : "";
+  $("#m-account").textContent = on ? m.account : "—";
+  $("#m-time").textContent = on && m.readingsTime ? m.readingsTime : "";
+  renderReadings(on ? m.readings : null);
+  routes = on ? m.routes : [];
+  renderRoutes();
+};
+
+window.onPing = d => {
+  const row = document.querySelector(`.route[data-id="${d.id}"]`);
+  if(!row) return;
+  row.querySelector(".dot").className = "dot " + d.state;
+  const st = row.querySelector(".state");
+  st.className = "state " + d.state;
+  st.textContent = d.text;
+};
+
+window.onExport = d => {
+  if(d.stage === "running"){
+    $("#pr-title").textContent = "Формируется отчёт";
+    $("#pr-text").textContent = "Подождите…";
+    $("#pr-actions").classList.add("hidden");
+    $(".spin").classList.remove("hidden");
+    show("#ov-progress", true);
+  }
+  if(d.stage === "done"){
+    lastPath = d.path;
+    $("#pr-title").textContent = "Отчёт готов";
+    $("#pr-text").textContent = d.path;
+    $(".spin").classList.add("hidden");
+    $("#pr-actions").classList.remove("hidden");
+  }
+  if(d.stage === "error"){
+    $("#pr-title").textContent = "Выгрузка не удалась";
+    $("#pr-text").textContent = d.error;
+    $(".spin").classList.add("hidden");
+    $("#pr-open").classList.add("hidden");
+    $("#pr-actions").classList.remove("hidden");
+  }
+};
+
+window.onUpdate = d => {
+  $("#up-title").textContent = `Доступна версия ${d.version}`;
+  $("#up-log").textContent = d.changelog;
+  show("#ov-update", true);
+};
+window.onUpdateStatus = d => {
+  $("#pr-text").textContent = d.attempt > 0
+    ? `${d.message} · попытка ${d.attempt}` : d.message;
+};
+window.onUpdateProgress = d => {
+  $("#pr-track").classList.remove("hidden");
+  $(".spin").classList.add("hidden");
+  $("#pr-fill").style.width = d.percent + "%";
+  $("#pr-text").textContent = `${fmtBytes(d.downloaded)} из ${fmtBytes(d.total)}`;
+};
+
+// ---- действия ------------------------------------------------------
+$("#btn-find").onclick = () => {
+  const v = $("#meter").value.trim();
+  if(!v){ hint("Введите номер ПУ"); $("#meter").focus(); return; }
+  api().fetch(v);
+};
+$("#meter").addEventListener("keydown", e => { if(e.key==="Enter") $("#btn-find").click(); });
+
+$("#routes").addEventListener("click", e => {
+  const btn = e.target.closest("[data-retry]");
+  if(!btn) return;
+  const r = routes.find(x => x.id === btn.dataset.retry);
+  if(r) api().ping(r.id, r.ip);
+});
+
+$("#btn-user").onclick = () => {
+  $("#li-err").textContent = "";
+  show("#ov-login", true);
+  $("#li-login").focus();
+};
+$("#li-ok").onclick = () => {
+  const l = $("#li-login").value.trim(), p = $("#li-pass").value.trim();
+  if(!l || !p){ $("#li-err").textContent = "Заполните логин и пароль"; return; }
+  $("#li-err").textContent = "";
+  api().login(l, p, true);
+};
+$("#ov-login").addEventListener("keydown", e => { if(e.key==="Enter") $("#li-ok").click(); });
+
+let exportKind = "daily";
+function openExport(kind, title){
+  exportKind = kind;
+  $("#ex-title").textContent = title;
+  $("#ex-err").textContent = "";
+  if(!$("#ex-from").value) $("#ex-from").value = today();
+  if(!$("#ex-to").value) $("#ex-to").value = today();
+  show("#ov-export", true);
+}
+$("#btn-daily").onclick = () => openExport("daily", "Выгрузка подневки");
+$("#btn-hourly").onclick = () => openExport("hourly", "Выгрузка почасовки");
+$("#ex-cancel").onclick = () => show("#ov-export", false);
+$("#ex-browse").onclick = async () => {
+  const dir = await api().browse_folder();
+  if(dir) $("#ex-dir").value = dir;
+};
+$("#ex-ok").onclick = async () => {
+  const res = await api().export(exportKind, $("#ex-from").value.trim(),
+                                 $("#ex-to").value.trim(), $("#ex-dir").value.trim());
+  if(res.ok) show("#ov-export", false);
+  else $("#ex-err").textContent = res.error;
+};
+
+$("#pr-close").onclick = () => show("#ov-progress", false);
+$("#pr-open").onclick = () => { if(lastPath) api().open_folder(lastPath); };
+
+$("#up-later").onclick = () => show("#ov-update", false);
+$("#up-now").onclick = () => {
+  show("#ov-update", false);
+  $("#pr-title").textContent = "Обновление";
+  $("#pr-text").textContent = "Подключение…";
+  $("#pr-actions").classList.add("hidden");
+  $("#pr-track").classList.add("hidden");
+  $(".spin").classList.remove("hidden");
+  show("#ov-progress", true);
+  api().start_update();
+};
+
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape"){
+    ["#ov-export","#ov-update"].forEach(id => show(id, false));
+  }
+});
+
+window.addEventListener("pywebviewready", async () => {
+  renderReadings(null);
+  const info = await api().bootstrap();
+  $("#version").textContent = "v" + info.version;
+  if(info.state === "need_login"){ show("#ov-login", true); $("#li-login").focus(); }
+  else { $("#user").textContent = info.login + " · вход…"; $("#status").textContent = "Вход…"; }
+  $("#meter").focus();
+});
+</script>
+</body>
+</html>

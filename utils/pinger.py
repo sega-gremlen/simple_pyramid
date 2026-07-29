@@ -78,15 +78,4 @@ class PingWorker:
             self._safe_callback(self.finished_callback, False)
 
     def _safe_callback(self, callback, *args):
-        """Вызов callback в главном потоке через root.after."""
-        def wrapper():
-            callback(*args)
-        import tkinter as tk
-        try:
-            root = tk._default_root
-            if root:
-                root.after(0, wrapper)
-            else:
-                wrapper()
-        except:
-            wrapper()
+        callback(*args)

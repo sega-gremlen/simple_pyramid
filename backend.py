@@ -564,7 +564,7 @@ class PyramidApiClient:
         full_output_path = f"{output_path}/{file_name}"
         with open(full_output_path, 'wb') as f:
             f.write(response.content)
-        return
+        return full_output_path
             
             
     @relogin
@@ -602,10 +602,8 @@ class PyramidApiClient:
         
         while not is_completed:
             is_completed = self.get_background_task_state(task_id)["isCompleted"]
-            
-        self.download_archive_report(archive_entry_id, output_path, meter)
                 
-        return
+        return self.download_archive_report(archive_entry_id, output_path, meter)
     
     
 backend_client = PyramidApiClient()

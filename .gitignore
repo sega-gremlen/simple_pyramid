@@ -25,6 +25,7 @@
 # utils
 !/utils/pinger.py
 !/utils/xlsx_exporter.py
+!/utils/payload_builder.py
 
 # tests
 !/tests/data/

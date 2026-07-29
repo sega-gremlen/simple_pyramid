@@ -13,6 +13,7 @@ from backend import backend_client
 from utils.pinger import PingWorker
 import updater
 from version import __version__
+from config import settings
 
 # Настройка логирования
 logging.basicConfig(
@@ -21,8 +22,6 @@ logging.basicConfig(
     datefmt='%H:%M:%S'
 )
 logger = logging.getLogger(__name__)
-
-CRED_FILE = "pyramid_creds.pkl"
 
 
 class PyramidApp:
@@ -195,14 +194,14 @@ class PyramidApp:
         entry.bind('<Shift-Insert>', lambda e: entry.event_generate('<<Paste>>'))
 
     def save_credentials(self, login, password):
-        with open(CRED_FILE, 'wb') as f:
+        with open(settings.CRED_FILE, 'wb') as f:
             pickle.dump({'login': login, 'password': password}, f)
         logger.debug("Учётные данные сохранены")
 
     def load_credentials(self):
-        if os.path.exists(CRED_FILE):
+        if os.path.exists(settings.CRED_FILE):
             try:
-                with open(CRED_FILE, 'rb') as f:
+                with open(settings.CRED_FILE, 'rb') as f:
                     data = pickle.load(f)
                     return data.get('login'), data.get('password')
             except Exception as e:
@@ -725,9 +724,4 @@ class PyramidApp:
         threading.Thread(target=run_download, daemon=True).start()
 
 
-if __name__ == "__main__":
-    app = PyramidApp()
-    app.start()
-else:
-    app = PyramidApp()
-    
+app = PyramidApp()

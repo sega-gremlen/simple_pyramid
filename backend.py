@@ -4,17 +4,55 @@ import urllib3
 from datetime import datetime
 import os
 from pathlib import Path
+import json
+from dataclasses import dataclass
+import time
 
 
 import requests
 
+
 from config import settings
 from utils.xlsx_exporter import create_excel_from_json
+from utils import payload_builder
 
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
+@dataclass
+class Meter:
+    """Объект счетчик. Собирает в себе все нужные данные"""
+    
+    # Номер счетчика
+    meter_num: str
+    # ID счетчика
+    instance_id: str
+    # Тип счетчика
+    model: str
+    # Маршруты
+    routes: list
+    # Иерархиеческий путь
+    full_path: str
+    # Адрес (последний элемент в иерархии)
+    address: str
+    # ЛС
+    contract_num: str
+    
+    # Показания (дата)
+    meter_data_datetime: datetime
+    
+    # Показания по тарифам (A+)
+    t0plus: float
+    t1plus: float
+    t2plus: float
+    
+    # Показания по тарифам (A-)
+    t0minus: float
+    t1minus: float
+    t2minus: float
+    
+    
 class PyramidApiClient:
     """
     Клиент для работы с API пирамиды с Bearer-авторизацией.
@@ -31,9 +69,10 @@ class PyramidApiClient:
         get_instance_info_endpoint: str = "/rdinstance/getinstanceinfo/",
         meterdata_read_endpoint: str = "/meterdata/read/",
         power_endpoint: str = "/loadlimitmanagement/startasynctaskwriteloadstate/",
+        hours_report_endpoint: str = "/reports/createfilereportasync/?reportId=12290958&reportFormatDataId=-7128",
+        getarchivereport_endpoinf: str = "/reports/getarchivereport/",
+        getbackgroundtaskstate_endpoint: str = "/backgroundtasks/getbackgroundtaskstate/",
         
-        #params
-        timezone_offset: int = -240,
     ) -> None:
         """
         Инициализация клиента.
@@ -48,7 +87,9 @@ class PyramidApiClient:
         self.get_instance_info_url: str = f"{self.base_url}{get_instance_info_endpoint}"
         self.meterdata_read_url: str = f"{self.base_url}{meterdata_read_endpoint}"
         self.power_url: str = f"{self.base_url}{power_endpoint}"
-        self.timezone_offset: int = timezone_offset
+        self.hours_report_url: str = f"{self.base_url}{hours_report_endpoint}"
+        self.getarchivereport_url: str = f"{self.base_url}{getarchivereport_endpoinf}"
+        self.getbackgroundtaskstate_url: str = f"{self.base_url}{getbackgroundtaskstate_endpoint}"
 
         # Всё что касается сессии
         self.session = requests.Session()
@@ -60,11 +101,6 @@ class PyramidApiClient:
         self.password: Optional[str] = None
         self.access_token: Optional[str] = None
 
-    def _build_login_url(self) -> str:
-        """Добавляет параметр timeZoneOffset к URL логина."""
-        return f"{self.login_url}?timeZoneOffset={self.timezone_offset}"
-    
-    
     def _request(self, method: str, url: str, **kwargs) -> dict:
         """
         Универсальный метод для выполнения HTTP-запросов с обработкой ошибок.
@@ -82,7 +118,22 @@ class PyramidApiClient:
         """
         response = self.session.request(method.upper(), url, **kwargs)
         response.raise_for_status()
-        return response.json()
+        try:
+            return response.json()
+        except requests.exceptions.JSONDecodeError:
+            return response
+    
+    
+    def restart_session(self) -> None:
+        """Рестарт сессии для случая ошибки с паралельным входом"""
+        
+        self.session = requests.Session()
+        self.session.verify = False
+        self.session.headers.update({
+            "Content-Type": "application/json"
+        })
+        self.access_token: Optional[str] = None
+        
     
     def login(self) -> bool:
         """
@@ -112,6 +163,8 @@ class PyramidApiClient:
         if not access_token:
             print(f"Не удалось найти access_token в ответе сервера: {data=}")
             return False
+        
+        self.user_id = data.get("userId", None)
 
         self.access_token = access_token
         # Устанавливаем заголовок Authorization для всех последующих запросов
@@ -145,11 +198,44 @@ class PyramidApiClient:
             except requests.exceptions.HTTPError as e:
                 print("Ошибка при запросе")
                 if e.response.status_code == 401:
-                    print("Отсутствует авторизация, делаем перелогин")
-                    self.login()
+                    print("Отсутствует авторизация, пересоздаём сессию")
+                    self.restart_session()
+                    self.login()                    
                     return func(self, *args, **kwargs)
-                raise
+                else:
+                    print(e.response.status_code)
+                    print(e)
+                    raise
         return wrapper
+    
+    def fetch_all_data(self, meter_num: str) -> Meter:
+        """Сбор всех нужных данных по счетчику"""
+        
+        instance = self.get_instances(meter_num)
+        instance_id = instance["instance_id"]
+        instance_info = self.get_instance_info(instance_id)
+        meterdata = self.get_meterdata_read(instance_id)
+        
+        meter = Meter(
+            meter_num = meter_num,
+            instance_id = instance_id,
+            model = instance["meter_model"],
+            routes = instance["meter_routes"],
+            address = instance_info["address"],
+            contract_num = instance_info["account_id"],
+            full_path = instance_info["full_path"],
+            
+            # Показания
+            meter_data_datetime = meterdata["register_datetime"],
+            t0plus = meterdata["fine_meter_values"]["A+"]["TO"],
+            t1plus = meterdata["fine_meter_values"]["A+"]["T1"],
+            t2plus = meterdata["fine_meter_values"]["A+"]["T2"],
+            t0minus = meterdata["fine_meter_values"]["A-"]["TO"],
+            t1minus = meterdata["fine_meter_values"]["A-"]["T1"],
+            t2minus = meterdata["fine_meter_values"]["A-"]["T2"],
+            )
+        
+        return meter
 
     @relogin
     def fetch_instances(self, meter_num: str) -> dict | None:
@@ -216,11 +302,13 @@ class PyramidApiClient:
                 
         instance = json_data.get("instance")
         account_id = instance.get("-10024")[0].get("caption")
-        address = instance.get("-13379").split("/")[-1]
+        full_path = instance.get("-13379")
+        address = full_path.split("/")[-1]
         
         res = {
             "account_id": account_id,
             "address": address,
+            "full_path": full_path,
             }
         
         return res
@@ -418,5 +506,106 @@ class PyramidApiClient:
                 self.power_url,
                 json=payload,
             )
+    
+    @relogin
+    def task_create_file_report_async(self,
+                                 start_dt: datetime,
+                                 end_dt: datetime,
+                                 classifier_nodes: list = None,
+                                 meter: Meter = None,
+                                 ):
+        """
+        Создание задания на формирование почасового отчёта с заданными точками учёта и периодом.
+        Отчет в пирамиде: 02.01 Показания и профиль ЭЭ (30 и 60 мин) по точке учета (СРС)
+        """
+
+        # Преобразуем переданные точки в значения для ClassifierNodes
+        if meter and not classifier_nodes:
+            nodes_values = [{"asInstanceLink": {"id": meter.instance_id, "caption": meter.full_path}}]
+        elif classifier_nodes and not meter:
+            nodes_values = [
+                {"asInstanceLink": {"id": node["id"], "caption": node["caption"]}}
+                for node in classifier_nodes
+            ]
+        else:
+            raise ValueError(
+                f"Некорректный вызов: ожидается ровно один источник данных (classifier_nodes или meter). "
+                f"Получено: classifier_nodes = {classifier_nodes}, meter = {meter}."
+            )
+
+        start_str = start_dt.isoformat(timespec='milliseconds')
+        end_str = end_dt.isoformat(timespec='milliseconds')
         
+        payload = payload_builder._build_task_create_file_report_async(start_str, end_str, nodes_values)
+        
+        return self._request("POST", self.hours_report_url, json=payload)
+    
+    
+    @relogin
+    def download_archive_report(self,
+                                archive_entry_id: str,
+                                output_path: str,
+                                meter: Meter,
+                                ) -> None:
+        """
+        Скачивание файла отчёта из архива.
+        Сохраняет бинарный ответ сервера в файл.
+        """
+
+        payload = {
+            "userId": self.user_id,
+            "archiveEntryId": archive_entry_id,
+            "keepNotification": False,
+            "fileName": "02.01 Показания и профиль ЭЭ (30 и 60 мин) по точке учета (СРС).xlsx"
+        }
+        timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        file_name = f"Почасовка {meter.model} №{meter.meter_num} {timestamp}.xlsx"
+        response = self._request("POST", self.getarchivereport_url, json=payload)
+        full_output_path = f"{output_path}/{file_name}"
+        with open(full_output_path, 'wb') as f:
+            f.write(response.content)
+        return
+            
+            
+    @relogin
+    def get_background_task_state(self, background_task_id: int, log_type: int = 1) -> dict:
+        """
+        Получение состояния фоновой задачи.
+        Параметры:
+            background_task_id: идентификатор фоновой задачи (query-параметр backgroundTaskId)
+            log_type: тип лога, по умолчанию 1 (query-параметр logType)
+        Возвращает словарь с данными о состоянии задачи.
+        """
+
+        params = {
+            "backgroundTaskId": background_task_id,
+            "logType": log_type
+        }
+        return self._request("GET", self.getbackgroundtaskstate_url, params=params)
+            
+    
+    def create_file_report_async(self,
+                             start_dt: datetime,
+                             end_dt: datetime,
+                             output_path: str,
+                             classifier_nodes: list = None,
+                             meter: Meter = None,
+                             ) -> None:
+        """
+        Создание задачи на формирование отчета, проверка статуса отчета, скачивание.
+        Отчет по пирамиде 02.01 Показания и профиль ЭЭ (30 и 60 мин) по точке учета (СРС)
+        """
+    
+        task = self.task_create_file_report_async(start_dt, end_dt, meter=meter)
+        task_id, archive_entry_id = task["taskId"], task["archiveEntryId"]
+        is_completed = self.get_background_task_state(task_id)["isCompleted"]
+        
+        while not is_completed:
+            is_completed = self.get_background_task_state(task_id)["isCompleted"]
+            
+        self.download_archive_report(archive_entry_id, output_path, meter)
+                
+        return
+    
+    
 backend_client = PyramidApiClient()

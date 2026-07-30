@@ -42,3 +42,6 @@
 
 #src
 !/src/
+!/src/*
+!/src/favicon.ico
+!/src/setup.iss

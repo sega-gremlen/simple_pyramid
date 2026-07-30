@@ -1,1 +1,1 @@
-pyinstaller --noconsole --onedir --icon=favicon.ico --name "Простая Пирамида" --add-data "ui;ui" --distpath . app.py
+pyinstaller --noconsole --onedir --icon=src/favicon.ico --name "Простая Пирамида" --add-data "ui;ui" --distpath . app.py

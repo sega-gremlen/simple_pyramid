@@ -32,6 +32,12 @@ def resource_path(rel):
     return os.path.join(base, rel)
 
 
+def use_bundled_runtime():
+    folder = resource_path(os.path.join("runtime", "webview2"))
+    if os.path.isdir(folder):
+        os.environ["WEBVIEW2_BROWSER_EXECUTABLE_FOLDER"] = folder
+
+
 class Api:
     def __init__(self):
         self._window = None
@@ -288,6 +294,9 @@ class Api:
 
 
 def main():
+    # Используем скачанный webview2
+    use_bundled_runtime()
+    
     api = Api()
     window = webview.create_window(
         "Простая Пирамида",
@@ -298,7 +307,23 @@ def main():
         background_color="#FAFAF9",
     )
     api._window = window
-    webview.start(debug=os.environ.get("PYRAMID_DEBUG") == "1")
+
+    try:
+        webview.start(
+            gui="edgechromium",
+            debug=os.environ.get("PYRAMID_DEBUG") == "1"
+            )
+    except Exception as e:
+        import ctypes
+        logger.exception("Не удалось запустить окно")
+        ctypes.windll.user32.MessageBoxW(
+            None,
+            "Не удалось запустить интерфейс.\n\n"
+            "Нужен компонент Microsoft Edge WebView2 Runtime.\n"
+            "Обратитесь к администратору или установите его с сайта Microsoft.",
+            "Простая Пирамида", 0x10)
+        sys.exit(1)
+
 
 
 if __name__ == "__main__":

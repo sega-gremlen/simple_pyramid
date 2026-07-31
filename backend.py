@@ -452,11 +452,12 @@ class PyramidApiClient:
             "parameters": [-2161, 4726233, 4726791],
             "start": start_date,
             "finish": finish_date,   # по заданию обе даты - текущее время
-            "sources": [[-3718]],
+            "sources": [[-21332], [-3718], [-39224], [-3720], [-3722], [-3724], [-3726]],
             "requireRatio": False,
             "requireLoses": False
         }
-        return self._request("POST", self.meterdata_read_url, json=payload)
+        headers = {'No-Limit': 'true'}
+        return self._request("POST", self.meterdata_read_url, json=payload, headers=headers)
     
     def create_meter_daily_data_report(self,
                                        instance_id: str,

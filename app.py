@@ -93,11 +93,11 @@ class Api:
                 self._emit("Status", {"text": "Готов"})
             else:
                 self._emit("Auth", {"ok": False, "error": "Неверный логин или пароль"})
-                self._emit("Status", {"text": "Вход не выполнен"})
+                self._emit("Status", {"text": "Неверный логин или пароль", "type": "err"})
         except Exception as e:
             logger.exception(f"Исключение при авторизации: {e}")
             self._emit("Auth", {"ok": False, "error": f"Не удалось подключиться: {e}"})
-            self._emit("Status", {"text": "Нет соединения"})
+            self._emit("Status", {"text": f"Не удалось подключиться: {e}", "type": "err"})
 
     def fetch(self, meter_num):
         threading.Thread(target=self._fetch, args=(meter_num,), daemon=True).start()
@@ -105,7 +105,7 @@ class Api:
     def _fetch(self, meter_num):
         self._stop_pings()
         if not self._client.access_token:
-            self._emit("Hint", {"text": "Нет активной сессии — войдите заново"})
+            self._emit("Status", {"text": "Нет активной сессии — войдите заново", "type": "err"})
             return
 
         self.current_meter = None
@@ -117,7 +117,7 @@ class Api:
             meter = self._client.fetch_all_data(meter_num)
             if not meter:
                 self._emit("Meter", None)
-                self._emit("Status", {"text": "Ничего не найдено"})
+                self._emit("Status", {"text": "Ничего не найдено", "type": "warn"})
                 return
 
             self.current_meter = meter
@@ -151,12 +151,10 @@ class Api:
 
         except ValueError as e:
             logger.warning(f"Ошибка данных: {e}")
-            self._emit("Hint", {"text": str(e)})
-            self._emit("Status", {"text": "Ошибка данных"})
+            self._emit("Status", {"text": f"Ошибка данных: {e}", "type": "err"})
         except Exception as e:
             logger.exception(f"Необработанная ошибка в fetch: {e}")
-            self._emit("Hint", {"text": f"Ошибка: {e}"})
-            self._emit("Status", {"text": "Ошибка выполнения"})
+            self._emit("Status", {"text": f"Ошибка: {e}", "type": "err"})
         finally:
             self._emit("Loading", {"on": False})
 
@@ -303,7 +301,6 @@ def main():
         gui="edgechromium",
         debug=os.environ.get("PYRAMID_DEBUG") == "1"
         )
-
 
 
 if __name__ == "__main__":

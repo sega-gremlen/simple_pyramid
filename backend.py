@@ -466,7 +466,9 @@ class PyramidApiClient:
         a_plus_datetime = define_datetime(fine_meter_values, "A+")
         a_minus_datetime = define_datetime(fine_meter_values, "A-")
         
-        if a_plus_datetime and not a_minus_datetime:
+        if not a_plus_datetime and not a_minus_datetime:
+            values_datetime = None
+        elif a_plus_datetime and not a_minus_datetime:
             values_datetime = a_plus_datetime
         elif a_minus_datetime and not a_plus_datetime:
             values_datetime = a_minus_datetime

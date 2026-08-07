@@ -68,7 +68,6 @@ header .spacer{flex:1}
 
 #bar{display:flex; align-items:center; gap:8px; padding:14px 16px 8px}
 #bar .spacer{flex:1}
-#hint{font-size:12px; color:var(--err); min-height:16px}
 
 #cards{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px;
   padding:6px 16px 14px}
@@ -138,6 +137,81 @@ footer{display:flex; justify-content:space-between; padding:9px 16px;
   animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .hidden{display:none!important}
+
+/* подсветка IP-адреса в маршруте */
+.ip-copy {
+  background: var(--accent-bg);
+  border-radius: 4px;
+  padding: 1px 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.ip-copy:hover {
+  background: var(--accent);
+  color: #fff;
+}
+@media (prefers-color-scheme: dark) {
+  .ip-copy:hover {
+    color: #04264A;
+  }
+}
+.ip-copy.flash {
+  background: var(--ok);
+  color: #fff;
+}
+
+/* общий стиль для кликабельных копируемых значений (договор, показания) */
+.copyable {
+  background: var(--accent-bg);
+  border-radius: 4px;
+  padding: 1px 5px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.copyable:hover {
+  background: var(--accent);
+  color: #fff;
+}
+@media (prefers-color-scheme: dark) {
+  .copyable:hover {
+    color: #04264A;
+  }
+}
+.copyable.flash {
+  background: var(--ok);
+  color: #fff;
+}
+
+/* статус-строка с иконкой и анимацией */
+#status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#status-icon {
+  font-weight: 500;
+  transition: transform 0.2s;
+}
+#status-text {
+  transition: color 0.2s;
+}
+/* пульсация иконки при изменении статуса */
+.status-updated #status-icon {
+  animation: statusPulse 0.3s ease;
+}
+@keyframes statusPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* цветовые классы для иконок */
+.icon-ok { color: var(--ok); }
+.icon-err { color: var(--err); }
+.icon-warn { color: var(--warn); }
+.icon-info { color: var(--muted); }
 </style>
 </head>
 <body>
@@ -161,7 +235,6 @@ footer{display:flex; justify-content:space-between; padding:9px 16px;
   <input id="meter" class="mono" maxlength="20" placeholder="номер ПУ"
          style="width:300px" autocomplete="off">
   <button id="btn-find" class="accent">Найти</button>
-  <div id="hint"></div>
   <div class="spacer"></div>
   <button id="btn-daily" disabled>Подневка</button>
   <button id="btn-hourly" disabled>Почасовка</button>
@@ -170,9 +243,9 @@ footer{display:flex; justify-content:space-between; padding:9px 16px;
 <div id="cards">
   <div class="card">
     <div class="card-label">Точка учёта</div>
-    <div class="kv"><span class="k">Счётчик</span><span class="v" id="m-model">—</span></div>
-    <div class="kv"><span class="k">Установка</span><span class="v plain" id="m-address" title="">—</span></div>
-    <div class="kv"><span class="k">Лицевой счёт</span><span class="v mono" id="m-account">—</span></div>
+    <div class="kv"><span class="k">Тип счетчика</span><span class="v" id="m-model">—</span></div>
+    <div class="kv"><span class="k">Место установки</span><span class="v plain" id="m-address" title="">—</span></div>
+    <div class="kv"><span class="k">Договор</span><span class="v mono" id="m-account">—</span></div>
   </div>
 
   <div class="card">
@@ -191,7 +264,13 @@ footer{display:flex; justify-content:space-between; padding:9px 16px;
   <div id="routes"><div id="empty">Введите номер ПУ, чтобы увидеть маршруты</div></div>
 </div>
 
-<footer><span id="status">Загрузка…</span><span id="version"></span></footer>
+<footer>
+  <div id="status">
+    <span id="status-icon"></span>
+    <span id="status-text">Загрузка…</span>
+  </div>
+  <span id="version"></span>
+</footer>
 
 <div class="overlay" id="ov-login">
   <div class="modal">
@@ -253,15 +332,40 @@ const api = () => window.pywebview.api;
 const TARIFFS = ["TO","T1","T2"];
 let routes = [], lastPath = null;
 
+// Простое экранирование HTML
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
 function today(){
   const d=new Date(), p=n=>String(n).padStart(2,"0");
   return `${p(d.getDate())}.${p(d.getMonth()+1)}.${d.getFullYear()}`;
 }
 function show(id,on){ $(id).classList.toggle("show",on); }
-function hint(text){
-  $("#hint").textContent = text || "";
-  if(text) setTimeout(()=>{ if($("#hint").textContent===text) $("#hint").textContent=""; },4000);
+
+// Установка статуса с иконкой и анимацией
+function setStatus(text, type = 'info') {
+  const icon = $("#status-icon");
+  const txt = $("#status-text");
+  const status = $("#status");
+
+  const icons = {
+    ok: '✓',
+    err: '✕',
+    warn: '⚠',
+    info: ''
+  };
+
+  icon.textContent = icons[type] || '';
+  icon.className = `icon-${type}`;
+  txt.textContent = text;
+
+  // удаляем и сразу добавляем класс, чтобы перезапустить анимацию
+  status.classList.remove('status-updated');
+  void status.offsetWidth; // триггерим reflow
+  status.classList.add('status-updated');
 }
+
 function fmtBytes(b){
   const u=["Б","КБ","МБ","ГБ"]; let i=0;
   while(b>=1024 && i<u.length-1){ b/=1024; i++; }
@@ -273,7 +377,11 @@ function renderReadings(data){
   body.innerHTML = TARIFFS.map(t=>{
     const plus = data ? data["A+"][t] : null;
     const minus = data ? data["A-"][t] : null;
-    const cell = v => v===null||v===undefined ? "—" : Number(v).toLocaleString("ru-RU");
+    const cell = v => {
+      if (v === null || v === undefined) return "—";
+      const s = Number(v).toLocaleString("ru-RU");
+      return `<span class="copyable" data-copy="${v}" title="Копировать">${s}</span>`;
+    };
     return `<tr><td class="t">${t}</td><td>${cell(plus)}</td><td>${cell(minus)}</td></tr>`;
   }).join("");
 }
@@ -284,22 +392,41 @@ function renderRoutes(){
     box.innerHTML = `<div id="empty">Маршруты не найдены</div>`;
     return;
   }
-  box.innerHTML = routes.map(r=>`
-    <div class="route" data-id="${r.id}">
+  box.innerHTML = routes.map(r => {
+    let addrHtml;
+    if (r.ip) {
+      const idx = r.text.indexOf(r.ip);
+      if (idx !== -1) {
+        const pre = r.text.substring(0, idx);
+        const post = r.text.substring(idx + r.ip.length);
+        addrHtml = `${escHtml(pre)}<span class="ip-copy" data-copy="${escHtml(r.ip)}" title="Копировать IP">${escHtml(r.ip)}</span>${escHtml(post)}`;
+      } else {
+        addrHtml = escHtml(r.text) + ` <span class="ip-copy" data-copy="${escHtml(r.ip)}" title="Копировать IP">[${escHtml(r.ip)}]</span>`;
+      }
+    } else {
+      addrHtml = escHtml(r.text);
+    }
+    return `<div class="route" data-id="${r.id}">
       <span class="dot"></span>
-      <span class="addr" title="${r.text}">${r.text}</span>
+      <span class="addr" title="${escHtml(r.text)}">${addrHtml}</span>
       <span class="state">—</span>
       <button class="icon" data-retry="${r.id}" title="Повторить пинг">
         <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
           stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
           <path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
       </button>
-    </div>`).join("");
+    </div>`;
+  }).join("");
 }
 
 // ---- события из Python --------------------------------------------
-window.onStatus = d => $("#status").textContent = d.text;
-window.onHint = d => hint(d.text);
+// onStatus теперь принимает type (err/warn/ok/info) и выводит иконку
+window.onStatus = d => setStatus(d.text, d.type || 'info');
+
+// onHint больше не используется (все ошибки приходят через Status с type:'err')
+// оставлен для обратной совместимости, но можно удалить
+window.onHint = d => setStatus(d.text, 'err');
+
 window.onLoading = d => $("#btn-find").disabled = d.on;
 
 window.onAuth = d => {
@@ -310,6 +437,7 @@ window.onAuth = d => {
     show("#ov-login", true);
     $("#li-err").textContent = d.error;
     $("#user").textContent = "не авторизован";
+    // статусная строка обновится через вызов Status с type:err из Python
   }
 };
 
@@ -320,7 +448,21 @@ window.onMeter = m => {
   $("#m-model").textContent = on ? m.model : "—";
   $("#m-address").textContent = on ? m.address : "—";
   $("#m-address").title = on ? (m.fullPath || "") : "";
-  $("#m-account").textContent = on ? m.account : "—";
+  // Договор с подсветкой номера после №
+  const accEl = $("#m-account");
+  if (on && m.account) {
+    const txt = m.account;
+    const idx = txt.indexOf("№");
+    if (idx !== -1) {
+      const prefix = txt.substring(0, idx+1); // включая №
+      const number = txt.substring(idx+1);
+      accEl.innerHTML = `${escHtml(prefix)}<span class="copyable" data-copy="${escHtml(number)}" title="Копировать номер">${escHtml(number)}</span>`;
+    } else {
+      accEl.textContent = txt;
+    }
+  } else {
+    accEl.textContent = "—";
+  }
   $("#m-time").textContent = on && m.readingsTime ? m.readingsTime : "";
   renderReadings(on ? m.readings : null);
   routes = on ? m.routes : [];
@@ -350,6 +492,7 @@ window.onExport = d => {
     $("#pr-text").textContent = d.path;
     $(".spin").classList.add("hidden");
     $("#pr-actions").classList.remove("hidden");
+    setStatus(`Отчёт сохранён: ${d.path}`, 'ok');
   }
   if(d.stage === "error"){
     $("#pr-title").textContent = "Выгрузка не удалась";
@@ -357,6 +500,7 @@ window.onExport = d => {
     $(".spin").classList.add("hidden");
     $("#pr-open").classList.add("hidden");
     $("#pr-actions").classList.remove("hidden");
+    setStatus(d.error, 'err');
   }
 };
 
@@ -379,16 +523,41 @@ window.onUpdateProgress = d => {
 // ---- действия ------------------------------------------------------
 $("#btn-find").onclick = () => {
   const v = $("#meter").value.trim();
-  if(!v){ hint("Введите номер ПУ"); $("#meter").focus(); return; }
+  if(!v){ setStatus("Введите номер ПУ", 'err'); $("#meter").focus(); return; }
   api().fetch(v);
 };
 $("#meter").addEventListener("keydown", e => { if(e.key==="Enter") $("#btn-find").click(); });
 
+// Единый обработчик кликов на маршрутах (пинг)
 $("#routes").addEventListener("click", e => {
+  // Повторный пинг
   const btn = e.target.closest("[data-retry]");
-  if(!btn) return;
-  const r = routes.find(x => x.id === btn.dataset.retry);
-  if(r) api().ping(r.id, r.ip);
+  if(btn) {
+    const r = routes.find(x => x.id === btn.dataset.retry);
+    if(r) api().ping(r.id, r.ip);
+  }
+});
+
+// Общий обработчик для всех копируемых полей (IP, договор, показания)
+document.addEventListener('click', e => {
+  const copyEl = e.target.closest('.copyable, .ip-copy');
+  if (!copyEl) return;
+
+  let val = null;
+  // приоритет: data-copy, потом data-ip
+  if (copyEl.dataset.copy !== undefined) {
+    val = copyEl.dataset.copy;
+  } else if (copyEl.dataset.ip !== undefined) {
+    val = copyEl.dataset.ip;
+  }
+
+  if (val) {
+    navigator.clipboard.writeText(val).then(() => {
+      copyEl.classList.add('flash');
+      setTimeout(() => copyEl.classList.remove('flash'), 600);
+      setStatus(`Скопировано: ${val}`, 'ok');
+    }).catch(() => setStatus("Не удалось скопировать", 'err'));
+  }
 });
 
 $("#btn-user").onclick = () => {
@@ -453,7 +622,7 @@ window.addEventListener("pywebviewready", async () => {
   const info = await api().bootstrap();
   $("#version").textContent = "v" + info.version;
   if(info.state === "need_login"){ show("#ov-login", true); $("#li-login").focus(); }
-  else { $("#user").textContent = info.login + " · вход…"; $("#status").textContent = "Вход…"; }
+  else { $("#user").textContent = info.login + " · вход…"; setStatus("Вход…", 'info'); }
   $("#meter").focus();
 });
 </script>

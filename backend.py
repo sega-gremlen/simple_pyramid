@@ -1,7 +1,7 @@
 from typing import Optional, Dict, Any
 import re
 import urllib3
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 from pathlib import Path
 import json
@@ -227,12 +227,12 @@ class PyramidApiClient:
             
             # Показания
             meter_data_datetime = meterdata["register_datetime"],
-            t0plus = meterdata["fine_meter_values"]["A+"]["TO"],
-            t1plus = meterdata["fine_meter_values"]["A+"]["T1"],
-            t2plus = meterdata["fine_meter_values"]["A+"]["T2"],
-            t0minus = meterdata["fine_meter_values"]["A-"]["TO"],
-            t1minus = meterdata["fine_meter_values"]["A-"]["T1"],
-            t2minus = meterdata["fine_meter_values"]["A-"]["T2"],
+            t0plus = meterdata["fine_meter_values"]["A+"]["TO"]["value"],
+            t1plus = meterdata["fine_meter_values"]["A+"]["T1"]["value"],
+            t2plus = meterdata["fine_meter_values"]["A+"]["T2"]["value"],
+            t0minus = meterdata["fine_meter_values"]["A-"]["TO"]["value"],
+            t1minus = meterdata["fine_meter_values"]["A-"]["T1"]["value"],
+            t2minus = meterdata["fine_meter_values"]["A-"]["T2"]["value"],
             )
         
         return meter
@@ -345,8 +345,10 @@ class PyramidApiClient:
     def extract_meterdata_read(self, json_data: dict):
         """Парсит JSON-ответ и извлекает дату последних показаний и сами показания прибора учета"""
         
+        # Извлекаем ключ: "Энергия А+ текущая, Тарифная зона \"День Двухзонный\""
+        # Значения: "14167570.0" и "2025-09-24T06:31:08.498"
         meter_values = {
-            value["parameter"]["caption"]: value["values"][0]["value"]
+            value["parameter"]["caption"]: (value["values"][0]["value"], value["values"][0]["registerDt"])
             for value in json_data[0].get("parametersData")
             }
         
@@ -357,71 +359,130 @@ class PyramidApiClient:
                 return True
             except TypeError:
                 return False
+            
+        def datetime_extracter(v: str) -> datetime:
+            dt_part = v.split('.')[0] # "2026-04-29T07:01:16"
+            dt = datetime.strptime(dt_part, "%Y-%m-%dT%H:%M:%S")
+            return dt
         
         # Меняем строки во float
         meter_values = {
-            key: round(float(meter_values[key] / 1000), 2)
+            key: (round(float(meter_values[key][0] / 1000), 2), meter_values[key][1])
             for key in meter_values.keys()
-            if isfloat(meter_values[key])
+            if isfloat(meter_values[key][0])
             }
         
         # Трансформируем полученный json
         fine_meter_values = {
             "A+": {
-                "TO": 0,
-                "T1": 0,
-                "T2": 0,
+                "TO": {"value": None, "datetime": None},
+                "T1": {"value": None, "datetime": None},
+                "T2": {"value": None, "datetime": None},
                 },
             "A-": {
-                "TO": 0,
-                "T1": 0,
-                "T2": 0,
+                "TO": {"value": None, "datetime": None},
+                "T1": {"value": None, "datetime": None},
+                "T2": {"value": None, "datetime": None},
                 },
             }
         
+        a_plus = "Энергия А+ текущая"
         t1_a_plus = "Энергия А+ текущая, Тарифная зона \"День Двухзонный\""
         t2_a_plus = "Энергия А+ текущая, Тарифная зона \"Ночь Двухзонный\""
-        a_plus = "Энергия А+ текущая"
+        a_minus = "Энергия А- текущая"
         t1_a_minus = "Энергия А- текущая, Тарифная зона \"День Двухзонный\""
         t2_a_minus = "Энергия А- текущая, Тарифная зона \"Ночь Двухзонный\""
-        a_minus = "Энергия А- текущая"
         
+        
+        if a_plus in meter_values:
+            fine_meter_values["A+"]["TO"]["value"] = meter_values[a_plus][0]
+            fine_meter_values["A+"]["TO"]["datetime"] = datetime_extracter(meter_values[a_plus][1])
+    
         if t1_a_plus in meter_values:
-            fine_meter_values["A+"]["T1"] = meter_values[t1_a_plus]
-            
+            fine_meter_values["A+"]["T1"]["value"] = meter_values[t1_a_plus][0]
+            fine_meter_values["A+"]["T1"]["datetime"] = datetime_extracter(meter_values[t1_a_plus][1])
+        
         if t2_a_plus in meter_values:
-            fine_meter_values["A+"]["T2"] = meter_values[t2_a_plus]
-            
+            fine_meter_values["A+"]["T2"]["value"] = meter_values[t2_a_plus][0]
+            fine_meter_values["A+"]["T2"]["datetime"] = datetime_extracter(meter_values[t2_a_plus][1])
+    
+        if a_minus in meter_values:
+            fine_meter_values["A-"]["TO"]["value"] = meter_values[a_minus][0]
+            fine_meter_values["A-"]["TO"]["datetime"] = datetime_extracter(meter_values[a_minus][1])
+        
         if t1_a_minus in meter_values:
-            fine_meter_values["A-"]["T1"] = meter_values[t1_a_minus]
-            
+            fine_meter_values["A-"]["T1"]["value"] = meter_values[t1_a_minus][0]
+            fine_meter_values["A-"]["T1"]["datetime"] = datetime_extracter(meter_values[t1_a_minus][1])
+        
         if t2_a_minus in meter_values:
-            fine_meter_values["A-"]["T2"] = meter_values[t2_a_minus]
+            fine_meter_values["A-"]["T2"]["value"] = meter_values[t2_a_minus][0]
+            fine_meter_values["A-"]["T2"]["datetime"] = datetime_extracter(meter_values[t2_a_minus][1])
+            
+        #return fine_meter_values
         
-        # Делаем через сумму потому что бывают разные значения там
-        if fine_meter_values["A+"]["T1"] or fine_meter_values["A+"]["T2"]:
-            fine_meter_values["A+"]["TO"] = round(fine_meter_values["A+"]["T1"] + fine_meter_values["A+"]["T2"], 2)
+        @staticmethod
+        def define_datetime(fine_meter_values: dict, direction: str):
+            """
+            Определяет какое из значений показаний принимать за истину.
+            Пирамида такая охиренная программа, что может данные в колонках TO T1 T2 могут быть на разные даты
+            И не всегда у нас T1 + T2 == TO
+            И вообще T1 T2 TO могут быть с разной актуальностью данных.
+            Задача брать самые актуальные данные
+            Возвращает дату выбранных показаний
+            """
+            # Если везде None пропускаем
+            if (not fine_meter_values[direction]["TO"]["datetime"] and
+            not fine_meter_values[direction]["T1"]["datetime"] and
+            not fine_meter_values[direction]["T2"]["datetime"]):
+                values_datetime = None
+            # Если есть только TO
+            elif ((fine_meter_values[direction]["TO"]["datetime"] and not fine_meter_values[direction]["T1"]["datetime"]) or
+            (fine_meter_values[direction]["TO"]["datetime"] and not fine_meter_values[direction]["T2"]["datetime"])):
+                values_datetime = fine_meter_values[direction]["TO"]["datetime"]
+            # Если есть только T1 и T2
+            elif ((fine_meter_values[direction]["T1"]["datetime"] and fine_meter_values[direction]["T2"]["datetime"]) and
+            not fine_meter_values[direction]["TO"]["datetime"]):
+                fine_meter_values[direction]["TO"]["value"] = round(fine_meter_values[direction]["T1"]["value"] + fine_meter_values[direction]["T2"]["value"], 2)
+                fine_meter_values[direction]["TO"]["datetime"] = fine_meter_values[direction]["T2"]["datetime"]
+                values_datetime = fine_meter_values[direction]["T2"]["datetime"]
+            # Если TO - T1 > 24ч или TO - T2 > 24ч
+            elif (fine_meter_values[direction]["TO"]["datetime"] - fine_meter_values[direction]["T1"]["datetime"] > timedelta(hours=24) or
+            fine_meter_values[direction]["TO"]["datetime"] - fine_meter_values[direction]["T2"]["datetime"] > timedelta(hours=24)):
+                fine_meter_values[direction]["T1"]["datetime"] = None
+                fine_meter_values[direction]["T2"]["datetime"] = None
+                fine_meter_values[direction]["T1"]["value"] = None
+                fine_meter_values[direction]["T2"]["value"] = None
+                values_datetime = fine_meter_values[direction]["TO"]["datetime"]
+            # Если T1 > TO и T2 > TO и |T1 - T2| < 24ч
+            elif abs(fine_meter_values[direction]["T1"]["datetime"] - fine_meter_values[direction]["T2"]["datetime"] < timedelta(hours=24)):
+                fine_meter_values[direction]["TO"]["value"] = round(fine_meter_values[direction]["T1"]["value"] + fine_meter_values[direction]["T2"]["value"], 2)
+                fine_meter_values[direction]["TO"]["datetime"] = fine_meter_values[direction]["T2"]["datetime"]
+                values_datetime = fine_meter_values[direction]["T2"]["datetime"]
+            else:
+                raise ValueError("Ни одно условие выбора показаний не подходит")
+            
+            return values_datetime
+        
+        a_plus_datetime = define_datetime(fine_meter_values, "A+")
+        a_minus_datetime = define_datetime(fine_meter_values, "A-")
+        
+        if a_plus_datetime and not a_minus_datetime:
+            values_datetime = a_plus_datetime
+        elif a_minus_datetime and not a_plus_datetime:
+            values_datetime = a_minus_datetime
+        elif a_plus_datetime > a_minus_datetime:
+            values_datetime = a_plus_datetime
         else:
-            fine_meter_values["A+"]["TO"] = meter_values[a_plus]
+            values_datetime = a_minus_datetime
         
-        if fine_meter_values["A-"]["T1"] or fine_meter_values["A-"]["T2"]:
-            fine_meter_values["A-"]["TO"] = round(fine_meter_values["A-"]["T1"] + fine_meter_values["A-"]["T2"], 2)
+        if values_datetime:
+            formatted_values_datetime = values_datetime.strftime("%d.%m.%Y %H:%M")
         else:
-            fine_meter_values["A-"]["TO"] = meter_values[a_minus]
-        
-        # Извлекаем даты, берем из всех самую последнюю
-        datetimes = []
-        for parameter_data in json_data[0]["parametersData"]:
-            if meter_value_register_datetime := parameter_data["values"][0]["registerDt"]:
-                datetimes.append(meter_value_register_datetime)
-        max_datetime = max(datetimes)
-        dt_part = max_datetime.split('.')[0] # "2026-04-29T07:01:16"
-        dt = datetime.strptime(dt_part, "%Y-%m-%dT%H:%M:%S")
-        formatted = dt.strftime("%d.%m.%Y %H:%M")
+            formatted_values_datetime = None
         
         # Результат
         res = {
-            "register_datetime": formatted,
+            "register_datetime": formatted_values_datetime,
             "fine_meter_values": fine_meter_values,
             }
         return res

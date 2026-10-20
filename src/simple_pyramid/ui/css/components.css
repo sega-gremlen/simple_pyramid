@@ -100,9 +100,12 @@ span.skeleton:empty::before{content:"\00a0"; display:inline-block; min-width:6em
 .na{color:var(--faint)}
 .na.err{color:var(--err); cursor:help; border-bottom:1px dotted currentColor}
 
-/* ---------- кликабельное копируемое значение ---------- */
+/* ---------- кликабельное копируемое значение ----------
+   Размер плашки задан явно (шрифт, высота строки, отступы), а не берётся у родителя —
+   поэтому она одинаковая везде: показания, договор, IP маршрута, таблица подневки. */
 .copyable{
-  background:var(--accent-bg); color:var(--accent-ink); border-radius:4px; padding:1px 5px;
+  display:inline-block; font-size:13px; line-height:16px; padding:0 3px;
+  background:var(--accent-bg); color:var(--accent-ink); border-radius:4px;
   cursor:pointer; transition:background .15s, color .15s; user-select:none;
 }
 .copyable:hover{background:var(--accent); color:var(--on-accent)}

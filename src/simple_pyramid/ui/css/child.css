@@ -1,11 +1,22 @@
 /* Раскладка дополнительных окон («Подневка», «События»). Базовые элементы — в components.css. */
 body{background:var(--card)}
-.tools{display:flex; flex-direction:column; gap:8px; padding:12px 14px 10px; border-bottom:.5px solid var(--border-strong)}
+/* Панель опций сверху — синяя, как панель поиска главного окна (цвета --bar-*) */
+.tools{display:flex; flex-direction:column; gap:8px; padding:10px 14px; background:var(--bar); color:var(--bar-text)}
 .tools .row{display:flex; flex-wrap:wrap; align-items:center; gap:8px}
 .tools .row.presets{gap:6px}
-.tools .dash{color:var(--muted)}
+.tools .dash{color:var(--status-faint)}
 .tools .spacer{flex:1}
-.tools .modal-err{margin:0; min-height:0}
+.tools button:not(.accent){color:var(--bar-text); border-color:var(--bar-btn-border)}
+.tools button:not(.accent):hover:not(:disabled){background:var(--bar-hover)}
+.tools button:focus-visible{outline-color:var(--bar-text)}
+.tools button.icon.square.busy{border-color:var(--bar-text)}
+.tools button.icon.square.busy::before{border-color:var(--bar-hover); border-top-color:var(--bar-text)}
+.tools .chip.active{background:var(--bar-text); border-color:transparent; color:var(--bar)}
+.tools input{border-color:var(--bar-input-border)}
+.tools .check input{background:transparent; border-color:var(--bar-btn-border)}
+.tools .check input:checked{background:var(--bar-text); border-color:var(--bar-text)}
+.tools .check input:checked::after{border-color:var(--bar)}
+.tools .modal-err{margin:0; min-height:0; color:var(--on-bar-err)}
 .tools .modal-err:empty{display:none}
 .body{flex:1; min-height:0; overflow:auto; position:relative}
 .loading-more{padding:10px; text-align:center}

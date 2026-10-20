@@ -234,10 +234,13 @@ button.icon.square.busy::before{content:""; position:absolute; inset:4px; border
   background:var(--sunken); font-family:var(--mono); font-size:11px; white-space:pre-wrap;
   user-select:text; color:var(--text)}
 
-/* ---------- тонкая статус-полоса дополнительных окон ---------- */
-.strip{display:flex; align-items:center; gap:8px; padding:2px 10px; min-height:22px; font-size:12px;
-  border-top:.5px solid var(--border); color:var(--muted)}
+/* ---------- статус-полоса дополнительных окон: синяя, как статус-строка главного ---------- */
+.strip{display:flex; align-items:center; gap:8px; padding:5px 14px; min-height:28px; font-size:12px;
+  background:var(--status-bg); color:var(--status-faint)}
 .strip .spacer{flex:1}
-.strip b{color:var(--text); font-weight:500}
+.strip b{color:var(--status-text); font-weight:500}
+.strip .icon-ok{color:var(--on-bar-ok)} .strip .icon-err{color:var(--on-bar-err)}
+.strip .icon-warn{color:var(--on-bar-warn)} .strip .icon-info{color:var(--on-bar-info)}
+.strip .linkbtn{color:var(--status-text); text-decoration:underline}
 .linkbtn{height:auto; padding:0; border:none; color:var(--accent); font-size:12px; background:none}
 .linkbtn:hover:not(:disabled){background:none; text-decoration:underline}

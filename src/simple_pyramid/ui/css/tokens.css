@@ -17,6 +17,8 @@
   --bar-hover:rgba(255,255,255,.12); --bar-input-border:transparent;
   --status-bg:#0F3A73; --status-text:#FFFFFF; --status-faint:#9DB4D6; --status-hover:rgba(255,255,255,.10);
   --status-glyph:#FFFFFF;
+  /* цветной текст на синих полосах (сообщения доп. окон) — светлее обычных --ok/--err */
+  --on-bar-ok:#6FD8A8; --on-bar-warn:#FFC56B; --on-bar-err:#FFA3A3; --on-bar-info:#A9CCFF;
   --tip-bg:#0F3A73; --tip-text:#FFFFFF;
 
   /* skeleton-shimmer */

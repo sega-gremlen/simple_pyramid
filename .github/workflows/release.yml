@@ -1,34 +1,58 @@
-name: Build & Release
+name: Release
 
+# Релиз — кнопкой: Actions → Release → Run workflow.
+# Версия считается сама из коммитов (git-cliff), changelog из них же попадает
+# в GitHub Release и показывается в окне обновления программы.
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Версия вручную (например 1.4.0). Пусто — посчитать по коммитам"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
 
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
   build:
+    needs: ci
     runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # git-cliff нужна вся история и теги
 
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: "3.13"
+          enable-cache: true
 
-      - name: Прописать версию
-        run: |
-          $v = "${{ github.ref_name }}".TrimStart("v")
-          "__version__ = `"$v`"" | Out-File -FilePath version.py -Encoding utf8
+      - name: Установка git-cliff
+        run: uv tool install git-cliff
+
+      - name: Вычислить версию и changelog
+        id: version
         shell: pwsh
+        run: |
+          $manual = "${{ github.event.inputs.version }}".Trim().TrimStart("v")
+          if ($manual) { $v = $manual } else { $v = (git cliff --bumped-version).Trim().TrimStart("v") }
+          if (git tag --list "v$v") { throw "Тег v$v уже существует — нет новых feat/fix коммитов?" }
+          git cliff --unreleased --tag "v$v" --strip all | Out-File -FilePath CHANGELOG_RELEASE.md -Encoding utf8
+          if (-not (Get-Content CHANGELOG_RELEASE.md -Raw).Trim()) { "Мелкие улучшения и исправления" | Out-File CHANGELOG_RELEASE.md -Encoding utf8 }
+          "__version__ = `"$v`"" | Out-File -FilePath src/simple_pyramid/version.py -Encoding utf8
+          "version=$v" >> $env:GITHUB_OUTPUT
+          Get-Content CHANGELOG_RELEASE.md
 
       - name: Установка зависимостей
-        run: |
-          pip install pyinstaller
-          pip install -r req.txt
+        run: uv sync --locked
 
       - name: Сборка PyInstaller
-        run: pyinstaller --noconsole --onedir --icon=src/favicon.ico --name simple_pyramid --add-data "ui;ui" --distpath . app.py
+        run: uv run pyinstaller simple_pyramid.spec --noconfirm
 
       - name: Установка Inno Setup
         run: choco install innosetup --yes
@@ -36,15 +60,16 @@ jobs:
       - name: Компиляция инсталлятора
         uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
         with:
-          path: src/setup.iss
-          options: /O+ /DAppVersion=${{ github.ref_name }}
+          path: installer/setup.iss
+          options: /O+ /DAppVersion=v${{ steps.version.outputs.version }}
 
-
-      - name: Создать GitHub Release и загрузить файл
+      - name: Создать тег и GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: src/Output/simple_pyramid.exe
-          generate_release_notes: true
+          tag_name: v${{ steps.version.outputs.version }}
+          name: v${{ steps.version.outputs.version }}
+          body_path: CHANGELOG_RELEASE.md
+          files: installer/Output/simple_pyramid.exe
 
       - name: Загрузить exe на резервный сервер по SSH
         shell: pwsh
@@ -62,7 +87,7 @@ jobs:
           ssh @sshOpts -p 44448 root@releases.sega-gremlen.top "mkdir -p /home/releases/simple_pyramid"
           if ($LASTEXITCODE -ne 0) { throw "SSH mkdir failed" }
 
-          scp @sshOpts -P 44448 src/Output/simple_pyramid.exe root@releases.sega-gremlen.top:/home/releases/simple_pyramid/simple_pyramid.exe
+          scp @sshOpts -P 44448 installer/Output/simple_pyramid.exe root@releases.sega-gremlen.top:/home/releases/simple_pyramid/simple_pyramid.exe
           if ($LASTEXITCODE -ne 0) { throw "SCP upload failed" }
 
           Remove-Item $keyPath -Force

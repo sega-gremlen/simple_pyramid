@@ -12,7 +12,7 @@ DisableFinishedPage=yes
 SetupIconFile=favicon.ico
 
 [Files]
-Source: "..\simple_pyramid\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "..\dist\simple_pyramid\*"; DestDir: "{app}"; Flags: recursesubdirs
 Source: "MicrosoftEdgeWebview2Setup.exe"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]

@@ -154,6 +154,52 @@ function resetMeter(loading){
   renderRoutes(loading);
 }
 
+// ---- живой глаз на логотипе пустого состояния ------------------------
+// Моргает с человеческой скоростью раз в несколько секунд (иногда дважды подряд),
+// а зрачок следит за мышкой — немного крипово.
+const EYE_BLINK_MS = 260;                  // полное моргание: закрыть + открыть
+const EYE_BLINK_EVERY = [2500, 5500];      // пауза между морганиями, мс (случайно в диапазоне)
+const EYE_DOUBLE_BLINK = 0.25;             // доля двойных морганий
+const EYE_RANGE = {x: 34, y: 11};          // насколько далеко зрачок уходит от центра (единицы SVG)
+const EYE_REACH_PX = 180;                  // дальше этого расстояния до мышки зрачок уже «в упоре»
+const EYE_CENTER = {x: 128 / 256, y: 154 / 256}; // центр глаза в долях размера логотипа
+
+const rand = ([a, b]) => a + Math.random() * (b - a);
+const eyeVisible = () => document.body.classList.contains("state-empty") && !document.hidden;
+
+function startEyeAnimation(){
+  const lid = $(".es-lid"), pupil = $(".es-pupil");
+  // «уменьшить движение» в Windows здесь не учитываем: глаз — задуманная фишка, а на рабочих ПК
+  // эта настройка часто выключена целиком (анимации Windows отключены ради скорости)
+  if (!lid) return;
+
+  const blink = () => lid.animate(
+    [{transform: "scaleY(1)"}, {transform: "scaleY(.06)", offset: .38},
+     {transform: "scaleY(.06)", offset: .5}, {transform: "scaleY(1)"}],
+    {duration: EYE_BLINK_MS, easing: "ease-in-out"});
+
+  (function blinkLoop(){
+    if (eyeVisible()){
+      blink();
+      if (Math.random() < EYE_DOUBLE_BLINK) setTimeout(blink, EYE_BLINK_MS + 120);
+    }
+    setTimeout(blinkLoop, rand(EYE_BLINK_EVERY));
+  })();
+
+  // зрачок смотрит на мышку: направление — на курсор, отклонение растёт с расстоянием
+  const logo = $(".es-logo");
+  document.addEventListener("mousemove", e => {
+    if (!eyeVisible()) return;
+    const r = logo.getBoundingClientRect();
+    const dx = e.clientX - (r.left + r.width * EYE_CENTER.x);
+    const dy = e.clientY - (r.top + r.height * EYE_CENTER.y);
+    const dist = Math.hypot(dx, dy) || 1;
+    const reach = Math.min(dist / EYE_REACH_PX, 1);
+    const x = dx / dist * reach * EYE_RANGE.x, y = dy / dist * reach * EYE_RANGE.y;
+    pupil.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+  });
+}
+
 // ---- высота окна по содержимому ------------------------------------
 // Нижняя граница окна — низ последнего маршрута + статус-строка: пустого места снизу нет.
 const EMPTY_STATE_HEIGHT = 300;   // высота области пустого состояния, px
@@ -395,6 +441,7 @@ document.addEventListener("keydown", e => {
 
 window.addEventListener("pywebviewready", async () => {
   resetMeter(false);
+  startEyeAnimation();
   const info = await api().bootstrap();
   $("#version").textContent = "v" + info.version;
   if (info.mock) $("#mock-hint").classList.remove("hidden");

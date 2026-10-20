@@ -35,15 +35,16 @@
 .route.skeleton-row .addr{height:14px; max-width:60%}
 .route-empty{padding:12px 14px; font-size:12px}
 
-/* Пустое состояние до первого поиска: картинка и надпись ровно по центру, всё серое —
-   «программа ещё ничего не показывает». */
+/* Пустое состояние до первого поиска: логотип и надпись ровно по центру; надпись серая —
+   «программа ещё ничего не показывает». Логотип в своих цветах, глаз живёт (app.js). */
 #empty-state{display:none; flex:1; flex-direction:column; align-items:center; justify-content:center;
   gap:8px; padding:24px 28px; text-align:center; position:relative}
 .state-empty #empty-state{display:flex}
 .state-empty #cards, .state-empty #routes-wrap{display:none}
-.es-icon{width:64px; height:64px; border-radius:16px; background:var(--sunken); color:var(--faint);
-  display:flex; align-items:center; justify-content:center; margin-bottom:6px}
-.es-icon svg{width:34px; height:34px}
+.es-logo{width:96px; height:96px; margin-bottom:4px}
+/* моргание сжимает глаз к его середине; зрачок плавно догоняет мышку */
+.es-lid{transform-box:view-box; transform-origin:128px 154px}
+.es-pupil{transition:transform 120ms ease-out}
 .es-title{font-size:15px; font-weight:500; color:var(--faint)}
 .es-hint{color:var(--muted); font-size:12.5px; line-height:1.5; max-width:440px}
 /* подсказка эмулятора — внизу поверх, в центровке не участвует (на боевом её нет) */

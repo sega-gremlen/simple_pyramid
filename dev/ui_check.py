@@ -10,6 +10,7 @@ import json
 import socket
 import threading
 import time
+from pathlib import Path
 from typing import Any
 
 import uvicorn
@@ -102,6 +103,14 @@ def main() -> None:
         "steps", nargs="*", help="шаги: wait:1 click:#sel type:#sel=текст js:код snap:имя"
     )
     args = parser.parse_args()
+    # @файл — шаги построчно из файла (удобно, когда в JS есть $ и кавычки)
+    steps: list[str] = []
+    for step in args.steps:
+        if step.startswith("@"):
+            lines = Path(step[1:]).read_text(encoding="utf-8").splitlines()
+            steps += [ln for ln in lines if ln.strip() and not ln.startswith("#")]
+        else:
+            steps.append(step)
     port = free_port()
     mock = create_app(latency=(0.1, 0.6), task_duration=(1, 2))
     server = uvicorn.Server(uvicorn.Config(mock, host="127.0.0.1", port=port, log_level="warning"))
@@ -130,7 +139,7 @@ def main() -> None:
     )
     emitter.window = window
     api._attach_window(PywebviewWindow(window))
-    webview.start(run_scenario, (window, args.steps or DEFAULT_STEPS), gui="edgechromium")
+    webview.start(run_scenario, (window, steps or DEFAULT_STEPS), gui="edgechromium")
 
 
 if __name__ == "__main__":

@@ -30,6 +30,52 @@ function fmtNumber(v){
   return Number(v).toLocaleString("ru-RU", {maximumFractionDigits: 3});
 }
 
+// ---- даты периода (те же правила, что в domain/period.py) ----------
+const MIN_YEAR = 2015;
+
+// "ДД.ММ.ГГГГ" → Date (полночь) или null, если такой даты нет (67-е число, 30 февраля…)
+function parseDate(text){
+  const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(String(text).trim());
+  if (!m) return null;
+  const [d, mo, y] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const date = new Date(y, mo - 1, d);
+  if (date.getFullYear() !== y || date.getMonth() !== mo - 1 || date.getDate() !== d) return null;
+  return date;
+}
+
+// Ошибка периода или null. Возвращает {field: "from"|"to"|null, message}
+function validatePeriod(fromText, toText){
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const check = (text, field) => {
+    if (!String(text).trim()) return {field, message: "Укажите дату"};
+    const d = parseDate(text);
+    if (!d) return {field, message: `Неверная дата «${text}» — нужен формат ДД.ММ.ГГГГ`};
+    if (d.getFullYear() < MIN_YEAR) return {field, message: `Дата слишком ранняя (не раньше ${MIN_YEAR} года)`};
+    if (d > now) return {field, message: "Дата ещё не наступила"};
+    return null;
+  };
+  const err = check(fromText, "from") || check(toText, "to");
+  if (err) return err;
+  if (parseDate(fromText) > parseDate(toText)) return {field: "from", message: "Начало периода позже окончания"};
+  return null;
+}
+
+// Маска ввода даты: цифры, точки ставятся сами (20102026 → 20.10.2026)
+function attachDateMask(input){
+  input.setAttribute("inputmode", "numeric");
+  input.setAttribute("maxlength", "10");
+  input.setAttribute("placeholder", "ДД.ММ.ГГГГ");
+  input.addEventListener("input", e => {
+    if (e.inputType && e.inputType.startsWith("delete")) return;
+    const digits = input.value.replace(/\D/g, "").slice(0, 8);
+    let out = digits.slice(0, 2);
+    if (digits.length > 2) out += "." + digits.slice(2, 4);
+    if (digits.length > 4) out += "." + digits.slice(4);
+    if (digits.length === 2 || digits.length === 4) out += ".";
+    input.value = out;
+  });
+}
+
 function fmtBytes(b){
   const u=["Б","КБ","МБ","ГБ"]; let i=0;
   while(b>=1024 && i<u.length-1){ b/=1024; i++; }

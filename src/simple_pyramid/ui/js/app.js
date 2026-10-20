@@ -213,15 +213,30 @@ function openExport(kind, title){
   if (!$("#ex-from").value) $("#ex-from").value = today();
   if (!$("#ex-to").value) $("#ex-to").value = today();
   show("#ov-export", true);
+  checkExportPeriod();
 }
 $("#btn-daily").onclick = () => openExport("daily", "Выгрузка подневки");
 $("#btn-hourly").onclick = () => openExport("hourly", "Выгрузка почасовки");
+// Проверка периода на лету: подсветка поля и текст ошибки, кнопка недоступна
+function checkExportPeriod(){
+  const err = validatePeriod($("#ex-from").value, $("#ex-to").value);
+  $("#ex-from").classList.toggle("invalid", err?.field === "from");
+  $("#ex-to").classList.toggle("invalid", err?.field === "to");
+  $("#ex-err").textContent = err ? err.message : "";
+  $("#ex-ok").disabled = !!err;
+  return !err;
+}
+["#ex-from", "#ex-to"].forEach(id => {
+  attachDateMask($(id));
+  $(id).addEventListener("input", checkExportPeriod);
+});
 $("#ex-cancel").onclick = () => show("#ov-export", false);
 $("#ex-browse").onclick = async () => {
   const dir = await api().browse_folder();
   if (dir) $("#ex-dir").value = dir;
 };
 $("#ex-ok").onclick = async () => {
+  if (!checkExportPeriod()) return;
   const res = await api().export(exportKind, $("#ex-from").value.trim(),
                                  $("#ex-to").value.trim(), $("#ex-dir").value.trim());
   if (res.ok) show("#ov-export", false);

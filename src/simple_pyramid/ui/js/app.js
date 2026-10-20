@@ -21,6 +21,7 @@ function renderReadings(data, loading = false){
 }
 
 function renderRoutes(loading = false){
+  fitWindowHeight(); // подгонка сработает после перерисовки (с задержкой)
   const box = $("#routes");
   if (loading){
     box.innerHTML = `<div class="route skeleton-row"><span class="dot"></span>
@@ -106,6 +107,33 @@ function resetMeter(loading){
   renderRoutes(loading);
 }
 
+// ---- высота окна по содержимому ------------------------------------
+// Нижняя граница окна — низ последнего маршрута + статус-строка: пустого места снизу нет.
+const EMPTY_STATE_HEIGHT = 300;   // высота области пустого состояния, px
+const MAX_SCREEN_SHARE = 0.9;     // окно не выше 90% экрана
+let fitTimer = null;
+
+function neededHeight(){
+  const bar = $("#bar").offsetHeight, footer = $("footer").offsetHeight;
+  if (document.body.classList.contains("state-empty")) return bar + EMPTY_STATE_HEIGHT + footer;
+  const rows = Array.from($("#routes").children).reduce((h, el) => h + el.offsetHeight, 0);
+  const wrap = $("#routes-wrap");
+  const border = wrap.offsetHeight - wrap.clientHeight;
+  return wrap.offsetTop + border + rows + footer;
+}
+
+function fitWindowHeight(attempt = 0){
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(() => {
+    const target = Math.min(neededHeight(), Math.round(screen.availHeight * MAX_SCREEN_SHARE));
+    const delta = target - window.innerHeight;
+    if (Math.abs(delta) <= 1 || !window.pywebview) return;
+    api().fit_height(delta);
+    // после ресайза меряем ещё раз (рамки окна/масштаб) — максимум 3 итерации
+    if (attempt < 2) setTimeout(() => fitWindowHeight(attempt + 1), 200);
+  }, 60);
+}
+
 // ---- события из Python ---------------------------------------------
 window.onStatus = d => setStatus(d.text, d.kind || 'info');
 // Ошибки — классическим окном; в статус-строке остаётся короткая отметка
@@ -142,6 +170,7 @@ window.onMeterPart = p => {
   }
   // кнопка «Найти» снова доступна, как только пришла хотя бы основа
   if (p.section === "identity") $("#btn-find").disabled = false;
+  fitWindowHeight(); // высота карточек могла измениться
 };
 
 window.onSectionBusy = d => {

@@ -2,11 +2,11 @@
 <title>Палитры Простой Пирамиды</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
-/* Раскладка: колонка вариантов; в каждом — светлый и тёмный макет главного окна рядом (на узком экране — друг под другом). */
+/* Раскладка: колонка вариантов; в каждом — светлый и тёмный макет главного окна рядом,
+   под ними — окно «События» и примеры сообщений. На узком экране всё в одну колонку. */
 :root{
   --bg:#F5F7FA; --surface:#FFFFFF; --fg:#121821; --muted:#5A6472; --line:rgba(18,24,33,.10); --accent:#1D5FB0;
   --ui:"Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
-  --mono:"Cascadia Mono",Consolas,"SF Mono",ui-monospace,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){ --bg:#0F1319; --surface:#161B23; --fg:#E7ECF2; --muted:#9AA4B1; --line:rgba(255,255,255,.10); --accent:#7FB0EC; color-scheme:dark }
@@ -15,93 +15,110 @@
 
 *{box-sizing:border-box}
 body{background:var(--bg); color:var(--fg); font-family:var(--ui); font-size:14px; line-height:1.5; margin:0}
-.page{max-width:1080px; margin:0 auto; padding-block:28px 56px;
+.page{max-width:1120px; margin:0 auto; padding-block:28px 56px;
   padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));
   display:flex; flex-direction:column; gap:36px}
 header.top h1{font-size:24px; font-weight:600; margin:0 0 6px; text-wrap:balance}
-header.top p{margin:0; color:var(--muted); max-width:68ch}
+header.top p{margin:0; color:var(--muted); max-width:70ch}
 .legend{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:12px; color:var(--muted); font-size:13px}
 .legend b{color:var(--fg); font-weight:600}
 
 .variant{display:flex; flex-direction:column; gap:14px; padding-top:22px; border-top:1px solid var(--line)}
 .v-head{display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px}
 .v-head h2{margin:0; font-size:18px; font-weight:600}
-.v-letter{font-family:var(--mono); font-size:12px; color:var(--accent); border:1px solid var(--line); border-radius:6px; padding:1px 7px}
-.v-head p{margin:0; color:var(--muted); flex-basis:100%; max-width:72ch}
+.v-letter{font-size:12px; font-weight:600; color:var(--accent); border:1px solid var(--line); border-radius:6px; padding:1px 7px}
+.v-head p{margin:0; color:var(--muted); flex-basis:100%; max-width:74ch}
 .swatches{display:flex; flex-wrap:wrap; gap:6px}
-.sw{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); font-family:var(--mono);
+.sw{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted); font-variant-numeric:tabular-nums;
   border:1px solid var(--line); border-radius:999px; padding:2px 9px 2px 3px; background:var(--surface)}
 .sw i{width:16px; height:16px; border-radius:50%; border:1px solid rgba(0,0,0,.12)}
-.pair{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap:16px}
-.theme-cap{font-size:12px; color:var(--muted); margin:0 0 6px; text-transform:uppercase; letter-spacing:.05em}
+.pair{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 430px), 1fr)); gap:18px; align-items:start}
+.col{display:flex; flex-direction:column; gap:12px; min-width:0}
+.theme-cap{font-size:12px; color:var(--muted); margin:0; text-transform:uppercase; letter-spacing:.05em}
 
 /* ================= макет окна (цвета — из переменных варианта, заданных инлайном) ================= */
 .mock{font-family:var(--ui); font-size:12.5px; color:var(--m-text); background:var(--m-page);
-  border:1px solid var(--m-border-strong); border-radius:10px; overflow:hidden; min-width:0;
-  box-shadow:0 10px 30px rgba(0,0,0,.10)}
-.m-title{display:flex; align-items:center; gap:8px; padding:7px 10px; font-size:11.5px;
+  font-variant-numeric:tabular-nums; border:1px solid var(--m-border-strong); border-radius:10px;
+  overflow:hidden; min-width:0; box-shadow:0 10px 30px rgba(0,0,0,.10)}
+.m-title{display:flex; align-items:center; gap:8px; padding:6px 10px; font-size:11.5px;
   background:var(--m-chrome); color:var(--m-chrome-text); border-bottom:1px solid var(--m-border)}
 .m-title .dots{margin-left:auto; display:flex; gap:12px; opacity:.7}
-.m-bar{display:flex; align-items:center; gap:6px; padding:10px 12px 8px; background:var(--m-bar); color:var(--m-bar-text)}
+.m-bar{display:flex; align-items:center; gap:5px; padding:9px 10px 7px; background:var(--m-bar); color:var(--m-bar-text)}
 .m-bar .sp{flex:1}
-.m-input{flex:0 1 150px; min-width:0; height:26px; border-radius:6px; border:1px solid var(--m-input-border);
-  background:var(--m-input); color:var(--m-text); font-family:var(--mono); font-size:11.5px; padding:0 8px; display:flex; align-items:center}
-.m-btn{height:26px; border-radius:6px; padding:0 9px; display:inline-flex; align-items:center; gap:5px; white-space:nowrap;
-  border:1px solid var(--m-bar-btn-border); color:var(--m-bar-text); font-size:11.5px}
+.m-input{flex:1 1 auto; max-width:170px; min-width:0; height:26px; border-radius:6px; border:1px solid var(--m-input-border);
+  background:var(--m-input); color:var(--m-text); font-size:11.5px; padding:0 8px; display:flex; align-items:center}
+.m-btn{height:26px; border-radius:6px; padding:0 9px; display:inline-flex; align-items:center; justify-content:center; gap:5px;
+  white-space:nowrap; border:1px solid var(--m-bar-btn-border); color:var(--m-bar-text); font-size:11.5px; position:relative; flex:none}
 .m-btn.acc{background:var(--m-accent); border-color:transparent; color:var(--m-on-accent)}
-.m-btn.sq{width:26px; padding:0; justify-content:center}
-.m-badge{min-width:16px; height:16px; border-radius:8px; background:var(--m-err); color:#fff; font-size:10px; font-weight:700;
-  display:inline-flex; align-items:center; justify-content:center; padding:0 4px}
-.m-cards{display:grid; grid-template-columns:auto minmax(0,1fr); gap:10px; padding:6px 12px 12px}
-.m-card{background:var(--m-card); border:1px solid var(--m-border); border-radius:9px; padding:9px 11px; position:relative; min-width:0}
+.m-btn.sq{width:26px; padding:0}
+.m-btn.sq svg{width:14px; height:14px}
+.m-badge{position:absolute; top:-6px; right:-6px; min-width:15px; height:15px; border-radius:8px; background:var(--m-err); color:#fff;
+  font-size:9.5px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; padding:0 4px}
+.m-cards{display:grid; grid-template-columns:auto minmax(0,1fr); gap:14px 10px; padding:14px 10px 10px}
+.m-card{border:1px solid var(--m-border-strong); background:var(--m-card); border-radius:9px; padding:11px 10px 7px; position:relative; min-width:0}
 .m-card.wide{grid-column:1 / -1}
-.m-label{font-size:11px; color:var(--m-faint); margin-bottom:5px}
-.m-kvg{display:grid; grid-template-columns:1fr 1fr; column-gap:16px}
-.m-kv{display:flex; justify-content:space-between; gap:8px; padding:2px 0; min-width:0}
-.m-kv.w{grid-column:1 / -1}
-.m-k{color:var(--m-muted); white-space:nowrap}
-.m-v{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:5px}
-.m-v.n{font-weight:400}
-.m-copy{background:var(--m-accent-bg); color:var(--m-accent-ink); border-radius:4px; padding:0 4px; font-family:var(--mono)}
-.m-alarm{width:16px; height:16px; border-radius:4px; background:var(--m-err-bg); color:var(--m-err); display:inline-flex; align-items:center; justify-content:center}
+.m-label, .m-meta{position:absolute; top:0; transform:translateY(-50%); padding:0 5px; background:var(--m-page);
+  font-size:10.5px; line-height:1; white-space:nowrap}
+.m-label{left:8px; color:var(--m-muted)}
+.m-card.has-c .m-label{left:18px}
+.m-meta{right:8px; color:var(--m-faint)}
+.m-kv{display:flex; align-items:center; gap:6px; padding:2px 0; min-width:0}
+.m-k{flex:1; display:flex; align-items:center; gap:6px; color:var(--m-muted); white-space:nowrap; min-width:0}
+.m-k::after{content:""; flex:1; min-width:10px; height:2px;
+  background-image:radial-gradient(circle, var(--m-border-strong) .9px, transparent 1.1px); background-size:5px 2px; background-repeat:repeat-x}
+.m-v{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:5px; max-width:72%}
+.m-copy{background:var(--m-accent-bg); color:var(--m-accent-ink); border-radius:4px; padding:0 4px}
+.m-alarm{width:16px; height:16px; border-radius:4px; background:var(--m-err-bg); color:var(--m-err); display:inline-flex; align-items:center; justify-content:center; flex:none}
 .m-alarm svg{width:11px; height:11px}
-.m-tbl{border-collapse:collapse; font-size:12px}
-.m-tbl th{font-weight:600; font-size:11px; color:var(--m-muted); padding:0 0 2px 10px; text-align:right}
-.m-tbl td{padding:1px 0 1px 10px; text-align:right; font-family:var(--mono); font-variant-numeric:tabular-nums}
-.m-tbl td:first-child{font-family:var(--ui); font-weight:600; text-align:left; padding-left:0}
-.m-corner{position:absolute; top:-9px; left:-9px; width:20px; height:20px; border-radius:50%;
-  background:var(--m-page); box-shadow:0 0 0 2px var(--m-page); color:var(--m-accent); display:flex; align-items:center; justify-content:center}
-.m-corner svg{width:12px; height:12px}
-.m-card.has-c .m-label{margin-left:8px}
-.m-dot{width:7px; height:7px; border-radius:50%; display:inline-block}
-.m-ts{color:var(--m-faint); font-weight:400; font-size:11px}
-.m-shimmer{display:inline-block; width:70px; height:10px; border-radius:3px; background:var(--m-skeleton)}
+.m-tbl{border-collapse:collapse; font-size:12px; margin:0 auto}
+.m-tbl th{font-weight:500; font-size:11px; color:var(--m-muted); padding:0 5px 2px; text-align:center; min-width:62px}
+.m-tbl th:first-child{min-width:0}
+.m-tbl td{padding:1px 5px; text-align:center}
+.m-tbl td:first-child{font-weight:500; text-align:left; padding-left:0; color:var(--m-muted)}
+.m-corner{position:absolute; top:-9px; left:-9px; width:19px; height:19px; border-radius:50%;
+  background:var(--m-page); box-shadow:0 0 0 2px var(--m-page); color:var(--m-muted); display:flex; align-items:center; justify-content:center}
+.m-corner svg{width:11px; height:11px}
+.m-dot{width:7px; height:7px; border-radius:50%; display:inline-block; flex:none}
+.m-shimmer{display:inline-block; width:56px; height:10px; border-radius:3px; background:var(--m-skeleton)}
 .m-routes{border-top:1px solid var(--m-border)}
-.m-route{display:flex; align-items:center; gap:8px; padding:7px 12px; font-family:var(--mono); font-size:11px}
-.m-route .st{margin-left:auto; font-family:var(--ui); color:var(--m-ok)}
-.m-status{display:flex; align-items:center; gap:8px; padding:6px 12px; border-top:1px solid var(--m-border);
-  background:var(--m-status); color:var(--m-status-text); font-size:12px}
-.m-status .ver{margin-left:auto; color:var(--m-status-faint); font-size:11px}
+.m-route{display:flex; align-items:center; gap:7px; padding:6px 10px; font-size:11.5px; min-width:0}
+.m-route .t{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.m-route .st{margin-left:auto; color:var(--m-ok); flex:none}
+.m-status{display:flex; align-items:center; gap:7px; padding:5px 10px; border-top:1px solid var(--m-border);
+  background:var(--m-status); color:var(--m-status-text); font-size:11.5px; min-width:0}
+.m-status .txt{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.m-status .ver{margin-left:auto; color:var(--m-status-faint); font-size:10.5px; flex:none}
 .m-ico{width:14px; height:14px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center;
   font-size:9px; font-weight:800; color:#fff; flex:none}
 
-.m-extra{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px; padding:12px; border-top:1px dashed var(--m-border-strong); background:var(--m-page)}
+/* окно «События» */
+.m-ev-tools{display:flex; align-items:center; gap:7px; padding:8px 10px; border-bottom:1px solid var(--m-border-strong); background:var(--m-card)}
+.m-check{width:13px; height:13px; border-radius:3px; background:var(--m-accent); color:var(--m-on-accent); display:inline-flex; align-items:center; justify-content:center; font-size:9px; font-weight:800}
+.m-ev-tools .sp{flex:1}
+.m-ev-tools .m-btn{color:var(--m-text); border-color:var(--m-border-strong)}
+.m-ev{width:100%; border-collapse:collapse; font-size:11.5px; background:var(--m-card)}
+.m-ev th{font-weight:500; font-size:10.5px; color:var(--m-muted); padding:5px 6px; border-bottom:1px solid var(--m-border-strong); text-align:center}
+.m-ev td{padding:4px 6px; border-bottom:1px solid var(--m-border); text-align:center}
+.m-ev tr.alarm td{background:var(--m-err-row)}
+.m-ev tr.imp td{background:var(--m-imp-row)}
+.m-strip{display:flex; padding:2px 10px; font-size:10.5px; color:var(--m-muted); background:var(--m-card); border-top:1px solid var(--m-border)}
+
+/* сообщения и окно ошибки */
+.m-extra{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:10px}
 .m-msgs{display:flex; flex-direction:column; gap:5px; min-width:0}
 .m-msg{display:flex; align-items:center; gap:7px; padding:4px 8px; border-radius:6px; font-size:11.5px; min-width:0;
-  color:var(--m-status-text); background:var(--m-status); border:1px solid var(--m-border)}
+  color:var(--m-status-text); background:var(--m-status); border:1px solid var(--m-border-strong)}
 .m-msg span:last-child{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.m-dialog{background:var(--m-card); border:1px solid var(--m-border-strong); border-radius:9px; padding:10px; font-size:11.5px;
+.m-dialog{background:var(--m-card); color:var(--m-text); border:1px solid var(--m-border-strong); border-radius:9px; padding:10px; font-size:11.5px;
   box-shadow:0 8px 20px rgba(0,0,0,.18); min-width:0}
-.m-dialog b{display:flex; align-items:center; gap:6px; font-size:12.5px; margin-bottom:4px}
-.m-dialog p{margin:0 0 8px; color:var(--m-text)}
+.m-dialog b{display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:600; margin-bottom:4px}
+.m-dialog p{margin:0 0 8px}
 .m-dialog .acts{display:flex; justify-content:flex-end; gap:6px}
 .m-dialog .m-btn{color:var(--m-text); border-color:var(--m-border-strong)}
+.m-tip{display:inline-block; background:var(--m-text); color:var(--m-page); font-size:11px; padding:4px 8px; border-radius:6px; margin-top:6px}
 
 @media (max-width:520px){
-  .m-kvg{grid-template-columns:1fr}
-  .m-cards{grid-template-columns:1fr}
   .m-extra{grid-template-columns:1fr}
-  .m-bar .hide-narrow{display:none}
 }
 @media (prefers-reduced-motion: no-preference){
   .m-shimmer{background:linear-gradient(90deg, var(--m-skeleton) 0, var(--m-skeleton-shine) 50%, var(--m-skeleton) 100%);
@@ -116,9 +133,9 @@ header.top p{margin:0; color:var(--muted); max-width:68ch}
 <div class="page">
   <header class="top">
     <h1>Цветовые схемы «Простой Пирамиды»</h1>
-    <p>Четыре варианта в сине-белой гамме на одном и том же главном окне: прибор найден, есть тревожные события,
-      идёт загрузка подневки, маршрут в сети. Ниже каждого окна — все типы сообщений статус-строки и окно ошибки.
-      Сравнивайте в первую очередь, насколько заметны статус-строка и ошибки.</p>
+    <p>Четыре варианта в сине-белой гамме на новом компактном окне: прибор с тревожными событиями,
+      лимит ещё грузится, маршрут в сети. Под главным окном — окно «События», все типы сообщений
+      статус-строки и окно ошибки. В первую очередь сравнивайте, насколько заметны статус-строка и ошибки.</p>
     <div class="legend">
       <span><b>A</b> — эволюция текущей</span><span><b>B</b> — яркий белый</span>
       <span><b>C</b> — синие панели сверху и снизу</span><span><b>D</b> — мягкий голубой</span>
@@ -140,112 +157,146 @@ header.top p{margin:0; color:var(--muted); max-width:68ch}
 const V = [
   {id:"A", name:"Классика", desc:"Текущая схема, доведённая до ума: холодные светлые нейтрали вместо тёплых, синий акцент чуть глубже, статус-строка на белом фоне с тёмным текстом.",
    light:{page:"#F6F8FA", card:"#FFFFFF", chrome:"#FFFFFF", "chrome-text":"#3A4350", bar:"#F6F8FA", "bar-text":"#141A21", "bar-btn-border":"rgba(16,24,40,.16)",
-     input:"#FFFFFF", "input-border":"rgba(16,24,40,.18)", border:"rgba(16,24,40,.09)", "border-strong":"rgba(16,24,40,.16)",
+     input:"#FFFFFF", "input-border":"rgba(16,24,40,.18)", border:"rgba(16,24,40,.09)", "border-strong":"rgba(16,24,40,.17)",
      text:"#141A21", muted:"#5B6573", faint:"#8A93A0", accent:"#1B5FAE", "accent-bg":"#E3EDF9", "accent-ink":"#164E8F", "on-accent":"#FFFFFF",
      ok:"#18885F", warn:"#B26A00", err:"#D23B3B", "ok-bg":"#E2F4EC", "warn-bg":"#FDF1DE", "err-bg":"#FCE7E7",
+     "err-row":"#FDF0F0", "imp-row":"#F1F6FC",
      status:"#FFFFFF", "status-text":"#141A21", "status-faint":"#8A93A0", skeleton:"#E9ECF0", "skeleton-shine":"#F7F8FA"},
    dark:{page:"#14171C", card:"#1C2027", chrome:"#1C2027", "chrome-text":"#A2ABB7", bar:"#14171C", "bar-text":"#E8ECF1", "bar-btn-border":"rgba(255,255,255,.16)",
      input:"#1C2027", "input-border":"rgba(255,255,255,.18)", border:"rgba(255,255,255,.09)", "border-strong":"rgba(255,255,255,.17)",
      text:"#E8ECF1", muted:"#A2ABB7", faint:"#737D8A", accent:"#7DB3EE", "accent-bg":"#17324F", "accent-ink":"#A9CDF4", "on-accent":"#071C33",
      ok:"#4CC79A", warn:"#F0A43A", err:"#F28B8B", "ok-bg":"#123628", "warn-bg":"#3A2A10", "err-bg":"#3E1D1D",
+     "err-row":"#2B1D21", "imp-row":"#1B2532",
      status:"#1C2027", "status-text":"#E8ECF1", "status-faint":"#737D8A", skeleton:"#262B33", "skeleton-shine":"#313740"}},
   {id:"B", name:"Ясный день", desc:"Чистый белый фон окна и насыщенный синий. Карточки чуть голубее фона, рамки с синим оттенком. Самый «лёгкий» и контрастный вариант.",
    light:{page:"#FFFFFF", card:"#F5F8FE", chrome:"#FFFFFF", "chrome-text":"#3B4A61", bar:"#FFFFFF", "bar-text":"#0F1B2D", "bar-btn-border":"rgba(26,102,224,.22)",
-     input:"#FFFFFF", "input-border":"rgba(26,102,224,.30)", border:"rgba(26,102,224,.13)", "border-strong":"rgba(26,102,224,.22)",
+     input:"#FFFFFF", "input-border":"rgba(26,102,224,.30)", border:"rgba(26,102,224,.13)", "border-strong":"rgba(26,102,224,.24)",
      text:"#0F1B2D", muted:"#52627A", faint:"#8796AD", accent:"#1A66E0", "accent-bg":"#E3EDFF", "accent-ink":"#1452B8", "on-accent":"#FFFFFF",
      ok:"#0F8A5F", warn:"#B76E00", err:"#D93636", "ok-bg":"#E1F5EC", "warn-bg":"#FFF1DC", "err-bg":"#FFE6E6",
+     "err-row":"#FFF0F0", "imp-row":"#EBF2FF",
      status:"#F5F8FE", "status-text":"#0F1B2D", "status-faint":"#8796AD", skeleton:"#E6EDF9", "skeleton-shine":"#F6F9FF"},
    dark:{page:"#0D131E", card:"#141C2B", chrome:"#141C2B", "chrome-text":"#93A3BC", bar:"#0D131E", "bar-text":"#E6EDF8", "bar-btn-border":"rgba(120,165,255,.22)",
-     input:"#141C2B", "input-border":"rgba(120,165,255,.28)", border:"rgba(120,165,255,.12)", "border-strong":"rgba(120,165,255,.22)",
+     input:"#141C2B", "input-border":"rgba(120,165,255,.28)", border:"rgba(120,165,255,.12)", "border-strong":"rgba(120,165,255,.24)",
      text:"#E6EDF8", muted:"#9BABC4", faint:"#6C7D97", accent:"#6EA2FF", "accent-bg":"#16294D", "accent-ink":"#A9C7FF", "on-accent":"#06173A",
      ok:"#45C894", warn:"#F2A640", err:"#FF8A8A", "ok-bg":"#0F3426", "warn-bg":"#3A2A0F", "err-bg":"#421C1F",
+     "err-row":"#2A1A22", "imp-row":"#17223A",
      status:"#141C2B", "status-text":"#E6EDF8", "status-faint":"#6C7D97", skeleton:"#1C2638", "skeleton-shine":"#26324A"}},
   {id:"C", name:"Синие панели", desc:"Тёмно-синяя полоса поиска сверху и такая же статус-строка снизу с белым текстом, контент между ними светлый. Статус-строку невозможно не заметить.",
    light:{page:"#F3F6FA", card:"#FFFFFF", chrome:"#0D3366", "chrome-text":"#C9D8EE", bar:"#0F3A73", "bar-text":"#FFFFFF", "bar-btn-border":"rgba(255,255,255,.28)",
-     input:"#FFFFFF", "input-border":"transparent", border:"rgba(15,58,115,.10)", "border-strong":"rgba(15,58,115,.18)",
+     input:"#FFFFFF", "input-border":"transparent", border:"rgba(15,58,115,.10)", "border-strong":"rgba(15,58,115,.20)",
      text:"#13202F", muted:"#566377", faint:"#8592A6", accent:"#2F7BE5", "accent-bg":"#E1EAF7", "accent-ink":"#0F4C9C", "on-accent":"#FFFFFF",
      ok:"#16865C", warn:"#B06A00", err:"#D33A3A", "ok-bg":"#E1F3EA", "warn-bg":"#FDF0DB", "err-bg":"#FCE6E6",
+     "err-row":"#FDF0F0", "imp-row":"#EEF3FA",
      status:"#0F3A73", "status-text":"#FFFFFF", "status-faint":"#9DB4D6", skeleton:"#E4EAF2", "skeleton-shine":"#F4F7FB"},
    dark:{page:"#0F1622", card:"#172131", chrome:"#08111F", "chrome-text":"#8EA3C2", bar:"#0B1A31", "bar-text":"#E5EEFB", "bar-btn-border":"rgba(255,255,255,.18)",
-     input:"#172131", "input-border":"rgba(255,255,255,.14)", border:"rgba(255,255,255,.09)", "border-strong":"rgba(255,255,255,.16)",
+     input:"#172131", "input-border":"rgba(255,255,255,.14)", border:"rgba(255,255,255,.09)", "border-strong":"rgba(255,255,255,.17)",
      text:"#E5EBF4", muted:"#9DA9BB", faint:"#6F7C8F", accent:"#5D9CF0", "accent-bg":"#16294A", "accent-ink":"#A8C8F5", "on-accent":"#06173A",
      ok:"#4BC596", warn:"#EFA43B", err:"#F38A8A", "ok-bg":"#11342A", "warn-bg":"#382810", "err-bg":"#3F1D20",
+     "err-row":"#2A1C24", "imp-row":"#18253A",
      status:"#0B1A31", "status-text":"#E5EEFB", "status-faint":"#7F95B6", skeleton:"#1F2A3C", "skeleton-shine":"#2A374C"}},
   {id:"D", name:"Морозный", desc:"Мягкий голубоватый фон и белые карточки, акцент спокойный стальной синий. Статус-строка — светло-голубая полоса. Меньше всего утомляет глаза при долгой работе.",
    light:{page:"#EDF2F8", card:"#FFFFFF", chrome:"#E3EAF3", "chrome-text":"#44536A", bar:"#EDF2F8", "bar-text":"#16202C", "bar-btn-border":"rgba(47,109,181,.24)",
-     input:"#FFFFFF", "input-border":"rgba(47,109,181,.28)", border:"rgba(47,109,181,.12)", "border-strong":"rgba(47,109,181,.22)",
+     input:"#FFFFFF", "input-border":"rgba(47,109,181,.28)", border:"rgba(47,109,181,.12)", "border-strong":"rgba(47,109,181,.24)",
      text:"#16202C", muted:"#56657A", faint:"#8796AA", accent:"#2F6DB5", "accent-bg":"#DCE8F6", "accent-ink":"#245A97", "on-accent":"#FFFFFF",
      ok:"#1A8660", warn:"#AD6A06", err:"#CC3B3B", "ok-bg":"#DFF2E9", "warn-bg":"#FBEFDB", "err-bg":"#FAE4E4",
+     "err-row":"#FCF0F1", "imp-row":"#EEF4FB",
      status:"#DCE8F6", "status-text":"#16202C", "status-faint":"#6E7F96", skeleton:"#E2E9F2", "skeleton-shine":"#F2F6FA"},
    dark:{page:"#101721", card:"#172231", chrome:"#0C121B", "chrome-text":"#8C9BB0", bar:"#101721", "bar-text":"#E4EBF4", "bar-btn-border":"rgba(132,180,236,.22)",
-     input:"#172231", "input-border":"rgba(132,180,236,.26)", border:"rgba(132,180,236,.11)", "border-strong":"rgba(132,180,236,.20)",
+     input:"#172231", "input-border":"rgba(132,180,236,.26)", border:"rgba(132,180,236,.11)", "border-strong":"rgba(132,180,236,.22)",
      text:"#E4EBF4", muted:"#9CAABD", faint:"#6E7C90", accent:"#84B4EC", "accent-bg":"#1A3150", "accent-ink":"#B2D0F4", "on-accent":"#08203D",
      ok:"#4FC59A", warn:"#EBA33E", err:"#F08B8B", "ok-bg":"#113427", "warn-bg":"#382910", "err-bg":"#3C1E21",
+     "err-row":"#291D25", "imp-row":"#1A2738",
      status:"#1A3150", "status-text":"#E4EBF4", "status-faint":"#8EA6C6", skeleton:"#1F2B3C", "skeleton-shine":"#2A384B"}},
 ];
 
-const ICON_REFRESH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>';
-const ICON_SHIELD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M12 8v5"/></svg>';
-const ICON_EXIT = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>';
+const SVG = (body, sw = 1.8) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`;
+const I = {
+  refresh: SVG('<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>', 2.4),
+  shield: SVG('<path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M12 8v5"/>', 2.4),
+  events: SVG('<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5h.01"/>'),
+  daily: SVG('<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17"/><path d="M8 3v4M16 3v4"/>'),
+  hourly: SVG('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/>'),
+  exit: SVG('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>'),
+};
 
 const ico = (kind, p) => {
   const map = {ok:["ok","✓"], warn:["warn","!"], err:["err","✕"], info:["accent","•"]};
   const [c, t] = map[kind];
   return `<span class="m-ico" style="background:${p[c]}">${t}</span>`;
 };
+const styleOf = p => Object.entries(p).map(([k, v]) => `--m-${k}:${v}`).join(";");
+const NS = " "; // узкий пробел между разрядами, как в программе
 
-function mock(p, label){
-  const style = Object.entries(p).map(([k, v]) => `--m-${k}:${v}`).join(";");
-  return `<div><p class="theme-cap">${label}</p>
-  <div class="mock" style="${style}">
+function mainMock(p){
+  return `<div class="mock" style="${styleOf(p)}">
     <div class="m-title"><span>Простая Пирамида • FilippovAS</span><span class="dots"><span>–</span><span>□</span><span>✕</span></span></div>
     <div class="m-bar">
       <span class="m-input">021250611469</span><span class="m-btn acc">Найти</span><span class="sp"></span>
-      <span class="m-btn">События <span class="m-badge">7</span></span>
-      <span class="m-btn hide-narrow">Подневка</span><span class="m-btn hide-narrow">Почасовка</span>
-      <span class="m-btn sq">${ICON_EXIT}</span>
+      <span class="m-btn sq">${I.events}<span class="m-badge">7</span></span>
+      <span class="m-btn sq">${I.daily}</span><span class="m-btn sq">${I.hourly}</span><span class="m-btn sq">${I.exit}</span>
     </div>
     <div class="m-cards">
-      <div class="m-card wide"><div class="m-label">Точка учёта</div>
-        <div class="m-kvg">
-          <div class="m-kv"><span class="m-k">Тип счётчика</span><span class="m-v"><span class="m-alarm">${ICON_SHIELD}</span>Нартис-И100 Split</span></div>
-          <div class="m-kv"><span class="m-k">Договор</span><span class="m-v">№<span class="m-copy">013300000001</span></span></div>
-          <div class="m-kv w"><span class="m-k">Место установки</span><span class="m-v n">Сызранский р-н, село Тестовое, ул Примерная, д 7</span></div>
-        </div></div>
-      <div class="m-card has-c"><span class="m-corner">${ICON_REFRESH}</span>
-        <div class="m-label">Показания, кВт·ч · <span style="color:${p.faint}">20.10.2026 06:45</span></div>
+      <div class="m-card wide"><span class="m-label">Точка учёта</span>
+        <div class="m-kv"><span class="m-k">Тип счётчика</span><span class="m-v"><span class="m-alarm">${I.shield}</span>Нартис-И100 (СПОДЭС)Split</span></div>
+        <div class="m-kv"><span class="m-k">Договор</span><span class="m-v">И. И. И. №<span class="m-copy">013300000001</span></span></div>
+        <div class="m-kv"><span class="m-k">Место установки</span><span class="m-v">Сызранский р-н, село Тестовое, ул Примерная, д 7</span></div>
+      </div>
+      <div class="m-card has-c"><span class="m-corner">${I.refresh}</span>
+        <span class="m-label">Показания, кВт·ч</span><span class="m-meta">20.10.2026 06:45</span>
         <table class="m-tbl"><tr><th></th><th>A+</th><th>A−</th></tr>
-          <tr><td>TO</td><td><span class="m-copy">14 167,57</span></td><td>0</td></tr>
-          <tr><td>T1</td><td><span class="m-copy">10 002,11</span></td><td>0</td></tr>
-          <tr><td>T2</td><td><span class="m-copy">4 165,46</span></td><td>0</td></tr></table></div>
-      <div class="m-card has-c"><span class="m-corner">${ICON_REFRESH}</span>
-        <div class="m-label">Нагрузка</div>
-        <div class="m-kv"><span class="m-k">Реле</span><span class="m-v"><span class="m-dot" style="background:${p.ok}"></span>Включено <span class="m-ts">06:45</span></span></div>
-        <div class="m-kv"><span class="m-k">Лимит</span><span class="m-v"><span class="m-shimmer"></span></span></div>
+          <tr><td>TO</td><td><span class="m-copy">14${NS}167,57</span></td><td><span class="m-copy">0</span></td></tr>
+          <tr><td>T1</td><td><span class="m-copy">10${NS}002,11</span></td><td><span class="m-copy">0</span></td></tr>
+          <tr><td>T2</td><td><span class="m-copy">4${NS}165,46</span></td><td><span class="m-copy">0</span></td></tr></table></div>
+      <div class="m-card has-c"><span class="m-corner">${I.refresh}</span>
+        <span class="m-label">Нагрузка</span><span class="m-meta">20.10.2026 06:45</span>
+        <div class="m-kv"><span class="m-k">Реле</span><span class="m-v"><span class="m-dot" style="background:${p.ok}"></span>Включено</span></div>
+        <div class="m-kv"><span class="m-k">Лимит мощности</span><span class="m-v"><span class="m-shimmer"></span></span></div>
       </div>
     </div>
     <div class="m-routes"><div class="m-route"><span class="m-dot" style="background:${p.ok}"></span>
-      Мегафон, +79000000000, <span class="m-copy">10.0.0.2</span>, порт 5002<span class="st">в сети</span></div></div>
-    <div class="m-status">${ico("warn", p)}<span>Внимание: в журнале есть тревожные события — вскрытие элемента</span><span class="ver">v1.4.0</span></div>
-    <div class="m-extra">
-      <div class="m-msgs">
-        <div class="m-msg">${ico("info", p)}<span>Опрос показаний: установлено соединение Мегафон…</span></div>
-        <div class="m-msg">${ico("ok", p)}<span>Показания получены (на 20.10.2026 13:30)</span></div>
-        <div class="m-msg" style="background:${p["warn-bg"]}">${ico("warn", p)}<span>Прибора учёта с таким номером нет</span></div>
-        <div class="m-msg" style="background:${p["err-bg"]}">${ico("err", p)}<span>Нет связи с сервером</span></div>
-      </div>
-      <div class="m-dialog"><b><span class="m-ico" style="background:${p.err}">!</span>Нет связи с сервером</b>
-        <p>Не удалось подключиться к серверу Пирамиды. Проверьте сеть и VPN.</p>
-        <div class="acts"><span class="m-btn">Скопировать</span><span class="m-btn acc">Закрыть</span></div></div>
-    </div>
-  </div></div>`;
+      <span class="t">Мегафон, +79000000000, <span class="m-copy">10.0.0.2</span>, порт 5002</span><span class="st">в сети</span></div></div>
+    <div class="m-status">${ico("warn", p)}<span class="txt">Внимание: в журнале есть тревожные события — вскрытие элемента</span><span class="ver">v1.4.0</span></div>
+  </div>`;
 }
+
+function eventsMock(p){
+  const rows = [
+    ["17.10.2026 03:42", "Вскрытие элемента устройства", "Вскрытие клеммной крышки", "alarm"],
+    ["09.10.2026 03:34", "Включение нагрузки", "—", "imp"],
+    ["08.10.2026 03:33", "Отключение нагрузки", "По команде оператора", "imp"],
+  ];
+  return `<div class="mock" style="${styleOf(p)}">
+    <div class="m-title"><span>События • Нартис-И100 №021250611469</span><span class="dots"><span>–</span><span>□</span><span>✕</span></span></div>
+    <div class="m-ev-tools"><span class="m-check">✓</span> Только важные<span class="sp"></span><span class="m-btn sq">${I.refresh}</span></div>
+    <table class="m-ev"><tr><th>Дата и время</th><th>Событие</th><th>Описание</th></tr>
+      ${rows.map(([d, t, s, c]) => `<tr class="${c}"><td>${d}</td><td>${c === "alarm" ? `<span class="m-dot" style="background:${p.err}"></span> ` : ""}${t}</td><td>${s}</td></tr>`).join("")}
+    </table>
+    <div class="m-strip">Показано 3 из 7</div>
+  </div>`;
+}
+
+function extras(p){
+  return `<div class="m-extra" style="${styleOf(p)}">
+    <div class="m-msgs">
+      <div class="m-msg">${ico("info", p)}<span>Опрос показаний: установлено соединение…</span></div>
+      <div class="m-msg">${ico("ok", p)}<span>Показания получены (на 20.10.2026 13:30)</span></div>
+      <div class="m-msg" style="background:${p["warn-bg"]}">${ico("warn", p)}<span>Прибора учёта с таким номером нет</span></div>
+      <div class="m-msg" style="background:${p["err-bg"]}">${ico("err", p)}<span>Нет связи с сервером</span></div>
+      <span class="m-tip">Нажмите, чтобы скопировать</span>
+    </div>
+    <div class="m-dialog"><b><span class="m-ico" style="background:${p.err}">!</span>Нет связи с сервером</b>
+      <p>Не удалось подключиться к серверу Пирамиды. Проверьте сеть и VPN.</p>
+      <div class="acts"><span class="m-btn">Скопировать</span><span class="m-btn acc">Закрыть</span></div></div>
+  </div>`;
+}
+
+const col = (p, label) => `<div class="col"><p class="theme-cap">${label}</p>${mainMock(p)}${eventsMock(p)}${extras(p)}</div>`;
 
 const keys = ["accent", "page", "card", "text", "ok", "warn", "err"];
 document.getElementById("variants").innerHTML = V.map(v => `
   <section class="variant" id="variant-${v.id.toLowerCase()}">
     <div class="v-head"><span class="v-letter">${v.id}</span><h2>${v.name}</h2><p>${v.desc}</p></div>
     <div class="swatches">${keys.map(k => `<span class="sw"><i style="background:${v.light[k]}"></i>${k} ${v.light[k]}</span>`).join("")}</div>
-    <div class="pair">${mock(v.light, "Светлая тема")}${mock(v.dark, "Тёмная тема")}</div>
+    <div class="pair">${col(v.light, "Светлая тема")}${col(v.dark, "Тёмная тема")}</div>
   </section>`).join("");
 </script>

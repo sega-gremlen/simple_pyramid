@@ -57,7 +57,9 @@ src/simple_pyramid/
     runner.py         asyncio-loop в фоновом потоке
     emitter.py        emit(event, payload) → window.on<Event>(payload) в JS
     pinger.py, updater.py, credentials.py
-  ui/                 index.html, css/{tokens,components,app}.css, js/{core,app}.js
+  ui/                 index.html, css/{tokens,components,app}.css,
+                      js/core.js (помощники, статус-строка, даты, ошибки), app.js (главное окно),
+                      daily.js (просмотр подневки), events.js (журнал + алярм-иконка)
 dev/                  эмулятор и инструменты разработчика (в сборку не попадают)
 tests/unit, tests/integration, tests/data
 installer/            setup.iss, favicon.ico, установщик WebView2
@@ -70,7 +72,19 @@ JS → `pywebview.api.search(num)` → `Api._spawn(...)` ставит корут
 
 События в JS: `Status{text,kind}`, `Error{title,message,details}`, `Auth`, `SearchStarted`, `SearchFailed`,
 `MeterPart{section,data,error}`, `SectionBusy{section,busy}`, `TaskLog{section,text}`, `Ping`, `Export`,
-`Update`, `UpdateStatus`, `UpdateProgress`.
+`Update`, `WhatsNew`, `UpdateStatus`, `UpdateProgress`.
+Методы моста: `bootstrap, login, logout, search, ping, refresh(section), cancel(section), events_page,
+validate_period, daily_view, export, browse_folder, open_folder, fit_height, start_update, close`.
+
+### Интерфейс (главное окно)
+- Без шапки: логин в заголовке окна («Простая Пирамида • FilippovAS»), выход — иконка справа от «Почасовки».
+- Сверху «Точка учёта» на всю ширину (тип + алярм-иконка, договор, адрес), ниже «Показания» и «Нагрузка».
+- ↻ в углу «Показаний» и «Нагрузки» — опрос прибора; во время опроса — ✕ «отменить», блок мерцает.
+- «События» — лист с журналом (по 10 при прокрутке, «Только важные», «Получить актуальные данные»).
+- «Подневка» — лист с таблицей по дням и «Скачать xlsx»; «Почасовка» — окно выгрузки.
+- Высота окна = низ последнего маршрута + статус-строка (`fitWindowHeight`); листы временно увеличивают окно.
+- Статус-строка: появляется и гаснет (`STATUS_*` в core.js), клик — история; ошибки — модальное окно.
+- Пустое состояние до первого поиска; нет значения — `naHtml()` («нет данных»), блок не загрузился — `errHtml()`.
 
 ## Правила проекта
 
@@ -81,8 +95,11 @@ JS → `pywebview.api.search(num)` → `Api._spawn(...)` ставит корут
 - **Комментарии в коде не удалять** (`agents.md: preserve_comments = true`).
 - **Единый дизайн UI.** Всё строится из `ui/css/components.css`: `.skeleton` (shimmer для
   загружающихся значений — мерцает значение, а не подпись), `.busy .shimmer-target` (обновление блока),
-  `button.icon`, `.copyable`, `.modal`, `.card`, `.kv`. Цвета — только переменные из `tokens.css`.
+  `.corner-btn` (↻ в углу карточки), `[data-tip]` (подсказка), `button.icon`/`.square`, `.copyable`,
+  `.na`, `.modal`, `.sheet` (большое окно-лист), `.table` (липкая шапка), `.chip`, `.check`, `.badge`,
+  `.alarm`, `.card`, `.kv`/`.kv-grid`, `.changelog`. Цвета — только переменные из `tokens.css`.
   Нужен новый элемент — сначала добавить компонент туда, потом использовать.
+- Проверка UI без браузера: `uv run python -m dev.ui_check @steps.txt` (шаги `wait:/click:/type:/js:/snap:`).
 - **Коммиты — Conventional Commits на русском**, один коммит на одно изменение:
   `feat: …` (новая функция → minor), `fix: …` (→ patch), `refactor/test/ci/docs/chore: …` (версию не
   меняют, в changelog не попадают), `feat(dev): …` — инструменты разработчика (в changelog не идут).

@@ -89,6 +89,10 @@ span.skeleton:empty::before{content:"\00a0"; display:inline-block; min-width:6em
   .skeleton::after, .busy .shimmer-target::after{animation:none}
 }
 
+/* ---------- «нет данных» ---------- */
+.na{color:var(--faint); font-weight:400; font-family:var(--sans)}
+.na.err{color:var(--err); cursor:help; border-bottom:1px dotted currentColor}
+
 /* ---------- кликабельное копируемое значение ---------- */
 .copyable{
   background:var(--accent-bg); border-radius:4px; padding:1px 5px;

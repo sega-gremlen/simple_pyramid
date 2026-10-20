@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="css/components.css">
 <link rel="stylesheet" href="css/app.css">
 </head>
-<body>
+<body class="state-empty">
 
 <div id="bar">
   <input id="meter" class="mono" maxlength="20" placeholder="номер ПУ"
@@ -23,6 +23,22 @@
       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>
     </svg>
   </button>
+</div>
+
+<!-- Пустое состояние: показывается до первого поиска -->
+<div id="empty-state">
+  <div class="es-icon">
+    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="9" y="6" width="30" height="36" rx="5"/><rect x="15" y="12" width="18" height="9" rx="2"/>
+      <path d="M17 30h4M27 30h4M17 36h14"/>
+    </svg>
+  </div>
+  <div class="es-title">Найдите прибор учёта</div>
+  <div class="es-hint">Введите заводской номер ПУ и нажмите <kbd>Enter</kbd> —<br>
+    появятся показания, нагрузка, события и маршруты связи</div>
+  <div class="es-hint mock hidden" id="mock-hint">Эмулятор: <b>0212…</b> — обычный ПУ, <b>333</b> — 3 маршрута,
+    <b>555</b> — реле отключено, <b>777</b> — тревоги, <b>999</b> — долгий опрос с ошибкой,
+    <b>222</b> — без опросов, <b>000</b> — не найден, <b>111</b> — несколько</div>
 </div>
 
 <div id="cards">
@@ -48,7 +64,7 @@
 </div>
 
 <div id="routes-wrap">
-  <div id="routes" class="scroll"><div id="empty">Введите номер ПУ, чтобы увидеть маршруты</div></div>
+  <div id="routes" class="scroll"></div>
 </div>
 
 <footer>

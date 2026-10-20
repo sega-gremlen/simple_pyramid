@@ -12,7 +12,7 @@ function renderReadings(data, loading = false){
     const cell = dir => {
       if (loading) return `<span class="cell skeleton"></span>`;
       const v = data ? data[dir][t] : null;
-      if (v === null || v === undefined) return `<span class="cell">—</span>`;
+      if (v === null || v === undefined) return naHtml("—");
       // В буфер — как на экране, с запятой, но без пробелов-разделителей (14167,57)
       return `<span class="copyable" data-copy="${toCopyNumber(v)}" title="Копировать">${fmtNumber(v)}</span>`;
     };
@@ -28,7 +28,7 @@ function renderRoutes(loading = false){
     return;
   }
   if (!routes.length){
-    box.innerHTML = `<div id="empty">Маршруты не найдены</div>`;
+    box.innerHTML = `<div class="route-empty">${naHtml("Маршрутов связи нет")}</div>`;
     return;
   }
   box.innerHTML = routes.map(r => {
@@ -44,8 +44,8 @@ function renderRoutes(loading = false){
     return `<div class="route" data-id="${r.id}">
       <span class="dot"></span>
       <span class="addr" title="${escHtml(r.text)}">${addrHtml}</span>
-      <span class="state">—</span>
-      <button class="icon" data-retry="${r.id}" title="Повторить пинг">
+      <span class="state"></span>
+      <button class="icon" data-retry="${r.id}" data-tip="Повторить пинг" data-tip-pos="left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
           <path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
       </button>
@@ -54,8 +54,7 @@ function renderRoutes(loading = false){
 }
 
 function renderIdentity(m){
-  $("#m-model").textContent = m.model || "—";
-  setSkeleton($("#m-model"), false);
+  setValue($("#m-model"), m.model);
   routes = m.routes || [];
   renderRoutes();
   meterLoaded = true;
@@ -65,14 +64,13 @@ function renderIdentity(m){
 
 function renderInfo(info){
   const addr = $("#m-address"), acc = $("#m-account");
-  [addr, acc].forEach(el => setSkeleton(el, false));
-  addr.textContent = info?.address || "—";
+  setValue(addr, info?.address);
   addr.title = info?.fullPath || "";
   if (info?.account && info.accountNumber){
     const idx = info.account.indexOf("№");
-    acc.innerHTML = `${escHtml(info.account.substring(0, idx + 1))}<span class="copyable" data-copy="${escHtml(info.accountNumber)}" title="Копировать номер">${escHtml(info.accountNumber)}</span>`;
+    setValue(acc, `${escHtml(info.account.substring(0, idx + 1))}<span class="copyable" data-copy="${escHtml(info.accountNumber)}" title="Копировать номер">${escHtml(info.accountNumber)}</span>`, true);
   } else {
-    acc.textContent = info?.account || "—";
+    setValue(acc, info?.account);
   }
 }
 
@@ -82,20 +80,30 @@ function renderReadingsPart(r){
   renderReadings(r);
 }
 
-// Пустое состояние / начало загрузки
+// Блок не загрузился — в его полях пишем «не загрузилось», причина в подсказке
+const SECTION_FIELDS = {
+  info: ["#m-address", "#m-account"],
+  readings: ["#m-time"],
+};
+function renderSectionError(section, error){
+  (SECTION_FIELDS[section] || []).forEach(id => setValue($(id), errHtml(error), true));
+  if (section === "readings") renderReadings(null);
+}
+
+// Пустое состояние (до первого поиска / прибор не найден) или начало загрузки
 function resetMeter(loading){
   meterLoaded = false;
+  document.body.classList.toggle("state-empty", !loading);
   $("#btn-daily").disabled = true;
   $("#btn-hourly").disabled = true;
   ["#m-model", "#m-address", "#m-account", "#m-time"].forEach(id => {
     const el = $(id);
-    el.textContent = loading || id === "#m-time" ? "" : "—";
+    el.textContent = "";
     setSkeleton(el, loading);
   });
   renderReadings(null, loading);
   routes = [];
-  if (loading) renderRoutes(true);
-  else $("#routes").innerHTML = `<div id="empty">Введите номер ПУ, чтобы увидеть маршруты</div>`;
+  renderRoutes(loading);
 }
 
 // ---- события из Python ---------------------------------------------
@@ -119,7 +127,8 @@ window.onSearchFailed = () => { $("#btn-find").disabled = false; resetMeter(fals
 
 window.onMeterPart = p => {
   if (p.error){
-    setStatus(`${p.section}: ${p.error}`, 'err');
+    renderSectionError(p.section, p.error);
+    return;
   }
   switch (p.section){
     case "identity": renderIdentity(p.data); break;
@@ -267,6 +276,7 @@ window.addEventListener("pywebviewready", async () => {
   resetMeter(false);
   const info = await api().bootstrap();
   $("#version").textContent = "v" + info.version;
+  if (info.mock) $("#mock-hint").classList.remove("hidden");
   if (info.state === "need_login"){ show("#ov-login", true); $("#li-login").focus(); }
   else setStatus(`Вход: ${info.login}…`, 'info');
   $("#meter").focus();

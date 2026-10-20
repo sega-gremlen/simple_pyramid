@@ -92,6 +92,20 @@ function show(id, on){ $(id).classList.toggle("show", on); }
 // Поле «ещё грузится»: мерцает только значение, подпись остаётся
 function setSkeleton(el, on){ el.classList.toggle("skeleton", on); }
 
+// Значения нет — единый приглушённый вид (а не прочерки разной ширины)
+function naHtml(text = "нет данных"){ return `<span class="na">${escHtml(text)}</span>`; }
+function errHtml(error){
+  return `<span class="na err" data-tip="${escHtml(error)}" data-tip-pos="top">не загрузилось</span>`;
+}
+
+// Заполнить поле значением (или «нет данных») и снять мерцание
+function setValue(el, value, isHtml = false){
+  setSkeleton(el, false);
+  if (value === null || value === undefined || value === "") el.innerHTML = naHtml();
+  else if (isHtml) el.innerHTML = value;
+  else el.textContent = value;
+}
+
 // ---- статус-строка ------------------------------------------------
 function setStatus(text, type = 'info') {
   const icon = $("#status-icon");

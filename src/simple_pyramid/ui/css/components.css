@@ -59,8 +59,11 @@ input.date{width:108px; text-align:center}
    <div class="card"><div class="card-label">Название</div><div class="card-meta">справа</div>… */
 .card{background:var(--card); border:.5px solid var(--border-strong); border-radius:var(--card-radius);
   padding:14px 14px 10px; position:relative; min-width:0}
+/* Своего фона у подписи нет: верх — цвет страницы, низ — цвет карточки, ровно по линии рамки.
+   Так рамка под текстом скрыта, а «плашки» вокруг надписи не видно. */
 .card-label, .card-meta{position:absolute; top:0; transform:translateY(-50%); padding:0 6px;
-  background:var(--page); font-size:12px; line-height:1; white-space:nowrap}
+  background:linear-gradient(var(--page) calc(50% - .25px), var(--card) calc(50% - .25px));
+  font-size:12px; line-height:1; white-space:nowrap}
 .card-label{left:10px; color:var(--muted)}
 .card-meta{right:10px; color:var(--faint)}
 
@@ -106,12 +109,18 @@ span.skeleton:empty::before{content:"\00a0"; display:inline-block; min-width:6em
 .copyable.flash{background:var(--ok); color:#fff}
 
 /* ---------- круглая кнопка, «врезанная» в угол карточки (обновить блок) ----------
-   Ореол цвета фона прячет линии рамки рядом с кнопкой: рамка подходит к ней, не касаясь.
+   Своего фона у кнопки нет: рамку карточки рисует ::before, а маска вырезает в ней круг
+   вокруг кнопки — рамка подходит к ней, не касаясь. Название стоит вплотную к кнопке,
+   поэтому между ними линии нет.
    .busy — идёт обновление: вместо ↻ крестик «отменить» и бегущее кольцо. */
-.card.has-corner > .card-label{left:22px}
+.card.has-corner{border-color:transparent}
+.card.has-corner::before{content:""; position:absolute; inset:-.5px; pointer-events:none;
+  border:.5px solid var(--border-strong); border-radius:inherit;
+  -webkit-mask-image:radial-gradient(circle at 1px 1px, transparent 15px, #000 15.5px);
+  mask-image:radial-gradient(circle at 1px 1px, transparent 15px, #000 15.5px)}
+.card.has-corner > .card-label{left:14px; padding-left:4px}
 .corner-btn{position:absolute; top:-12px; left:-12px; width:26px; height:26px; padding:0; z-index:2;
-  border-radius:50%; border:none; background:var(--page); color:var(--muted);
-  box-shadow:0 0 0 3px var(--page)}
+  border-radius:50%; border:none; background:transparent; color:var(--muted)}
 .corner-btn:hover:not(:disabled){background:var(--accent-bg); color:var(--accent)}
 .corner-btn svg{width:15px; height:15px}
 .corner-btn .ic-cancel{display:none}

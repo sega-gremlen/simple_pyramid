@@ -115,7 +115,7 @@ header.top p{margin:0; color:var(--muted); max-width:70ch}
 .m-dialog p{margin:0 0 8px}
 .m-dialog .acts{display:flex; justify-content:flex-end; gap:6px}
 .m-dialog .m-btn{color:var(--m-text); border-color:var(--m-border-strong)}
-.m-tip{display:inline-block; background:var(--m-text); color:var(--m-page); font-size:11px; padding:4px 8px; border-radius:6px; margin-top:6px}
+.m-tip{display:inline-block; background:var(--m-tip-bg, var(--m-text)); color:var(--m-tip-text, var(--m-page)); font-size:11px; padding:4px 8px; border-radius:6px; margin-top:6px}
 
 @media (max-width:520px){
   .m-extra{grid-template-columns:1fr}
@@ -187,13 +187,13 @@ const V = [
      text:"#13202F", muted:"#566377", faint:"#8592A6", accent:"#2F7BE5", "accent-bg":"#E1EAF7", "accent-ink":"#0F4C9C", "on-accent":"#FFFFFF",
      ok:"#16865C", warn:"#B06A00", err:"#D33A3A", "ok-bg":"#E1F3EA", "warn-bg":"#FDF0DB", "err-bg":"#FCE6E6",
      "err-row":"#FDF0F0", "imp-row":"#EEF3FA",
-     status:"#0F3A73", "status-text":"#FFFFFF", "status-faint":"#9DB4D6", skeleton:"#E4EAF2", "skeleton-shine":"#F4F7FB"},
+     status:"#0F3A73", "status-text":"#FFFFFF", "status-faint":"#9DB4D6", "tip-bg":"#0F3A73", "tip-text":"#FFFFFF", skeleton:"#E4EAF2", "skeleton-shine":"#F4F7FB"},
    dark:{page:"#0F1622", card:"#172131", chrome:"#08111F", "chrome-text":"#8EA3C2", bar:"#0B1A31", "bar-text":"#E5EEFB", "bar-btn-border":"rgba(255,255,255,.18)",
      input:"#172131", "input-border":"rgba(255,255,255,.14)", border:"rgba(255,255,255,.09)", "border-strong":"rgba(255,255,255,.17)",
      text:"#E5EBF4", muted:"#9DA9BB", faint:"#6F7C8F", accent:"#5D9CF0", "accent-bg":"#16294A", "accent-ink":"#A8C8F5", "on-accent":"#06173A",
      ok:"#4BC596", warn:"#EFA43B", err:"#F38A8A", "ok-bg":"#11342A", "warn-bg":"#382810", "err-bg":"#3F1D20",
      "err-row":"#2A1C24", "imp-row":"#18253A",
-     status:"#0B1A31", "status-text":"#E5EEFB", "status-faint":"#7F95B6", skeleton:"#1F2A3C", "skeleton-shine":"#2A374C"}},
+     status:"#0B1A31", "status-text":"#E5EEFB", "status-faint":"#7F95B6", "tip-bg":"#0B2449", "tip-text":"#E5EEFB", skeleton:"#1F2A3C", "skeleton-shine":"#2A374C"}},
   {id:"D", name:"Морозный", desc:"Мягкий голубоватый фон и белые карточки, акцент спокойный стальной синий. Статус-строка — светло-голубая полоса. Меньше всего утомляет глаза при долгой работе.",
    light:{page:"#EDF2F8", card:"#FFFFFF", chrome:"#E3EAF3", "chrome-text":"#44536A", bar:"#EDF2F8", "bar-text":"#16202C", "bar-btn-border":"rgba(47,109,181,.24)",
      input:"#FFFFFF", "input-border":"rgba(47,109,181,.28)", border:"rgba(47,109,181,.12)", "border-strong":"rgba(47,109,181,.24)",

@@ -1,0 +1,134 @@
+[project]
+name = "simple-pyramid"
+dynamic = ["version"]
+description = "Простая Пирамида — быстрый просмотр данных приборов учёта из ПО «Пирамида»"
+requires-python = ">=3.13,<3.14"
+dependencies = [
+    "httpx>=0.28",
+    "keyring>=25.6",
+    "openpyxl>=3.1.5",
+    "packaging>=25.0",
+    "pydantic>=2.11",
+    "pydantic-settings>=2.9",
+    "pywebview>=6.0",
+]
+
+[project.scripts]
+simple-pyramid = "simple_pyramid.__main__:main"
+
+[dependency-groups]
+dev = [
+    "fastapi>=0.115",
+    "mypy>=1.16",
+    "pre-commit>=4.2",
+    "pyinstaller>=6.14",
+    "pytest>=8.4",
+    "pytest-asyncio>=1.0",
+    "pytest-cov>=6.2",
+    "pytest-mock>=3.14",
+    "respx>=0.22",
+    "ruff>=0.12",
+    "types-openpyxl>=3.1",
+    "uvicorn>=0.34",
+]
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/simple_pyramid/version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/simple_pyramid"]
+
+# ---------------------------------------------------------------- ruff
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+src = ["src", "tests", "dev"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "A",        # затенение builtins
+    "C4",       # comprehensions
+    "SIM",      # упрощения
+    "RET",      # return
+    "PTH",      # pathlib вместо os.path
+    "PL",       # pylint
+    "RUF",      # ruff-specific
+    "ASYNC",    # ошибки в async-коде
+    "T20",      # print() запрещён — только logging
+    "S",        # bandit (безопасность)
+    "ANN",      # аннотации типов везде
+    "D",        # docstring везде
+    "FBT003",   # голые True/False в вызовах
+    "PIE", "PERF", "LOG", "G",
+]
+ignore = [
+    "D100",     # docstring модуля — по желанию
+    "D104",     # docstring пакета — по желанию
+    "D105",     # magic-методы
+    "D107",     # __init__ описывается в docstring класса
+    "D203", "D213",  # конфликтующие правила pydocstyle
+    "RUF001", "RUF002", "RUF003",  # кириллица в строках/комментариях — норма
+    "PLR0913",  # много аргументов — бывает у API-методов
+    "PLR2004",  # magic values
+    "ANN401",   # Any — для JSON-payload'ов это честный тип
+    "S501",     # verify=False — корпоративный самоподписанный сертификат (настраивается)
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101", "D", "ANN", "PLR2004", "S105", "S106", "SLF001", "FBT003", "PLC0415"]
+"dev/**" = ["S104", "S311", "PLR0911", "PLR0915", "E501"]
+
+# ---------------------------------------------------------------- mypy
+[tool.mypy]
+python_version = "3.13"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+packages = ["simple_pyramid"]
+
+[[tool.mypy.overrides]]
+module = ["webview", "webview.*", "keyring", "keyring.*"]
+ignore_missing_imports = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = false
+
+# ---------------------------------------------------------------- pytest
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = ["src", "."]
+addopts = "-ra"
+
+[tool.coverage.run]
+source_pkgs = ["simple_pyramid"]
+branch = true
+omit = [
+    "src/simple_pyramid/__main__.py",
+    "src/simple_pyramid/desktop/window.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 85
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["simple_pyramid", "dev", "tests"]

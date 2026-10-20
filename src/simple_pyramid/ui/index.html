@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Простая Пирамида</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+<header>
+  <div id="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+         stroke-linejoin="round" style="color:var(--muted)">
+      <path d="M12 3 L21 20 H3 Z"/><path d="M7.5 13.5 h9"/>
+    </svg>
+  </div>
+  <div>
+    <div class="h-title">Простая Пирамида</div>
+    <div class="h-sub" id="user">не авторизован</div>
+  </div>
+  <div class="spacer"></div>
+  <button id="btn-user">Сменить пользователя</button>
+</header>
+
+<div id="bar">
+  <input id="meter" class="mono" maxlength="20" placeholder="номер ПУ"
+         style="width:300px" autocomplete="off">
+  <button id="btn-find" class="accent">Найти</button>
+  <div class="spacer"></div>
+  <button id="btn-daily" disabled>Подневка</button>
+  <button id="btn-hourly" disabled>Почасовка</button>
+</div>
+
+<div id="cards">
+  <div class="card" id="card-point">
+    <div class="card-label">Точка учёта</div>
+    <div class="kv"><span class="k">Тип счетчика</span><span class="v" id="m-model">—</span></div>
+    <div class="kv"><span class="k">Место установки</span><span class="v plain" id="m-address" title="">—</span></div>
+    <div class="kv"><span class="k">Договор</span><span class="v mono" id="m-account">—</span></div>
+  </div>
+
+  <div class="card" id="card-readings">
+    <div id="readings-head">
+      <span class="card-label" style="margin:0">Показания, кВт·ч</span>
+      <span class="card-label shimmer-target" style="margin:0" id="m-time"></span>
+    </div>
+    <table id="readings">
+      <thead><tr><th class="corner"></th><th>A+</th><th>A−</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<div id="routes-wrap">
+  <div id="routes" class="scroll"><div id="empty">Введите номер ПУ, чтобы увидеть маршруты</div></div>
+</div>
+
+<footer>
+  <div id="status">
+    <span id="status-icon"></span>
+    <span id="status-text">Загрузка…</span>
+  </div>
+  <span id="version"></span>
+</footer>
+
+<div class="overlay" id="ov-login">
+  <div class="modal">
+    <h2>Вход</h2>
+    <div class="field"><label>Логин</label><input id="li-login" autocomplete="off"></div>
+    <div class="field"><label>Пароль</label><input id="li-pass" type="password"></div>
+    <div class="modal-err" id="li-err"></div>
+    <div class="modal-actions"><button class="accent" id="li-ok">Войти</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-export">
+  <div class="modal">
+    <h2 id="ex-title">Выгрузка</h2>
+    <div class="field"><label>Период</label>
+      <div class="row2"><input id="ex-from" class="mono"><span
+        style="color:var(--muted)">—</span><input id="ex-to" class="mono"></div>
+    </div>
+    <div class="field"><label>Папка</label>
+      <div class="row2"><input id="ex-dir"><button id="ex-browse">Обзор</button></div>
+    </div>
+    <div class="modal-err" id="ex-err"></div>
+    <div class="modal-actions">
+      <button id="ex-cancel">Отмена</button>
+      <button class="accent" id="ex-ok">Выгрузить</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-progress">
+  <div class="modal">
+    <h2 id="pr-title">Формируется отчёт</h2>
+    <div style="display:flex;align-items:center;gap:10px;color:var(--muted)">
+      <div class="spin"></div><span id="pr-text">Подождите…</span>
+    </div>
+    <div class="bar-track hidden" id="pr-track"><div class="bar-fill" id="pr-fill"></div></div>
+    <div class="modal-actions hidden" id="pr-actions">
+      <button id="pr-open">Открыть папку</button>
+      <button class="accent" id="pr-close">Готово</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="ov-update">
+  <div class="modal">
+    <h2 id="up-title">Доступно обновление</h2>
+    <div style="color:var(--muted); white-space:pre-wrap; max-height:160px;
+      overflow:auto" id="up-log"></div>
+    <div class="modal-actions">
+      <button id="up-later">Позже</button>
+      <button class="accent" id="up-now">Обновить</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

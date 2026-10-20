@@ -1,0 +1,108 @@
+/* Единая дизайн-система: базовые элементы, которые переиспользуются везде.
+   Новый элемент интерфейса — сначала ищем подходящий компонент здесь. */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans); font-size:13px; color:var(--text);
+  background:var(--page); display:flex; flex-direction:column;
+  overflow:hidden; user-select:none;
+  -webkit-font-smoothing:antialiased;
+}
+.mono{font-family:var(--mono)}
+.hidden{display:none!important}
+
+/* ---------- кнопки ---------- */
+button{
+  font:inherit; font-size:13px; color:var(--text); cursor:pointer;
+  background:transparent; border:.5px solid var(--border-strong);
+  border-radius:var(--radius); padding:0 12px; height:32px;
+  display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+  transition:background .12s, border-color .12s, color .12s;
+}
+button:hover:not(:disabled){background:var(--sunken)}
+button:active:not(:disabled){transform:scale(.985)}
+button:disabled{opacity:.4; cursor:default}
+button.accent{background:var(--accent); border-color:transparent; color:var(--on-accent)}
+button.accent:hover:not(:disabled){filter:brightness(1.08); background:var(--accent)}
+/* квадратная кнопка-иконка */
+button.icon{padding:0; width:28px; height:28px; justify-content:center; border-color:transparent}
+button.icon:hover:not(:disabled){border-color:var(--border-strong)}
+button.icon svg{width:15px; height:15px}
+
+/* ---------- поля ввода ---------- */
+input{
+  font:inherit; font-size:13px; color:var(--text); background:var(--card);
+  border:.5px solid var(--border-strong); border-radius:var(--radius);
+  height:32px; padding:0 10px; outline:none; user-select:text;
+}
+input:focus{border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-bg)}
+input.mono{font-family:var(--mono); letter-spacing:.02em}
+input.invalid{border-color:var(--err); box-shadow:0 0 0 3px var(--err-bg)}
+
+/* ---------- карточки и пары «ключ — значение» ---------- */
+.card{background:var(--card); border:.5px solid var(--border);
+  border-radius:var(--card-radius); padding:12px 14px; position:relative}
+.card-label{font-size:12px; color:var(--faint); margin-bottom:8px}
+.kv{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:4px 0; min-height:26px}
+.kv .k{color:var(--muted); white-space:nowrap}
+.kv .v{text-align:right; font-weight:500; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.kv .v.plain{font-weight:400}
+
+/* ---------- skeleton-shimmer: «поле ещё грузится» ----------
+   Применяется к значению (не к подписи!): <span class="v skeleton">.
+   .busy на контейнере — то же для всего блока при обновлении данных. */
+.skeleton, .busy .shimmer-target{
+  position:relative; color:transparent!important; border-radius:4px;
+  background:var(--skeleton); overflow:hidden; pointer-events:none;
+}
+.skeleton::after, .busy .shimmer-target::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(90deg, transparent 0, var(--skeleton-shine) 50%, transparent 100%);
+  transform:translateX(-100%); animation:shimmer var(--shimmer-duration) ease-in-out infinite;
+}
+.skeleton *, .busy .shimmer-target *{visibility:hidden}
+span.skeleton:empty::before{content:"\00a0"; display:inline-block; min-width:6em}
+@keyframes shimmer{to{transform:translateX(100%)}}
+@media (prefers-reduced-motion: reduce){
+  .skeleton::after, .busy .shimmer-target::after{animation:none}
+}
+
+/* ---------- кликабельное копируемое значение ---------- */
+.copyable{
+  background:var(--accent-bg); border-radius:4px; padding:1px 5px;
+  cursor:pointer; transition:background .15s, color .15s; user-select:none;
+}
+.copyable:hover{background:var(--accent); color:var(--on-accent)}
+.copyable.flash{background:var(--ok); color:#fff}
+
+/* ---------- модальные окна ---------- */
+.overlay{position:fixed; inset:0; background:rgba(0,0,0,.35);
+  display:none; align-items:center; justify-content:center; z-index:10}
+.overlay.show{display:flex}
+.modal{background:var(--card); border-radius:var(--card-radius);
+  border:.5px solid var(--border); padding:20px; width:340px;
+  box-shadow:0 12px 32px rgba(0,0,0,.18)}
+.modal h2{font-size:15px; font-weight:500; margin-bottom:14px}
+.field{margin-bottom:10px}
+.field label{display:block; font-size:12px; color:var(--muted); margin-bottom:4px}
+.field input{width:100%}
+.row2{display:flex; align-items:center; gap:8px}
+.row2 input{flex:1; text-align:center}
+.modal-err{font-size:12px; color:var(--err); min-height:16px; margin-top:6px; white-space:pre-line}
+.modal-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:14px}
+
+/* ---------- прогресс ---------- */
+.bar-track{height:4px; background:var(--sunken); border-radius:2px; overflow:hidden; margin:12px 0 6px}
+.bar-fill{height:100%; width:0; background:var(--accent); transition:width .2s}
+.spin{width:14px; height:14px; border:2px solid var(--border-strong);
+  border-top-color:var(--accent); border-radius:50%; animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---------- индикаторы состояния ---------- */
+.dot{width:7px; height:7px; border-radius:50%; flex:none; background:var(--faint)}
+.dot.ok{background:var(--ok)} .dot.warn{background:var(--warn)} .dot.err{background:var(--err)}
+.icon-ok{color:var(--ok)} .icon-err{color:var(--err)} .icon-warn{color:var(--warn)} .icon-info{color:var(--muted)}
+
+/* ---------- полоса прокрутки ---------- */
+.scroll::-webkit-scrollbar{width:10px}
+.scroll::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:5px; border:3px solid var(--page)}

@@ -255,7 +255,7 @@ function openExport(kind, title){
   show("#ov-export", true);
   checkExportPeriod();
 }
-$("#btn-daily").onclick = () => openExport("daily", "Выгрузка подневки");
+$("#btn-daily").onclick = () => openDaily();
 $("#btn-hourly").onclick = () => openExport("hourly", "Выгрузка почасовки");
 // Проверка периода на лету: подсветка поля и текст ошибки, кнопка недоступна
 function checkExportPeriod(){
@@ -315,8 +315,11 @@ $("#er-copy").onclick = () => {
 
 document.addEventListener("keydown", e => {
   if (e.key === "Escape"){
-    ["#ov-export", "#ov-update", "#ov-error"].forEach(id => show(id, false));
+    // сначала закрываем верхнее окно, «лист» — только если поверх ничего нет
+    const modals = ["#ov-export", "#ov-update", "#ov-error"].filter(id => $(id).classList.contains("show"));
+    modals.forEach(id => show(id, false));
     $("#status-history").classList.add("hidden");
+    if (!modals.length && $("#ov-daily").classList.contains("show")) closeDaily();
   }
 });
 

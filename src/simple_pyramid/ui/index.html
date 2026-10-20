@@ -79,6 +79,43 @@
   </div>
 </footer>
 
+<div class="sheet-overlay" id="ov-daily">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Подневка</h2><span class="sub" id="dv-meter"></span>
+      <div class="spacer"></div>
+      <button class="icon" id="dv-close" data-tip="Закрыть (Esc)" data-tip-pos="bottom-end" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="sheet-tools">
+      <input id="dv-from" class="mono" style="width:112px; text-align:center">
+      <span style="color:var(--muted)">—</span>
+      <input id="dv-to" class="mono" style="width:112px; text-align:center">
+      <button class="accent" id="dv-show">Показать</button>
+      <span style="width:6px"></span>
+      <button class="chip" data-range="month">Этот месяц</button>
+      <button class="chip" data-range="prev">Прошлый месяц</button>
+      <button class="chip" data-range="3m">3 месяца</button>
+      <button class="chip" data-range="year">Год</button>
+      <div class="modal-err" id="dv-err" style="flex-basis:100%; margin:0; min-height:0"></div>
+    </div>
+    <div class="sheet-body scroll" id="dv-body">
+      <table class="table">
+        <thead><tr><th class="left">Дата</th><th>Общее, кВт·ч</th><th>T1 (день)</th><th>T2 (ночь)</th><th>Расход за сутки</th></tr></thead>
+        <tbody id="dv-rows"></tbody>
+      </table>
+      <div id="dv-sentinel" style="height:1px"></div>
+    </div>
+    <div class="sheet-foot">
+      <span id="dv-summary" style="color:var(--muted)"></span>
+      <div class="spacer"></div>
+      <button id="dv-download" disabled>Скачать xlsx</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="ov-error">
   <div class="modal modal-error" role="alertdialog" aria-labelledby="er-title">
     <div class="er-head">
@@ -156,5 +193,6 @@
 
 <script src="js/core.js"></script>
 <script src="js/app.js"></script>
+<script src="js/daily.js"></script>
 </body>
 </html>

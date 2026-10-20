@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Подневка</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/child.css">
+</head>
+<body>
+
+<div class="tools">
+  <div class="row">
+    <input id="dv-from" class="date">
+    <span class="dash">—</span>
+    <input id="dv-to" class="date">
+    <button class="accent" id="dv-show">Показать</button>
+    <button id="dv-download" disabled>Скачать xlsx</button>
+  </div>
+  <div class="row presets">
+    <button class="chip" data-range="month">Этот месяц</button>
+    <button class="chip" data-range="prev">Прошлый месяц</button>
+    <button class="chip" data-range="3m">3 месяца</button>
+    <button class="chip" data-range="6m">6 месяцев</button>
+    <button class="chip" data-range="9m">9 месяцев</button>
+    <button class="chip" data-range="year">Год</button>
+  </div>
+  <div class="modal-err" id="dv-err"></div>
+</div>
+
+<div class="body scroll" id="dv-body">
+  <table class="table">
+    <thead><tr><th>Дата</th><th>Общее, кВт·ч</th><th>T1 (день)</th><th>T2 (ночь)</th><th>Расход за сутки</th></tr></thead>
+    <tbody id="dv-rows"></tbody>
+  </table>
+</div>
+
+<div class="strip">
+  <span id="dv-summary"></span>
+  <span class="spacer"></span>
+  <span id="strip-msg"></span>
+  <span id="dv-export"></span>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/child.js"></script>
+<script src="js/daily.js"></script>
+</body>
+</html>

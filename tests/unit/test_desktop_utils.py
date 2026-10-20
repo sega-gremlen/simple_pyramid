@@ -204,6 +204,20 @@ def test_window_emitter():
     emitter.window = Broken()
     emitter.emit("Status", {})  # не падает
 
+    # несколько окон: событие уходит во все, закрытое окно отключается
+    first, second = Win(), Win()
+    emitter.window = first
+    emitter.add(second)
+    calls.clear()
+    emitter.emit("Status", {})
+    assert len(calls) == 2
+    emitter.remove(second)
+    emitter.emit("Status", {})
+    assert len(calls) == 3
+    assert emitter.window is first
+    emitter.window = None
+    assert emitter.window is None
+
 
 def test_window_title_and_short_login():
     assert short_login("samara.vlmrk.corp\\FilippovAS") == "FilippovAS"

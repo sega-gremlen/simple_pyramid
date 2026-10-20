@@ -21,6 +21,9 @@ class FakeWindow:
         self.heights = []
         self.closed = False
         self.folder = folder
+        self.children = {}
+        self.dialog_owner = None
+        self.cancel_dialog = False
 
     def set_title(self, title):
         self.titles.append(title)
@@ -28,8 +31,16 @@ class FakeWindow:
     def grow_height(self, delta):
         self.heights.append(delta)
 
-    def choose_folder(self):
-        return str(self.folder)
+    def choose_folder(self, kind=None):
+        self.dialog_owner = kind
+        return None if self.cancel_dialog else str(self.folder)
+
+    def open_child(self, kind, title):
+        self.children[kind] = title
+
+    def set_child_title(self, kind, title):
+        if kind in self.children:
+            self.children[kind] = title
 
     def close(self):
         self.closed = True
@@ -192,3 +203,39 @@ def test_spawn_reports_unexpected_errors(bridge):
     wait_until(future.done)
     wait_until(lambda: bridge.sink.of("Error"))
     assert bridge.sink.of("Error")[-1]["title"] == "Внутренняя ошибка"
+
+
+def test_child_windows(bridge):
+    assert bridge.open_daily() is False  # прибор не открыт
+    assert bridge.window_context() == {"meter": None}
+    login(bridge)
+    bridge.search("021250611469")
+    wait_until(lambda: any("Все данные" in s["text"] for s in bridge.sink.of("Status")))
+    assert bridge.open_daily() is True
+    assert bridge.open_events(False) is True
+    assert bridge.window.children["daily"].startswith("Подневка • ")
+    assert "№021250611469" in bridge.window.children["events"]
+    assert bridge.sink.of("EventsFilter")[-1] == {"importantOnly": False}
+    ctx = bridge.window_context()
+    assert ctx["meter"]["meterNum"] == "021250611469"
+    assert ctx["importantOnly"] is False
+    assert ctx["eventsLoaded"] is True
+    # новый прибор — заголовки открытых окон обновляются
+    bridge.search("5551")
+    wait_until(lambda: "№5551" in bridge.window.children["daily"])
+
+
+def test_export_here(bridge, tmp_path):
+    login(bridge)
+    bridge.search("021250611469")
+    wait_until(lambda: any("Все данные" in s["text"] for s in bridge.sink.of("Status")))
+    today = date.today().strftime("%d.%m.%Y")
+    assert bridge.export_here("daily", "bad", today, "daily")["ok"] is False
+    bridge.window.cancel_dialog = True
+    assert bridge.export_here("daily", today, today, "daily") == {"ok": False, "cancelled": True}
+    bridge.window.cancel_dialog = False
+    assert bridge.export_here("daily", today, today, "daily") == {"ok": True}
+    assert bridge.window.dialog_owner == "daily"
+    wait_until(lambda: any(e["stage"] == "done" for e in bridge.sink.of("Export")))
+    done = next(e for e in bridge.sink.of("Export") if e["stage"] == "done")
+    assert done["source"] == "daily"

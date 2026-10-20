@@ -55,11 +55,20 @@ class WindowControl(Protocol):
     def grow_height(self, delta: int) -> None:
         """Меняет высоту окна на ``delta`` CSS-пикселей."""
 
-    def choose_folder(self) -> str | None:
-        """Диалог выбора папки."""
+    def choose_folder(self, kind: str | None = None) -> str | None:
+        """Диалог выбора папки (поверх окна ``kind`` или главного)."""
+
+    def open_child(self, kind: str, title: str) -> None:
+        """Открывает дополнительное окно (``daily``/``events``) или поднимает открытое."""
+
+    def set_child_title(self, kind: str, title: str) -> None:
+        """Меняет заголовок дополнительного окна, если оно открыто."""
 
     def close(self) -> None:
         """Закрывает окно."""
+
+
+CHILD_TITLES = {"daily": "Подневка", "events": "События"}
 
 
 def short_login(login: str | None) -> str | None:
@@ -115,6 +124,7 @@ class Api:
         self._session: MeterSession | None = None
         self._tasks: dict[str, Future[Any]] = {}
         self._update: UpdateInfo | None = None
+        self._events_important = True
 
     # ------------------------------------------------------------ служебное
     def _attach_window(self, window: WindowControl) -> None:
@@ -126,6 +136,22 @@ class Api:
         if self._window:
             title = window_title(self._client.username, mock=self._settings.mock)
             self._window.set_title(title)
+
+    def _child_title(self, kind: str) -> str:
+        """Заголовок дополнительного окна: «Подневка • Нартис-И100 №0212…»."""
+        parts = [CHILD_TITLES[kind]]
+        if self._session is not None:
+            identity = self._session.identity
+            parts.append(f"{identity.model or 'ПУ'} №{identity.meter_num}")
+        if self._settings.mock:
+            parts.append("ЭМУЛЯТОР")
+        return " • ".join(parts)
+
+    def _update_child_titles(self) -> None:
+        """Новый прибор — обновляем заголовки открытых дополнительных окон."""
+        if self._window:
+            for kind in CHILD_TITLES:
+                self._window.set_child_title(kind, self._child_title(kind))
 
     def _status(self, text: str, kind: StatusKind = StatusKind.INFO) -> None:
         """Сообщение в статус-строку."""
@@ -245,6 +271,7 @@ class Api:
             raise AuthError("Нет активной сессии — войдите заново")
         session = await self._service.find(meter_num)
         self._session = session
+        self._update_child_titles()
         for route in session.identity.routes:
             self.ping(route.id)
         await self._service.load_details(session)
@@ -347,8 +374,24 @@ class Api:
         """Диалог выбора папки для выгрузки."""
         return self._window.choose_folder() if self._window else None
 
-    def export(self, kind: str, start: str, end: str, output_dir: str) -> dict[str, Any]:
-        """Выгрузка подневки (``daily``) или почасовки (``hourly``) в xlsx."""
+    def export_here(self, kind: str, start: str, end: str, source: str) -> dict[str, Any]:
+        """Выгрузка из дополнительного окна: сначала диалог папки поверх него, затем выгрузка."""
+        try:
+            parse_period(start, end)
+        except ValueError as exc:
+            return {"ok": False, "error": str(exc)}
+        folder = self._window.choose_folder(source) if self._window else None
+        if not folder:
+            return {"ok": False, "cancelled": True}
+        return self.export(kind, start, end, folder, source)
+
+    def export(
+        self, kind: str, start: str, end: str, output_dir: str, source: str = "main"
+    ) -> dict[str, Any]:
+        """Выгрузка подневки (``daily``) или почасовки (``hourly``) в xlsx.
+
+        ``source`` — окно, из которого запущена выгрузка (ему и показывается прогресс).
+        """
         session = self._session
         if session is None:
             return {"ok": False, "error": "Сначала найдите прибор"}
@@ -359,26 +402,73 @@ class Api:
         folder = Path(output_dir.strip())
         if not output_dir.strip() or not folder.is_dir():
             return {"ok": False, "error": "Такой папки нет"}
-        self._spawn("export", self._export(kind, session, period.start, period.end, folder),
-                    on_error=self._export_failed)  # fmt: skip
+        self._spawn(
+            f"export:{source}",
+            self._export(
+                kind, session, start=period.start, end=period.end, folder=folder, source=source
+            ),
+            on_error=lambda exc: self._export_failed(exc, source),
+        )
         return {"ok": True}
 
     async def _export(
-        self, kind: str, session: MeterSession, start: Any, end: Any, folder: Path
+        self,
+        kind: str,
+        session: MeterSession,
+        *,
+        start: Any,
+        end: Any,
+        folder: Path,
+        source: str,
     ) -> None:
         """Сценарий выгрузки."""
-        self._sink.emit("Export", {"stage": "running", "kind": kind})
+        self._sink.emit("Export", {"stage": "running", "kind": kind, "source": source})
         if kind == "daily":
             path = await self._service.export_daily(session, start, end, folder)
         else:
             path = await self._service.export_hourly(session, start, end, folder)
-        self._sink.emit("Export", {"stage": "done", "path": str(path)})
+        self._sink.emit("Export", {"stage": "done", "path": str(path), "source": source})
         self._status(f"Отчёт сохранён: {path.name}", StatusKind.OK)
 
-    def _export_failed(self, exc: BaseException) -> None:
+    def _export_failed(self, exc: BaseException, source: str = "main") -> None:
         """Выгрузка не удалась."""
-        self._sink.emit("Export", {"stage": "error", "error": str(exc)})
-        self._error(exc, title="Выгрузка не удалась")
+        self._sink.emit("Export", {"stage": "error", "error": str(exc), "source": source})
+        if source == "main":
+            self._error(exc, title="Выгрузка не удалась")
+
+    # ------------------------------------------------------------ дополнительные окна
+    def open_daily(self) -> bool:
+        """Открыть окно «Подневка»."""
+        return self._open_child("daily")
+
+    def open_events(self, important_only: bool = True) -> bool:
+        """Открыть окно «События» (с фильтром «Только важные» или без)."""
+        self._events_important = bool(important_only)
+        if self._open_child("events"):
+            self._sink.emit("EventsFilter", {"importantOnly": self._events_important})
+            return True
+        return False
+
+    def _open_child(self, kind: str) -> bool:
+        """Открывает дополнительное окно для текущего прибора."""
+        if self._session is None or self._window is None:
+            return False
+        self._window.open_child(kind, self._child_title(kind))
+        return True
+
+    def window_context(self) -> dict[str, Any]:
+        """Что нужно дополнительному окну при открытии: прибор, фильтр, сводка журнала."""
+        session = self._session
+        if session is None:
+            return {"meter": None}
+        events = session.events or []
+        return {
+            "meter": session.identity.to_js(),
+            "importantOnly": self._events_important,
+            "eventsLoaded": session.events is not None,
+            "eventsTotal": len(events),
+            "mock": self._settings.mock,
+        }
 
     def open_folder(self, path: str) -> None:
         """Открыть папку с отчётом."""

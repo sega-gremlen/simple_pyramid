@@ -84,6 +84,7 @@ def test_load_info_morning(data):
     assert load.relay_on is True
     assert load.relay_at == datetime(2026, 10, 20, 6, 45, 31, 352000)
     assert load.limit == 15000.0
+    assert load.limit_kw == 15.0
     assert load.limit_at == datetime(2026, 10, 20, 6, 45, 30, 232000)
 
 

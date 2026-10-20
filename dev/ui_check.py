@@ -55,14 +55,30 @@ def free_port() -> int:
         return int(s.getsockname()[1])
 
 
-def run_scenario(window: Any, steps: list[str]) -> None:
-    """Выполняет шаги сценария и печатает снимки DOM."""
-    window.events.loaded.wait(15)
-    window.evaluate_js(CATCH_ERRORS_JS)
+def run_scenario(main: Any, steps: list[str]) -> None:
+    """Выполняет шаги сценария и печатает снимки DOM.
+
+    ``win:N`` — дальше шаги выполняются в окне N (0 — главное, 1… — открытые доп. окна),
+    ``title`` — напечатать document.title текущего окна.
+    """
+    main.events.loaded.wait(15)
+    main.evaluate_js(CATCH_ERRORS_JS)
     time.sleep(1)
+    window = main
     for step in steps:
         cmd, _, arg = step.partition(":")
-        if cmd == "wait":
+        if cmd == "win":
+            window = webview.windows[int(arg)]
+            window.events.loaded.wait(15)
+            window.evaluate_js(CATCH_ERRORS_JS)
+            print(f"--- окно {arg}: {window.title}")  # noqa: T201
+        elif cmd == "title":
+            print(  # noqa: T201
+                window.evaluate_js(
+                    "document.title + ' | errors=' + JSON.stringify(window.__errors || [])"
+                )
+            )
+        elif cmd == "wait":
             time.sleep(float(arg))
         elif cmd == "js":
             window.evaluate_js(arg)
@@ -77,7 +93,7 @@ def run_scenario(window: Any, steps: list[str]) -> None:
             snap = json.loads(window.evaluate_js(SNAPSHOT_JS))
             print(f"--- {arg or 'snapshot'}")  # noqa: T201
             print(json.dumps(snap, ensure_ascii=False, indent=1))  # noqa: T201
-    window.destroy()
+    main.destroy()
 
 
 DEFAULT_STEPS = [
@@ -138,7 +154,7 @@ def main() -> None:
         APP_TITLE, str(resource_path("ui/index.html")), js_api=api, width=WIDTH, height=HEIGHT
     )
     emitter.window = window
-    api._attach_window(PywebviewWindow(window))
+    api._attach_window(PywebviewWindow(window, emitter, api))
     webview.start(run_scenario, (window, steps or DEFAULT_STEPS), gui="edgechromium")
 
 

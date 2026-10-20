@@ -102,9 +102,16 @@ class BrowserWindow:
         """Высоту вкладки браузера менять нельзя — только логируем."""
         logging.getLogger(__name__).info("fit_height(%s)", delta)
 
-    def choose_folder(self) -> str | None:
+    def choose_folder(self, kind: str | None = None) -> str | None:
         """Вместо диалога — временная папка."""
         return self.folder
+
+    def open_child(self, kind: str, title: str) -> None:
+        """Доп. окна в браузере не открываются — только логируем (открыть /daily.html вручную)."""
+        logging.getLogger(__name__).info("open_child(%s, %s)", kind, title)
+
+    def set_child_title(self, kind: str, title: str) -> None:
+        """Нечего обновлять."""
 
     def close(self) -> None:
         """Закрывать нечего."""
@@ -122,10 +129,21 @@ def build_app(mock_port: int) -> FastAPI:
 
     app = FastAPI()
 
+    def page(name: str) -> str:
+        html = (UI_DIR / name).read_text(encoding="utf-8")
+        return html.replace('<script src="js/core.js">', SHIM + '<script src="js/core.js">', 1)
+
     @app.get("/", response_class=HTMLResponse)
     async def index() -> str:
-        html = (UI_DIR / "index.html").read_text(encoding="utf-8")
-        return html.replace('<script src="js/core.js">', SHIM + '<script src="js/core.js">', 1)
+        return page("index.html")
+
+    @app.get("/daily.html", response_class=HTMLResponse)
+    async def daily() -> str:
+        return page("daily.html")
+
+    @app.get("/events.html", response_class=HTMLResponse)
+    async def events_page() -> str:
+        return page("events.html")
 
     @app.post("/bridge/{method}")
     async def call(method: str, request: Request) -> JSONResponse:

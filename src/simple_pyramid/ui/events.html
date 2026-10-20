@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>События</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/child.css">
+</head>
+<body>
+
+<div class="tools">
+  <div class="row">
+    <label class="check"><input type="checkbox" id="ev-important" checked> Только важные</label>
+    <span class="spacer"></span>
+    <button id="ev-refresh" class="icon square" data-tip="Обновить данные — вычитать журнал с прибора"
+            data-tip-pos="left" aria-label="Обновить данные">
+      <svg class="ic-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+      <svg class="ic-cancel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <path d="M8 8l8 8M16 8l-8 8"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="body scroll" id="ev-body">
+  <table class="table" id="ev-table">
+    <thead><tr><th style="width:140px">Дата и время</th><th style="width:40%">Событие</th><th>Описание</th></tr></thead>
+    <tbody id="ev-rows"></tbody>
+  </table>
+  <div id="ev-more" class="loading-more hidden"><span class="spin" style="display:inline-block"></span></div>
+</div>
+
+<div class="strip">
+  <span id="ev-count"></span>
+  <span class="spacer"></span>
+  <span id="strip-msg"></span>
+</div>
+
+<script src="js/core.js"></script>
+<script src="js/child.js"></script>
+<script src="js/events.js"></script>
+</body>
+</html>

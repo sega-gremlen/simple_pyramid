@@ -129,9 +129,9 @@ function setValue(el, value, isHtml = false){
 // ---- статус-строка ------------------------------------------------
 // Сообщение появляется, держится STATUS_VISIBLE_MS и плавно гаснет за STATUS_FADE_MS.
 // Предупреждения и ошибки держатся дольше. Клик по строке — история сообщений.
-const STATUS_VISIBLE_MS = 4000;
-const STATUS_IMPORTANT_VISIBLE_MS = 9000;
-const STATUS_FADE_MS = 1200;
+const STATUS_VISIBLE_MS = 2000;
+const STATUS_IMPORTANT_VISIBLE_MS = 7000;
+const STATUS_FADE_MS = 600;
 // Обычное сообщение не перебивает свежее предупреждение раньше, чем через столько мс
 const STATUS_WARN_HOLD_MS = 2500;
 const STATUS_HISTORY_SIZE = 50;

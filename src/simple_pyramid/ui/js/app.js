@@ -112,6 +112,7 @@ function renderSectionError(section, error){
   (SECTION_FIELDS[section] || []).forEach(id => setValue($(id), errHtml(error), true));
   if (section === "readings") renderReadings(null);
   if (section === "load") ["#m-relay-at", "#m-limit-at"].forEach(id => setTs($(id), null));
+  if (section === "events"){ $("#btn-events").disabled = true; $("#btn-events").dataset.tip = `Журнал не загрузился: ${error}`; }
 }
 
 // Пустое состояние (до первого поиска / прибор не найден) или начало загрузки
@@ -126,6 +127,7 @@ function resetMeter(loading){
     setSkeleton(el, loading);
   });
   renderReadings(null, loading);
+  resetEvents();
   routes = [];
   renderRoutes(loading);
 }
@@ -191,6 +193,7 @@ window.onMeterPart = p => {
     case "info": renderInfo(p.data); break;
     case "readings": renderReadingsPart(p.data); break;
     case "load": renderLoad(p.data); break;
+    case "events": renderEventsSummary(p.data); break;
   }
   // кнопка «Найти» снова доступна, как только пришла хотя бы основа
   if (p.section === "identity") $("#btn-find").disabled = false;
@@ -201,6 +204,7 @@ window.onSectionBusy = d => {
   if (d.busy) busySections.add(d.section); else busySections.delete(d.section);
   const card = {readings: "#card-readings", load: "#card-load"}[d.section];
   if (card) $(card).classList.toggle("busy", d.busy);
+  if (d.section === "events") setEventsBusy(d.busy);
   document.querySelectorAll(`[data-refresh="${d.section}"]`).forEach(btn => {
     btn.classList.toggle("busy", d.busy);
     btn.dataset.tip = d.busy ? "Отменить обновление" : "Обновить";
@@ -357,6 +361,7 @@ document.addEventListener("keydown", e => {
     modals.forEach(id => show(id, false));
     $("#status-history").classList.add("hidden");
     if (!modals.length && $("#ov-daily").classList.contains("show")) closeDaily();
+    if (!modals.length && $("#ov-events").classList.contains("show")) closeEvents();
   }
 });
 

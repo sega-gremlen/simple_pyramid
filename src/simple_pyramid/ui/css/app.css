@@ -90,3 +90,14 @@ footer{display:flex; justify-content:space-between; align-items:center; gap:16px
 .ts{color:var(--faint); font-weight:400; font-size:12px; font-variant-numeric:tabular-nums}
 #card-load .skeleton{min-width:5em}
 #card-load .ts.skeleton{min-width:7em}
+
+/* Тип счётчика + алярм-иконка */
+.v-wrap{display:flex; align-items:center; gap:8px; min-width:0; justify-content:flex-end}
+
+/* Журнал событий */
+#ev-table .sec{color:var(--faint)}
+#ev-table tr.ev-important td{background:color-mix(in srgb, var(--accent-bg) 45%, transparent)}
+#ev-table tr.ev-alarm td{background:color-mix(in srgb, var(--err-bg) 70%, transparent)}
+#ev-table .dot{display:inline-block; margin-right:7px; vertical-align:middle}
+#ev-table td.text{user-select:text}
+#btn-events .badge{margin-left:2px}

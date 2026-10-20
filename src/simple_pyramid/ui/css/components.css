@@ -28,6 +28,28 @@ button.accent:hover:not(:disabled){filter:brightness(1.08); background:var(--acc
 button.icon{padding:0; width:28px; height:28px; justify-content:center; border-color:transparent}
 button.icon:hover:not(:disabled){border-color:var(--border-strong)}
 button.icon svg{width:15px; height:15px}
+button.icon.square{width:32px; height:32px; border-color:var(--border-strong)}
+button.icon.square svg{width:16px; height:16px}
+
+/* ---------- всплывающая подсказка ----------
+   <button data-tip="Текст">…</button>; по умолчанию снизу,
+   data-tip-pos="top" — сверху, "left" — слева, "bottom-end" — снизу, прижата вправо. */
+[data-tip]{position:relative}
+[data-tip]::after{
+  content:attr(data-tip); position:absolute; z-index:20; pointer-events:none;
+  left:50%; top:calc(100% + 6px); transform:translate(-50%, -2px);
+  background:var(--text); color:var(--page); font-size:12px; font-weight:400;
+  line-height:1.35; padding:5px 8px; border-radius:6px; white-space:pre; text-align:left;
+  opacity:0; transition:opacity .12s ease, transform .12s ease; transition-delay:0s;
+  box-shadow:0 4px 14px rgba(0,0,0,.18);
+}
+[data-tip]:hover::after{opacity:1; transform:translate(-50%, 0); transition-delay:.35s}
+[data-tip][data-tip-pos="top"]::after{top:auto; bottom:calc(100% + 6px)}
+[data-tip][data-tip-pos="left"]::after{left:auto; right:calc(100% + 6px); top:50%; transform:translate(2px, -50%)}
+[data-tip][data-tip-pos="left"]:hover::after{transform:translate(0, -50%)}
+[data-tip][data-tip-pos="bottom-end"]::after{left:auto; right:0; transform:translate(0, -2px)}
+[data-tip][data-tip-pos="bottom-end"]:hover::after{transform:translate(0, 0)}
+[data-tip=""]::after{display:none}
 
 /* ---------- поля ввода ---------- */
 input{

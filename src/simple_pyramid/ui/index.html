@@ -9,21 +9,6 @@
 </head>
 <body>
 
-<header>
-  <div id="logo">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
-         stroke-linejoin="round" style="color:var(--muted)">
-      <path d="M12 3 L21 20 H3 Z"/><path d="M7.5 13.5 h9"/>
-    </svg>
-  </div>
-  <div>
-    <div class="h-title">Простая Пирамида</div>
-    <div class="h-sub" id="user">не авторизован</div>
-  </div>
-  <div class="spacer"></div>
-  <button id="btn-user">Сменить пользователя</button>
-</header>
-
 <div id="bar">
   <input id="meter" class="mono" maxlength="20" placeholder="номер ПУ"
          style="width:300px" autocomplete="off">
@@ -31,6 +16,13 @@
   <div class="spacer"></div>
   <button id="btn-daily" disabled>Подневка</button>
   <button id="btn-hourly" disabled>Почасовка</button>
+  <button id="btn-user" class="icon square" data-tip="Сменить пользователя" data-tip-pos="bottom-end"
+          aria-label="Сменить пользователя">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>
+    </svg>
+  </button>
 </div>
 
 <div id="cards">

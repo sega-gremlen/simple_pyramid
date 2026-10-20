@@ -1,13 +1,4 @@
 /* Раскладка главного окна. Базовые элементы — в components.css. */
-header{display:flex; align-items:center; gap:10px; padding:12px 16px;
-  border-bottom:.5px solid var(--border)}
-#logo{width:28px; height:28px; flex:none; border-radius:6px;
-  display:flex; align-items:center; justify-content:center; background:var(--sunken)}
-#logo svg{width:18px; height:18px}
-.h-title{font-weight:500}
-.h-sub{font-size:12px; color:var(--muted)}
-header .spacer{flex:1}
-
 #bar{display:flex; align-items:center; gap:8px; padding:14px 16px 8px}
 #bar .spacer{flex:1}
 

@@ -104,13 +104,13 @@ window.onError = d => setStatus(`${d.title}: ${d.message}`.replace(/\n/g, " "), 
 window.onTaskLog = d => setStatus(d.text, 'info');
 
 window.onAuth = d => {
+  // Логин показывается в заголовке окна Windows (его ставит Python)
   if (d.ok){
     show("#ov-login", false);
-    $("#user").textContent = `${d.login} · сессия активна`;
   } else {
     show("#ov-login", true);
     $("#li-err").textContent = d.error || "";
-    $("#user").textContent = "не авторизован";
+    $("#li-login").focus();
   }
 };
 
@@ -268,6 +268,6 @@ window.addEventListener("pywebviewready", async () => {
   const info = await api().bootstrap();
   $("#version").textContent = "v" + info.version;
   if (info.state === "need_login"){ show("#ov-login", true); $("#li-login").focus(); }
-  else { $("#user").textContent = info.login + " · вход…"; setStatus("Вход…", 'info'); }
+  else setStatus(`Вход: ${info.login}…`, 'info');
   $("#meter").focus();
 });

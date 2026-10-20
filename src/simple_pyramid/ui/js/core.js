@@ -25,9 +25,11 @@ function fmtDateTime(iso){
   return m[4] ? `${m[3]}.${m[2]}.${m[1]} ${m[4]}:${m[5]}` : `${m[3]}.${m[2]}.${m[1]}`;
 }
 
-// 14167.57 → "14 167,57"
-function fmtNumber(v){
-  return Number(v).toLocaleString("ru-RU", {maximumFractionDigits: 3});
+// 14167.57 → "14 167,57". Разряды отделяются узким пробелом: обычный пробел
+// визуально «отрывает» 1 от 000 и ломает центровку колонок.
+const NARROW_SPACE = " ";
+function fmtNumber(v, maxFraction = 3){
+  return Number(v).toLocaleString("ru-RU", {maximumFractionDigits: maxFraction}).replace(/\s/g, NARROW_SPACE);
 }
 
 // ---- даты периода (те же правила, что в domain/period.py) ----------
@@ -159,7 +161,7 @@ function showStatus(text, type, sticky){
   $("#status-icon").textContent = icons[type] || '';
   $("#status-icon").className = `icon-${type}`;
   $("#status-text").textContent = text;
-  status.title = "История сообщений";
+  status.dataset.tip = "История сообщений";
   statusKind = type;
   statusShownAt = Date.now();
 
@@ -196,6 +198,50 @@ function showError({title, message, details}){
   show("#ov-error", true);
   $("#er-close").focus();
 }
+
+// ---- всплывающие подсказки -----------------------------------------
+// Одна подсказка на всё приложение: любой элемент с data-tip. Рисуется поверх всего
+// (не обрезается рамками карточек), одинаково для кнопок, значений и иконок.
+const TIP_DELAY_MS = 350;
+const TIP_GAP = 7;
+let tipEl = null, tipTimer = null, tipTarget = null;
+
+function placeTip(target){
+  const pos = target.dataset.tipPos || "bottom";
+  const r = target.getBoundingClientRect(), t = tipEl.getBoundingClientRect();
+  const vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+  let x = r.left + r.width / 2 - t.width / 2, y = r.bottom + TIP_GAP;
+  if (pos === "top" || (pos === "bottom" && y + t.height > vh - 4)) y = r.top - t.height - TIP_GAP;
+  if (pos === "left"){ x = r.left - t.width - TIP_GAP; y = r.top + r.height / 2 - t.height / 2; }
+  if (pos === "right"){ x = r.right + TIP_GAP; y = r.top + r.height / 2 - t.height / 2; }
+  if (y < 4) y = r.bottom + TIP_GAP;
+  x = Math.max(6, Math.min(x, vw - t.width - 6));
+  tipEl.style.left = `${Math.round(x)}px`;
+  tipEl.style.top = `${Math.round(y)}px`;
+}
+
+function hideTip(){
+  clearTimeout(tipTimer);
+  tipTarget = null;
+  if (tipEl) tipEl.classList.remove("show");
+}
+
+document.addEventListener("mouseover", e => {
+  const target = e.target.closest("[data-tip]");
+  if (target === tipTarget) return;
+  hideTip();
+  if (!target || !target.dataset.tip) return;
+  tipTarget = target;
+  tipTimer = setTimeout(() => {
+    if (!tipEl){ tipEl = document.createElement("div"); tipEl.id = "tip"; document.body.appendChild(tipEl); }
+    tipEl.textContent = target.dataset.tip;
+    placeTip(target);
+    tipEl.classList.add("show");
+  }, TIP_DELAY_MS);
+});
+document.addEventListener("mousedown", hideTip);
+document.addEventListener("scroll", hideTip, true);
+window.addEventListener("blur", hideTip);
 
 // ---- копирование по клику ------------------------------------------
 document.addEventListener('click', e => {

@@ -1,8 +1,10 @@
 // Главное окно: обработка событий из Python и действия пользователя.
+// «Подневка» и «События» — отдельные окна (daily.html, events.html), здесь только кнопки их открытия.
 "use strict";
 
 const TARIFFS = ["t0", "t1", "t2"];
 const TARIFF_LABELS = {t0: "TO", t1: "T1", t2: "T2"};
+const COPY_TIP = "Нажмите, чтобы скопировать";
 let routes = [], lastPath = null, meterLoaded = false;
 
 // ---- отрисовка блоков ----------------------------------------------
@@ -10,12 +12,12 @@ function renderReadings(data, loading = false){
   const body = $("#readings tbody");
   body.innerHTML = TARIFFS.map(t => {
     const cell = dir => {
-      if (loading) return `<span class="cell skeleton"></span>`;
+      if (loading) return `<span class="skeleton" style="min-width:5em"></span>`;
       const v = data ? data[dir][t] : null;
       // shimmer-target — мерцает при обновлении блока (старое значение под мерцанием)
       if (v === null || v === undefined) return `<span class="shimmer-target">${naHtml("—")}</span>`;
       // В буфер — как на экране, с запятой, но без пробелов-разделителей (14167,57)
-      return `<span class="copyable shimmer-target" data-copy="${toCopyNumber(v)}" title="Копировать">${fmtNumber(v)}</span>`;
+      return `<span class="copyable shimmer-target" data-copy="${toCopyNumber(v)}" data-tip="${COPY_TIP}">${fmtNumber(v)}</span>`;
     };
     return `<tr><td class="t">${TARIFF_LABELS[t]}</td><td>${cell("aPlus")}</td><td>${cell("aMinus")}</td></tr>`;
   }).join("");
@@ -38,14 +40,14 @@ function renderRoutes(loading = false){
     if (r.ip){
       const shown = r.ipText || r.ip;
       const idx = r.text.indexOf(shown);
-      const chip = txt => `<span class="copyable" data-copy="${escHtml(r.ip)}" title="Копировать IP">${escHtml(txt)}</span>`;
+      const chip = txt => `<span class="copyable" data-copy="${escHtml(r.ip)}" data-tip="${COPY_TIP}">${escHtml(txt)}</span>`;
       addrHtml = idx !== -1
         ? `${escHtml(r.text.substring(0, idx))}${chip(shown)}${escHtml(r.text.substring(idx + shown.length))}`
         : `${escHtml(r.text)} ${chip(`[${r.ip}]`)}`;
     }
     return `<div class="route" data-id="${r.id}">
       <span class="dot"></span>
-      <span class="addr" title="${escHtml(r.text)}">${addrHtml}</span>
+      <span class="addr">${addrHtml}</span>
       <span class="state"></span>
       <button class="icon" data-retry="${r.id}" data-tip="Повторить пинг" data-tip-pos="left">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
@@ -67,10 +69,10 @@ function renderIdentity(m){
 function renderInfo(info){
   const addr = $("#m-address"), acc = $("#m-account");
   setValue(addr, info?.address);
-  addr.title = info?.fullPath || "";
+  addr.dataset.tip = info?.fullPath || "";
   if (info?.account && info.accountNumber){
     const idx = info.account.indexOf("№");
-    setValue(acc, `${escHtml(info.account.substring(0, idx + 1))}<span class="copyable" data-copy="${escHtml(info.accountNumber)}" title="Копировать номер">${escHtml(info.accountNumber)}</span>`, true);
+    setValue(acc, `${escHtml(info.account.substring(0, idx + 1))}<span class="copyable" data-copy="${escHtml(info.accountNumber)}" data-tip="${COPY_TIP}">${escHtml(info.accountNumber)}</span>`, true);
   } else {
     setValue(acc, info?.account);
   }
@@ -79,7 +81,26 @@ function renderInfo(info){
 function renderReadingsPart(r){
   setSkeleton($("#m-time"), false);
   $("#m-time").textContent = r?.takenAt ? fmtDateTime(r.takenAt) : "";
-  renderReadings(r);
+}
+
+// Блок «Нагрузка»: реле с цветной точкой, лимит в кВт; время получения — в рамке справа,
+// чтобы не спорить со значениями
+function renderLoad(load){
+  const relay = $("#m-relay");
+  if (load?.relay){
+    const dot = load.relayOn === true ? "ok" : load.relayOn === false ? "err" : "";
+    setValue(relay, `<span class="dot ${dot}"></span>${escHtml(load.relay)}`, true);
+  } else setValue(relay, null);
+  setValue($("#m-limit"), load?.limitKw != null ? `${fmtNumber(load.limitKw)} кВт` : null);
+
+  const at = $("#m-load-at");
+  setSkeleton(at, false);
+  const latest = [load?.relayAt, load?.limitAt].filter(Boolean).sort().pop();
+  at.textContent = latest ? fmtDateTime(latest) : "";
+  at.dataset.tip = [
+    load?.relayAt ? `Реле получено ${fmtDateTime(load.relayAt)}` : "",
+    load?.limitAt ? `Лимит получен ${fmtDateTime(load.limitAt)}` : "",
+  ].filter(Boolean).join("\n");
 }
 
 // Блок не загрузился — в его полях пишем «не загрузилось», причина в подсказке
@@ -88,46 +109,47 @@ const SECTION_FIELDS = {
   readings: ["#m-time"],
   load: ["#m-relay", "#m-limit"],
 };
-const LOAD_FIELDS = ["#m-relay", "#m-relay-at", "#m-limit", "#m-limit-at"];
-
-// Блок «Нагрузка»: значения как пришли из Пирамиды, рядом серым — когда получены
-function renderLoad(load){
-  const relay = $("#m-relay");
-  if (load?.relay){
-    const dot = load.relayOn === true ? "ok" : load.relayOn === false ? "err" : "";
-    setValue(relay, `<span class="dot ${dot}"></span>${escHtml(load.relay)}`, true);
-  } else setValue(relay, null);
-  setValue($("#m-limit"), load?.limit ?? null);
-  setTs($("#m-relay-at"), load?.relayAt);
-  setTs($("#m-limit-at"), load?.limitAt);
-}
-
-// Серое время рядом со значением
-function setTs(el, iso){
-  setSkeleton(el, false);
-  el.textContent = iso ? fmtDateTime(iso) : "";
-  el.dataset.tip = iso ? "Когда получено значение" : "";
-}
 function renderSectionError(section, error){
   (SECTION_FIELDS[section] || []).forEach(id => setValue($(id), errHtml(error), true));
   if (section === "readings") renderReadings(null);
-  if (section === "load") ["#m-relay-at", "#m-limit-at"].forEach(id => setTs($(id), null));
+  if (section === "load"){ setSkeleton($("#m-load-at"), false); $("#m-load-at").textContent = ""; }
   if (section === "events"){ $("#btn-events").disabled = true; $("#btn-events").dataset.tip = `Журнал не загрузился: ${error}`; }
 }
 
+// Сводка журнала: счётчик важных на кнопке и алярм-иконка у типа счётчика
+function renderEventsSummary(summary){
+  const btn = $("#btn-events");
+  btn.disabled = false;
+  btn.dataset.tip = "События прибора";
+  const badge = $("#ev-badge");
+  badge.textContent = summary?.importantTotal || "";
+  badge.classList.toggle("hidden", !summary?.importantTotal);
+  badge.classList.toggle("err", !!summary?.alarms?.length);
+
+  const alarm = $("#m-alarm");
+  const alarms = summary?.alarms || [];
+  alarm.classList.toggle("hidden", !alarms.length);
+  alarm.dataset.tip = alarms.length
+    ? "В истории прибора есть тревожные события:\n"
+      + alarms.map(a => `• ${a.eventType} — ${a.count} раз, последнее ${fmtDateTime(a.lastAt)}`).join("\n")
+      + "\n\nНажмите, чтобы открыть журнал"
+    : "";
+}
+
 // Пустое состояние (до первого поиска / прибор не найден) или начало загрузки
+const VALUE_FIELDS = ["#m-model", "#m-address", "#m-account", "#m-time", "#m-relay", "#m-limit", "#m-load-at"];
 function resetMeter(loading){
   meterLoaded = false;
   document.body.classList.toggle("state-empty", !loading);
-  $("#btn-daily").disabled = true;
-  $("#btn-hourly").disabled = true;
-  ["#m-model", "#m-address", "#m-account", "#m-time", ...LOAD_FIELDS].forEach(id => {
+  ["#btn-daily", "#btn-hourly", "#btn-events"].forEach(id => { $(id).disabled = true; });
+  $("#ev-badge").classList.add("hidden");
+  $("#m-alarm").classList.add("hidden");
+  VALUE_FIELDS.forEach(id => {
     const el = $(id);
     el.textContent = "";
     setSkeleton(el, loading);
   });
   renderReadings(null, loading);
-  resetEvents();
   routes = [];
   renderRoutes(loading);
 }
@@ -191,7 +213,7 @@ window.onMeterPart = p => {
   switch (p.section){
     case "identity": renderIdentity(p.data); break;
     case "info": renderInfo(p.data); break;
-    case "readings": renderReadingsPart(p.data); break;
+    case "readings": renderReadingsPart(p.data); renderReadings(p.data); break;
     case "load": renderLoad(p.data); break;
     case "events": renderEventsSummary(p.data); break;
   }
@@ -204,7 +226,6 @@ window.onSectionBusy = d => {
   if (d.busy) busySections.add(d.section); else busySections.delete(d.section);
   const card = {readings: "#card-readings", load: "#card-load"}[d.section];
   if (card) $(card).classList.toggle("busy", d.busy);
-  if (d.section === "events") setEventsBusy(d.busy);
   document.querySelectorAll(`[data-refresh="${d.section}"]`).forEach(btn => {
     btn.classList.toggle("busy", d.busy);
     btn.dataset.tip = d.busy ? "Отменить обновление" : "Обновить";
@@ -229,7 +250,9 @@ window.onPing = d => {
   st.textContent = d.text;
 };
 
+// Прогресс выгрузки — только для выгрузок из этого окна (подневка выгружается из своего)
 window.onExport = d => {
+  if ((d.source || "main") !== "main") return;
   if (d.stage === "running"){
     $("#pr-title").textContent = "Формируется отчёт";
     $("#pr-text").textContent = "Подождите…";
@@ -282,6 +305,11 @@ $("#routes").addEventListener("click", e => {
   if (btn) api().ping(btn.dataset.retry);
 });
 
+// отдельные окна
+$("#btn-daily").onclick = () => api().open_daily();
+$("#btn-events").onclick = () => api().open_events(true);
+$("#m-alarm").onclick = () => api().open_events(true);
+
 $("#btn-user").onclick = () => api().logout();
 $("#li-ok").onclick = () => {
   const l = $("#li-login").value.trim(), p = $("#li-pass").value.trim();
@@ -291,9 +319,8 @@ $("#li-ok").onclick = () => {
 };
 $("#ov-login").addEventListener("keydown", e => { if (e.key === "Enter") $("#li-ok").click(); });
 
-let exportKind = "daily";
-function openExport(kind, title){
-  exportKind = kind;
+// Выгрузка почасовки
+function openExport(title){
   $("#ex-title").textContent = title;
   $("#ex-err").textContent = "";
   if (!$("#ex-from").value) $("#ex-from").value = today();
@@ -301,8 +328,7 @@ function openExport(kind, title){
   show("#ov-export", true);
   checkExportPeriod();
 }
-$("#btn-daily").onclick = () => openDaily();
-$("#btn-hourly").onclick = () => openExport("hourly", "Выгрузка почасовки");
+$("#btn-hourly").onclick = () => openExport("Выгрузка почасовки");
 // Проверка периода на лету: подсветка поля и текст ошибки, кнопка недоступна
 function checkExportPeriod(){
   const err = validatePeriod($("#ex-from").value, $("#ex-to").value);
@@ -323,7 +349,7 @@ $("#ex-browse").onclick = async () => {
 };
 $("#ex-ok").onclick = async () => {
   if (!checkExportPeriod()) return;
-  const res = await api().export(exportKind, $("#ex-from").value.trim(),
+  const res = await api().export("hourly", $("#ex-from").value.trim(),
                                  $("#ex-to").value.trim(), $("#ex-dir").value.trim());
   if (res.ok) show("#ov-export", false);
   else $("#ex-err").textContent = res.error;
@@ -362,12 +388,8 @@ $("#er-copy").onclick = () => {
 
 document.addEventListener("keydown", e => {
   if (e.key === "Escape"){
-    // сначала закрываем верхнее окно, «лист» — только если поверх ничего нет
-    const modals = ["#ov-export", "#ov-update", "#ov-error"].filter(id => $(id).classList.contains("show"));
-    modals.forEach(id => show(id, false));
+    ["#ov-export", "#ov-update", "#ov-error"].forEach(id => show(id, false));
     $("#status-history").classList.add("hidden");
-    if (!modals.length && $("#ov-daily").classList.contains("show")) closeDaily();
-    if (!modals.length && $("#ov-events").classList.contains("show")) closeEvents();
   }
 });
 

@@ -10,19 +10,26 @@
 <body class="state-empty">
 
 <div id="bar">
-  <input id="meter" class="mono" maxlength="20" placeholder="номер ПУ"
-         style="width:300px" autocomplete="off">
+  <input id="meter" maxlength="20" placeholder="номер ПУ" autocomplete="off">
   <button id="btn-find" class="accent">Найти</button>
   <div class="spacer"></div>
-  <button id="btn-events" disabled>События <span class="badge hidden" id="ev-badge"></span></button>
-  <button id="btn-daily" disabled>Подневка</button>
-  <button id="btn-hourly" disabled>Почасовка</button>
-  <button id="btn-user" class="icon square" data-tip="Сменить пользователя" data-tip-pos="bottom-end"
-          aria-label="Сменить пользователя">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-         stroke-linecap="round" stroke-linejoin="round">
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/>
-    </svg>
+  <button id="btn-events" class="icon square" disabled data-tip="События прибора" aria-label="События">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5h.01"/></svg>
+    <span class="badge hidden" id="ev-badge"></span>
+  </button>
+  <button id="btn-daily" class="icon square" disabled data-tip="Подневка — показания на начало суток" aria-label="Подневка">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17"/><path d="M8 3v4M16 3v4"/>
+      <path d="M8 14h2M14 14h2M8 17.2h2"/></svg>
+  </button>
+  <button id="btn-hourly" class="icon square" disabled data-tip="Почасовка — выгрузка в xlsx" aria-label="Почасовка">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg>
+  </button>
+  <button id="btn-user" class="icon square" data-tip="Сменить пользователя" aria-label="Сменить пользователя">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
   </button>
 </div>
 
@@ -45,15 +52,13 @@
 <div id="cards">
   <div class="card" id="card-point">
     <div class="card-label">Точка учёта</div>
-    <div class="kv-grid">
-      <div class="kv"><span class="k">Тип счётчика</span>
-        <span class="v-wrap"><span class="alarm hidden" id="m-alarm" data-tip="" data-tip-pos="bottom" role="button" aria-label="Тревожные события">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg>
-        </span><span class="v" id="m-model">—</span></span></div>
-      <div class="kv"><span class="k">Договор</span><span class="v mono" id="m-account">—</span></div>
-      <div class="kv wide"><span class="k">Место установки</span><span class="v plain" id="m-address" title="">—</span></div>
-    </div>
+    <div class="kv"><span class="k">Тип счётчика</span>
+      <span class="v-wrap"><span class="alarm hidden" id="m-alarm" data-tip="" role="button" aria-label="Тревожные события">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></svg>
+      </span><span class="v" id="m-model"></span></span></div>
+    <div class="kv"><span class="k">Договор</span><span class="v" id="m-account"></span></div>
+    <div class="kv"><span class="k">Место установки</span><span class="v" id="m-address"></span></div>
   </div>
 
   <div class="card has-corner" id="card-readings">
@@ -63,10 +68,8 @@
       <svg class="ic-cancel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
         <path d="M8 8l8 8M16 8l-8 8"/></svg>
     </button>
-    <div id="readings-head">
-      <span class="card-label" style="margin:0">Показания, кВт·ч</span>
-      <span class="card-label shimmer-target" style="margin:0" id="m-time"></span>
-    </div>
+    <div class="card-label">Показания, кВт·ч</div>
+    <div class="card-meta"><span class="shimmer-target" id="m-time" data-tip="Когда сняты показания"></span></div>
     <table id="readings">
       <thead><tr><th class="corner"></th><th>A+</th><th>A−</th></tr></thead>
       <tbody></tbody>
@@ -81,10 +84,9 @@
         <path d="M8 8l8 8M16 8l-8 8"/></svg>
     </button>
     <div class="card-label">Нагрузка</div>
-    <div class="kv"><span class="k">Реле</span>
-      <span class="v load-v"><span class="shimmer-target" id="m-relay"></span><span class="ts shimmer-target" id="m-relay-at"></span></span></div>
-    <div class="kv"><span class="k">Лимит мощности</span>
-      <span class="v load-v"><span class="shimmer-target mono" id="m-limit"></span><span class="ts shimmer-target" id="m-limit-at"></span></span></div>
+    <div class="card-meta"><span class="shimmer-target" id="m-load-at"></span></div>
+    <div class="kv"><span class="k">Реле</span><span class="v shimmer-target" id="m-relay"></span></div>
+    <div class="kv"><span class="k">Лимит мощности</span><span class="v shimmer-target" id="m-limit"></span></div>
   </div>
 </div>
 
@@ -103,71 +105,6 @@
     <div id="status-history-list" class="scroll"></div>
   </div>
 </footer>
-
-<div class="sheet-overlay" id="ov-daily">
-  <div class="sheet">
-    <div class="sheet-head">
-      <h2>Подневка</h2><span class="sub" id="dv-meter"></span>
-      <div class="spacer"></div>
-      <button class="icon" id="dv-close" data-tip="Закрыть (Esc)" data-tip-pos="bottom-end" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <div class="sheet-tools">
-      <input id="dv-from" class="mono" style="width:112px; text-align:center">
-      <span style="color:var(--muted)">—</span>
-      <input id="dv-to" class="mono" style="width:112px; text-align:center">
-      <button class="accent" id="dv-show">Показать</button>
-      <span style="width:6px"></span>
-      <button class="chip" data-range="month">Этот месяц</button>
-      <button class="chip" data-range="prev">Прошлый месяц</button>
-      <button class="chip" data-range="3m">3 месяца</button>
-      <button class="chip" data-range="year">Год</button>
-      <div class="modal-err" id="dv-err" style="flex-basis:100%; margin:0; min-height:0"></div>
-    </div>
-    <div class="sheet-body scroll" id="dv-body">
-      <table class="table">
-        <thead><tr><th class="left">Дата</th><th>Общее, кВт·ч</th><th>T1 (день)</th><th>T2 (ночь)</th><th>Расход за сутки</th></tr></thead>
-        <tbody id="dv-rows"></tbody>
-      </table>
-      <div id="dv-sentinel" style="height:1px"></div>
-    </div>
-    <div class="sheet-foot">
-      <span id="dv-summary" style="color:var(--muted)"></span>
-      <div class="spacer"></div>
-      <button id="dv-download" disabled>Скачать xlsx</button>
-    </div>
-  </div>
-</div>
-
-<div class="sheet-overlay" id="ov-events">
-  <div class="sheet">
-    <div class="sheet-head">
-      <h2>События</h2><span class="sub" id="ev-meter"></span>
-      <div class="spacer"></div>
-      <button class="icon" id="ev-close" data-tip="Закрыть (Esc)" data-tip-pos="bottom-end" aria-label="Закрыть">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-          <path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <div class="sheet-tools">
-      <label class="check"><input type="checkbox" id="ev-important" checked> Только важные</label>
-      <span id="ev-count" style="color:var(--muted); font-size:12px"></span>
-      <div class="spacer" style="flex:1"></div>
-      <span id="ev-latest" class="ts"></span>
-      <button id="ev-refresh" data-tip="Вычитать журнал с прибора (с последнего события до сейчас)" data-tip-pos="bottom-end">
-        Получить актуальные данные</button>
-    </div>
-    <div class="sheet-body scroll" id="ev-body">
-      <table class="table" id="ev-table">
-        <thead><tr><th class="left" style="width:150px">Дата и время</th><th class="left" style="width:38%">Событие</th><th class="left">Описание</th></tr></thead>
-        <tbody id="ev-rows"></tbody>
-      </table>
-      <div id="ev-sentinel" style="height:1px"></div>
-    </div>
-  </div>
-</div>
 
 <div class="overlay" id="ov-error">
   <div class="modal modal-error" role="alertdialog" aria-labelledby="er-title">
@@ -204,11 +141,11 @@
   <div class="modal">
     <h2 id="ex-title">Выгрузка</h2>
     <div class="field"><label>Период</label>
-      <div class="row2"><input id="ex-from" class="mono"><span
-        style="color:var(--muted)">—</span><input id="ex-to" class="mono"></div>
+      <div class="row2"><input id="ex-from"><span
+        style="color:var(--muted)">—</span><input id="ex-to"></div>
     </div>
     <div class="field"><label>Папка</label>
-      <div class="row2"><input id="ex-dir"><button id="ex-browse">Обзор</button></div>
+      <div class="row2"><input id="ex-dir" style="text-align:left"><button id="ex-browse">Обзор</button></div>
     </div>
     <div class="modal-err" id="ex-err"></div>
     <div class="modal-actions">
@@ -246,7 +183,5 @@
 
 <script src="js/core.js"></script>
 <script src="js/app.js"></script>
-<script src="js/daily.js"></script>
-<script src="js/events.js"></script>
 </body>
 </html>

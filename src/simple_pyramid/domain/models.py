@@ -77,7 +77,8 @@ class LoadInfo(DtoModel):
     relay: str | None = None
     relay_on: bool | None = None
     relay_at: JsDateTime | None = None
-    limit: float | None = None
+    limit: float | None = None  # как пришло из Пирамиды, Вт
+    limit_kw: float | None = None  # то же в кВт — для показа
     limit_at: JsDateTime | None = None
 
 

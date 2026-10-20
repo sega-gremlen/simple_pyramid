@@ -57,9 +57,10 @@ src/simple_pyramid/
     runner.py         asyncio-loop в фоновом потоке
     emitter.py        emit(event, payload) → window.on<Event>(payload) в JS
     pinger.py, updater.py, credentials.py
-  ui/                 index.html, css/{tokens,components,app}.css,
-                      js/core.js (помощники, статус-строка, даты, ошибки), app.js (главное окно),
-                      daily.js (просмотр подневки), events.js (журнал + алярм-иконка)
+  ui/                 index.html (главное окно), daily.html, events.html (отдельные окна);
+                      css/{tokens,components,app,child}.css;
+                      js/core.js (помощники, подсказки, статус-строка, даты, ошибки), app.js (главное),
+                      child.js (общее для доп. окон), daily.js, events.js
 dev/                  эмулятор и инструменты разработчика (в сборку не попадают)
 tests/unit, tests/integration, tests/data
 installer/            setup.iss, favicon.ico, установщик WebView2
@@ -74,15 +75,24 @@ JS → `pywebview.api.search(num)` → `Api._spawn(...)` ставит корут
 `MeterPart{section,data,error}`, `SectionBusy{section,busy}`, `TaskLog{section,text}`, `Ping`, `Export`,
 `Update`, `WhatsNew`, `UpdateStatus`, `UpdateProgress`.
 Методы моста: `bootstrap, login, logout, search, ping, refresh(section), cancel(section), events_page,
-validate_period, daily_view, export, browse_folder, open_folder, fit_height, start_update, close`.
+validate_period, daily_view, export, export_here, browse_folder, open_folder, open_daily, open_events,
+window_context, fit_height, start_update, close`.
+События рассылаются во **все** открытые окна (`WindowEmitter`), каждая страница обрабатывает своё.
+Выгрузка несёт `source` (`main`/`daily`) — прогресс показывает только окно-источник.
 
-### Интерфейс (главное окно)
-- Без шапки: логин в заголовке окна («Простая Пирамида • FilippovAS»), выход — иконка справа от «Почасовки».
-- Сверху «Точка учёта» на всю ширину (тип + алярм-иконка, договор, адрес), ниже «Показания» и «Нагрузка».
+### Интерфейс
+- Главное окно 607 px (минимальная ширина). Без шапки: логин в заголовке окна, справа на панели —
+  квадратные иконки: События (круг с «!», счётчик важных), Подневка (календарь), Почасовка (часы), Выход.
+- Названия разделов врезаны в верхнюю рамку карточки (`.card-label`), справа в рамке — время данных (`.card-meta`).
+- «Точка учёта» — три строки (тип + алярм-иконка, договор, адрес), между подписью и значением — точки.
+- Ниже «Показания» (все числа по центру) и «Нагрузка» (реле с точкой, лимит в кВт).
 - ↻ в углу «Показаний» и «Нагрузки» — опрос прибора; во время опроса — ✕ «отменить», блок мерцает.
-- «События» — лист с журналом (по 10 при прокрутке, «Только важные», «Получить актуальные данные»).
-- «Подневка» — лист с таблицей по дням и «Скачать xlsx»; «Почасовка» — окно выгрузки.
-- Высота окна = низ последнего маршрута + статус-строка (`fitWindowHeight`); листы временно увеличивают окно.
+- «События» и «Подневка» — **отдельные окна** программы (`desktop/window.py: CHILD_WINDOWS`), не меняют
+  главное. События — по 10 при прокрутке, «Только важные», квадратная ↻ «Обновить данные».
+  Подневка — пресеты (месяц, прошлый, 3/6/9 месяцев, год), «Скачать xlsx» рядом с «Показать».
+- Высота главного окна = низ последнего маршрута + статус-строка (`fitWindowHeight`).
+- Один шрифт (`--sans`) везде, числа табличные, разряды — узкий пробел (`fmtNumber`).
+- Подсказки — одна система на JS (`data-tip`, рисует core.js) для кнопок, значений и иконок; `title` не использовать.
 - Статус-строка: появляется и гаснет (`STATUS_*` в core.js), клик — история; ошибки — модальное окно.
 - Пустое состояние до первого поиска; нет значения — `naHtml()` («нет данных»), блок не загрузился — `errHtml()`.
 
@@ -99,7 +109,8 @@ validate_period, daily_view, export, browse_folder, open_folder, fit_height, sta
   `.na`, `.modal`, `.sheet` (большое окно-лист), `.table` (липкая шапка), `.chip`, `.check`, `.badge`,
   `.alarm`, `.card`, `.kv`/`.kv-grid`, `.changelog`. Цвета — только переменные из `tokens.css`.
   Нужен новый элемент — сначала добавить компонент туда, потом использовать.
-- Проверка UI без браузера: `uv run python -m dev.ui_check @steps.txt` (шаги `wait:/click:/type:/js:/snap:`).
+- Проверка UI без браузера: `uv run python -m dev.ui_check @steps.txt` (шаги `wait:/click:/type:/js:/snap:`,
+  `win:N` — перейти в окно N, `title` — напечатать document.title окна).
 - **Коммиты — Conventional Commits на русском**, один коммит на одно изменение:
   `feat: …` (новая функция → minor), `fix: …` (→ patch), `refactor/test/ci/docs/chore: …` (версию не
   меняют, в changelog не попадают), `feat(dev): …` — инструменты разработчика (в changelog не идут).

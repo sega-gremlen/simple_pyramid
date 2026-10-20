@@ -51,5 +51,6 @@ def build_load_info(points: list[LoadLimitPoint]) -> LoadInfo:
         relay_on=relay_is_on(relay),
         relay_at=relay_at,
         limit=limit,
+        limit_kw=round(limit / 1000, 3) if limit is not None else None,
         limit_at=limit_at,
     )

@@ -115,8 +115,15 @@ class MeterState:
 
 
 def _morning(days_ago: int = 0) -> datetime:
-    """Время ежедневного утреннего опроса."""
-    today = datetime.now().replace(hour=6, minute=45, second=31, microsecond=352000)
+    """Время ежедневного утреннего опроса.
+
+    Ночью, до 06:45, сегодняшнего опроса ещё не было — последний был вчера. Иначе дата опроса
+    оказывалась в будущем, и ручной опрос выглядел «старее» утреннего (тесты падали ночью).
+    """
+    now = datetime.now()
+    today = now.replace(hour=6, minute=45, second=31, microsecond=352000)
+    if today > now:
+        today -= timedelta(days=1)
     return today - timedelta(days=days_ago)
 
 

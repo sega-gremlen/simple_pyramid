@@ -2,7 +2,11 @@
 #bar{display:flex; align-items:center; gap:8px; padding:14px 16px 8px}
 #bar .spacer{flex:1}
 
-#cards{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; padding:6px 16px 14px}
+/* Сверху «Точка учёта» на всю ширину, под ней «Показания» (свой размер) и «Нагрузка» (остаток) */
+#cards{display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; padding:6px 16px 14px}
+#card-point{grid-column:1 / -1}
+.kv-grid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:28px}
+.kv-grid .kv.wide{grid-column:1 / -1}
 
 #readings-head{display:flex; justify-content:space-between; gap:16px; margin-bottom:8px}
 #readings{border-collapse:collapse; font-size:13px}

@@ -1,15 +1,26 @@
 /* Дизайн-токены: цвета, радиусы, шрифты, тайминги.
-   Цветовая схема меняется ТОЛЬКО здесь. */
+   Цветовая схема меняется ТОЛЬКО здесь.
+   Схема C «Синие панели»: тёмно-синяя панель поиска сверху и такая же статус-строка снизу,
+   между ними светлый контент; подсказки — того же тёмно-синего цвета. */
 :root{
-  --page:#FAFAF9; --card:#FFFFFF; --sunken:#F5F4F2;
-  --border:rgba(20,20,19,.10); --border-strong:rgba(20,20,19,.16);
-  --text:#141413; --muted:#6E6E69; --faint:#9A9A93;
-  --accent:#185FA5; --accent-bg:#E6F1FB; --on-accent:#FFFFFF;
-  --ok:#1D9E75; --warn:#BA7517; --err:#E24B4A;
-  --ok-bg:#E3F5EE; --warn-bg:#FBF0DE; --err-bg:#FDE8E8;
+  --page:#F3F6FA; --card:#FFFFFF; --sunken:#EAEFF6;
+  --border:rgba(15,58,115,.10); --border-strong:rgba(15,58,115,.20);
+  --text:#13202F; --muted:#566377; --faint:#8592A6;
+  --accent:#2F7BE5; --accent-bg:#E1EAF7; --accent-ink:#0F4C9C; --on-accent:#FFFFFF;
+  --ok:#16865C; --warn:#B06A00; --err:#D33A3A;
+  --ok-bg:#E1F3EA; --warn-bg:#FDF0DB; --err-bg:#FCE6E6;
+  /* строки журнала событий */
+  --row-alarm:#FDF0F0; --row-important:#EEF3FA;
+
+  /* синие панели: поиск сверху, статус-строка снизу, всплывающие подсказки */
+  --bar:#0F3A73; --bar-text:#FFFFFF; --bar-btn-border:rgba(255,255,255,.28);
+  --bar-hover:rgba(255,255,255,.12); --bar-input-border:transparent;
+  --status-bg:#0F3A73; --status-text:#FFFFFF; --status-faint:#9DB4D6; --status-hover:rgba(255,255,255,.10);
+  --status-glyph:#FFFFFF;
+  --tip-bg:#0F3A73; --tip-text:#FFFFFF;
 
   /* skeleton-shimmer */
-  --skeleton:#ECEBE8; --skeleton-shine:rgba(255,255,255,.75);
+  --skeleton:#E4EAF2; --skeleton-shine:rgba(255,255,255,.75);
 
   --radius:8px; --card-radius:12px;
   --sans:"Segoe UI Variable Text","Segoe UI",Inter,system-ui,sans-serif;
@@ -19,12 +30,18 @@
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --page:#1A1A19; --card:#232322; --sunken:#1E1E1D;
-    --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.18);
-    --text:#EDEDEB; --muted:#A3A39C; --faint:#7A7A74;
-    --accent:#85B7EB; --accent-bg:#0C447C; --on-accent:#04264A;
-    --ok:#5DCAA5; --warn:#EF9F27; --err:#F09595;
-    --ok-bg:#12382B; --warn-bg:#3A2A0E; --err-bg:#3D1C1C;
-    --skeleton:#2E2E2C; --skeleton-shine:rgba(255,255,255,.08);
+    --page:#0F1622; --card:#172131; --sunken:#131C2A;
+    --border:rgba(255,255,255,.09); --border-strong:rgba(255,255,255,.17);
+    --text:#E5EBF4; --muted:#9DA9BB; --faint:#6F7C8F;
+    --accent:#5D9CF0; --accent-bg:#16294A; --accent-ink:#A8C8F5; --on-accent:#06173A;
+    --ok:#4BC596; --warn:#EFA43B; --err:#F38A8A;
+    --ok-bg:#11342A; --warn-bg:#382810; --err-bg:#3F1D20;
+    --row-alarm:#2A1C24; --row-important:#18253A;
+    --bar:#0B1A31; --bar-text:#E5EEFB; --bar-btn-border:rgba(255,255,255,.18);
+    --bar-hover:rgba(255,255,255,.08); --bar-input-border:rgba(255,255,255,.14);
+    --status-bg:#0B1A31; --status-text:#E5EEFB; --status-faint:#7F95B6; --status-hover:rgba(255,255,255,.07);
+    --status-glyph:#0B1A31;
+    --tip-bg:#0B2449; --tip-text:#E5EEFB;
+    --skeleton:#1F2A3C; --skeleton-shine:rgba(255,255,255,.08);
   }
 }

@@ -39,7 +39,7 @@ button .badge{position:absolute; top:-6px; right:-6px}
 /* ---------- всплывающая подсказка (одна на всё приложение, рисует core.js) ----------
    <любой элемент data-tip="Текст" [data-tip-pos="top|bottom|left|right"]> */
 #tip{position:fixed; z-index:100; pointer-events:none; max-width:320px;
-  background:var(--text); color:var(--page); font-size:12px; line-height:1.4;
+  background:var(--tip-bg); color:var(--tip-text); font-size:12px; line-height:1.4;
   padding:6px 9px; border-radius:6px; white-space:pre-line;
   box-shadow:0 4px 14px rgba(0,0,0,.18); opacity:0; transform:translateY(-2px);
   transition:opacity .12s ease, transform .12s ease}
@@ -99,7 +99,7 @@ span.skeleton:empty::before{content:"\00a0"; display:inline-block; min-width:6em
 
 /* ---------- кликабельное копируемое значение ---------- */
 .copyable{
-  background:var(--accent-bg); border-radius:4px; padding:1px 5px;
+  background:var(--accent-bg); color:var(--accent-ink); border-radius:4px; padding:1px 5px;
   cursor:pointer; transition:background .15s, color .15s; user-select:none;
 }
 .copyable:hover{background:var(--accent); color:var(--on-accent)}

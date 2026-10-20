@@ -156,7 +156,7 @@ function setStatus(text, type = 'info', {sticky = false} = {}) {
 }
 
 function showStatus(text, type, sticky){
-  const icons = {ok: '✓', err: '✕', warn: '⚠', info: '•'};
+  const icons = {ok: '✓', err: '✕', warn: '!', info: '•'};
   const status = $("#status");
   $("#status-icon").textContent = icons[type] || '';
   $("#status-icon").className = `icon-${type}`;
@@ -183,7 +183,7 @@ function renderStatusHistory(){
   const time = d => `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
   box.innerHTML = statusHistory.length
     ? statusHistory.map(s => `<div class="sh-row"><span class="sh-time">${time(s.at)}</span>
-        <span class="icon-${s.type}">${{ok: '✓', err: '✕', warn: '⚠', info: '•'}[s.type] || ''}</span>
+        <span class="icon-${s.type}">${{ok: '✓', err: '✕', warn: '!', info: '•'}[s.type] || ''}</span>
         <span class="sh-text">${escHtml(s.text)}</span></div>`).join("")
     : naHtml("Пока ничего не происходило");
 }

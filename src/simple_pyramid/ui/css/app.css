@@ -1,6 +1,11 @@
 /* Раскладка главного окна. Базовые элементы — в components.css. */
-#bar{display:flex; align-items:center; gap:6px; padding:12px 14px 6px}
+/* Панель поиска — синяя полоса (цвета --bar-* в tokens.css) */
+#bar{display:flex; align-items:center; gap:6px; padding:10px 14px; background:var(--bar); color:var(--bar-text)}
 #bar .spacer{flex:1}
+#bar button:not(.accent){color:var(--bar-text); border-color:var(--bar-btn-border)}
+#bar button:not(.accent):hover:not(:disabled){background:var(--bar-hover)}
+#bar button:focus-visible{outline-color:var(--bar-text)}
+#bar input{border-color:var(--bar-input-border)}
 #meter{flex:1 1 auto; min-width:120px; max-width:260px}
 
 /* Сверху «Точка учёта» на всю ширину, под ней «Показания» (свой размер) и «Нагрузка» (остаток).
@@ -45,15 +50,20 @@ kbd{font-family:var(--sans); font-size:11px; padding:1px 5px; border-radius:4px;
   border:.5px solid var(--border-strong); background:var(--card)}
 
 footer{display:flex; justify-content:space-between; align-items:center; gap:16px; padding:7px 14px;
-  border-top:.5px solid var(--border); font-size:12.5px; color:var(--faint); position:relative}
+  background:var(--status-bg); font-size:12.5px; color:var(--status-faint); position:relative}
 #version{flex:none}
-/* Статус-строка: текст цвета основного, появляется и плавно гаснет (см. core.js) */
-#status{display:flex; align-items:center; gap:7px; min-width:0; flex:1; color:var(--text);
+/* Статус-строка (синяя полоса): текст светлый, появляется и плавно гаснет (см. core.js);
+   тип сообщения — цветной кружок со значком */
+#status{display:flex; align-items:center; gap:7px; min-width:0; flex:1; color:var(--status-text);
   cursor:pointer; opacity:0; border-radius:6px; padding:2px 6px; margin-left:-6px}
-#status:hover{background:var(--sunken); opacity:1!important; transition:none}
+#status:hover{background:var(--status-hover); opacity:1!important; transition:none}
 #status.shown{animation:statusIn .25s ease forwards}
 #status.shown.fading{animation:statusOut var(--status-fade, 1.2s) ease forwards}
-#status-icon{font-weight:600; flex:none; width:12px; text-align:center}
+#status-icon{flex:none; width:15px; height:15px; border-radius:50%; display:inline-flex; align-items:center;
+  justify-content:center; font-size:9px; font-weight:800; color:var(--status-glyph); background:var(--accent)}
+#status-icon:empty{display:none}
+#status-icon.icon-ok{background:var(--ok)} #status-icon.icon-warn{background:var(--warn)}
+#status-icon.icon-err{background:var(--err)}
 #status-text{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
 @keyframes statusIn{from{opacity:0; transform:translateY(3px)} to{opacity:1; transform:none}}
 @keyframes statusOut{from{opacity:1} to{opacity:0}}

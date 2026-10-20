@@ -11,7 +11,7 @@ body{background:var(--card)}
 .loading-more{padding:10px; text-align:center}
 
 /* Журнал событий */
-#ev-table tr.ev-important td{background:color-mix(in srgb, var(--accent-bg) 45%, transparent)}
-#ev-table tr.ev-alarm td{background:color-mix(in srgb, var(--err-bg) 70%, transparent)}
+#ev-table tr.ev-important td{background:var(--row-important)}
+#ev-table tr.ev-alarm td{background:var(--row-alarm)}
 #ev-table .dot{margin-right:7px; vertical-align:middle}
 #ev-table td.text{user-select:text}

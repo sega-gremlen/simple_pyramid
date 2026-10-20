@@ -1,69 +1,71 @@
-import pytest
+"""Общие фикстуры тестов."""
+
 import json
+from collections.abc import AsyncIterator
 from pathlib import Path
-import sys
+from typing import Any
 
+import httpx
+import pytest
+from fastapi import FastAPI
 
-# Добавляем корень проекта в sys.path
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-
-# Имена файлов с тестовыми данными
-INSTANCES_FILE = "instances.json"
-INSTANCE_INFO_FILE = "instance_info.json"
-METERDATA_READ_FILE = "meterdata_read.json"
-METER_DAILY_DATA_FILE = "meter_daily_data.json"
-EXPECTED = "expected.json"
-INPUT_DATA = "input.json"
+from dev.mock_server.app import create_app
+from simple_pyramid.api.client import PyramidClient
+from simple_pyramid.config import Settings
+from simple_pyramid.services.meter_service import MeterService
+from simple_pyramid.services.sink import RecordingSink
 
 # Путь к папке с данными (относительно этого файла)
 DATA_DIR = Path(__file__).parent / "data"
 
-def load_json(scenario: str, filename: str) -> dict:
-    """Загружает JSON-файл для конкретного сценария (папки с номером)."""
-    file_path = DATA_DIR / scenario / filename
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-    
-    
-SCENARIO_DESCRIPTIONS_FILE = DATA_DIR / "scenario.json"
-print(SCENARIO_DESCRIPTIONS_FILE)
 
-def load_scenario_descriptions() -> dict:
-    with open(SCENARIO_DESCRIPTIONS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-# Словарь описаний: ключи — имена папок (строки с числами)
-SCENARIO_DESCRIPTIONS = load_scenario_descriptions()
-SCENARIOS = list(SCENARIO_DESCRIPTIONS.keys())  # ["1", "2", ..., "6"]
+def load_json(filename: str) -> Any:
+    """Загружает JSON-файл из папки data."""
+    return json.loads((DATA_DIR / filename).read_text(encoding="utf-8"))
 
 
 @pytest.fixture
-def scenario(request) -> str:
-    """Возвращает имя текущего сценария (например, '1', '2', ...)."""
-    return request.param
+def data() -> Any:
+    """Функция-загрузчик тестовых JSON: ``data("instances.json")``."""
+    return load_json
+
 
 @pytest.fixture
-def input_data(scenario):
-    return load_json(scenario, INPUT_DATA)
+def settings(tmp_path: Path) -> Settings:
+    """Настройки для тестов: эмулятор в памяти, быстрые опросы задач."""
+    return Settings(
+        api_url="http://pyramid.test/api/v1",
+        task_poll_interval=0.01,
+        task_timeout=5,
+        ping_attempts=3,
+        data_dir=tmp_path,
+        legacy_creds_file=tmp_path / "pyramid_creds.pkl",
+        _env_file=None,  # type: ignore[call-arg]
+    )
+
 
 @pytest.fixture
-def mock_fetch_instances(scenario):
-    return load_json(scenario, INSTANCES_FILE)
+def mock_app() -> FastAPI:
+    """Эмулятор Пирамиды без задержек и с мгновенными задачами."""
+    return create_app(latency=(0, 0), task_duration=(0, 0))
+
 
 @pytest.fixture
-def mock_fetch_instance_info(scenario):
-    return load_json(scenario, INSTANCE_INFO_FILE)
+async def client(settings: Settings, mock_app: FastAPI) -> AsyncIterator[PyramidClient]:
+    """Клиент, подключённый к эмулятору в памяти, уже залогиненный."""
+    transport = httpx.ASGITransport(app=mock_app)
+    async with PyramidClient(settings, transport=transport) as c:
+        await c.login("tester", "secret")
+        yield c
+
 
 @pytest.fixture
-def mock_fetch_meterdata_read(scenario):
-    return load_json(scenario, METERDATA_READ_FILE)
+def sink() -> RecordingSink:
+    """Sink, копящий события для проверки."""
+    return RecordingSink()
+
 
 @pytest.fixture
-def mock_fetch_meter_daily_data(scenario):
-    return load_json(scenario, METER_DAILY_DATA_FILE)
-
-@pytest.fixture
-def expected(scenario):
-    return load_json(scenario, EXPECTED)
+def service(client: PyramidClient, settings: Settings, sink: RecordingSink) -> MeterService:
+    """Сервис поверх эмулятора."""
+    return MeterService(client, settings, sink)

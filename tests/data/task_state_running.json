@@ -1,0 +1,9 @@
+{
+  "isCompleted": false, "extendedCompletionStatus": 0, "isErrorsDetected": false, "information": "", "informationFormat": 1,
+  "customData": {"dataCount": 0}, "taskDuration": "00:00:00.3186092",
+  "log": [
+    {"message": "Начало выполнения задания", "logMessageType": 0, "level": 1, "dt": "2026-10-20T13:15:04.953"},
+    {"message": "Начало выполнения задания", "logMessageType": 0, "level": 1, "dt": "2026-10-20T13:15:04.982"}
+  ],
+  "progress": 0
+}

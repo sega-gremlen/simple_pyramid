@@ -1,0 +1,6 @@
+{
+  "taskState": {"isCompleted": false, "extendedCompletionStatus": 0, "isErrorsDetected": false, "information": "",
+    "informationFormat": 1, "customData": {"dataCount": 0}, "taskDuration": "00:00:00.1768036", "log": [], "progress": 0},
+  "shortTaskDescriptor": "Чтение состояния нагрузки и лимита мощности",
+  "canBeInBackground": true, "logType": 2, "isLogIncrement": false, "id": -1876
+}

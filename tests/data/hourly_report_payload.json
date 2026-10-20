@@ -1,0 +1,289 @@
+[
+ {
+  "id": "ClassifierNodes",
+  "parameterName": "Точки учёта",
+  "pointerToType": -1478,
+  "dataType": 9,
+  "isArray": true,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInstanceLink": {
+     "id": "13516725",
+     "caption": "CAPTION"
+    }
+   }
+  ],
+  "classifierId": 2481,
+  "discret": null,
+  "constraint": "{\"Type\": 9, \"Caption\": \"Объект классификатора\", \"Id\": -1478, \"PointerToType\": null}",
+  "entitiesLinks": [],
+  "entitiesLinksIds": [],
+  "stringValues": [],
+  "constraintValue": {
+   "Type": 9,
+   "Caption": "Объект классификатора",
+   "Id": -1478,
+   "PointerToType": null
+  }
+ },
+ {
+  "id": "ClassifierAbon",
+  "parameterName": "Абоненты",
+  "pointerToType": -1592,
+  "dataType": 10,
+  "isArray": true,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {}
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": "{\"Type\": 10, \"Caption\": \"Абоненты\", \"Id\": -1592, \"PointerToType\": null}",
+  "entitiesLinks": [],
+  "entitiesLinksIds": [],
+  "stringValues": [],
+  "constraintValue": {
+   "Type": 10,
+   "Caption": "Абоненты",
+   "Id": -1592,
+   "PointerToType": null
+  }
+ },
+ {
+  "id": "StartDt",
+  "parameterName": "Начало периода",
+  "pointerToType": null,
+  "dataType": 5,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInt": null,
+    "asFloat": null,
+    "asString": null,
+    "asBoolean": null,
+    "asDateTime": "2026-10-01T00:00:00.000",
+    "asInstanceLink": null,
+    "asClassLink": null
+   }
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": "{\"OffsetDiscret\": {\"TypeId\": -1147, \"Value\": 0}, \"RelativeDiscret\": -5171}",
+  "entitiesLinksIds": [],
+  "constraintValue": {
+   "OffsetDiscret": {
+    "TypeId": -1147,
+    "Value": 0
+   },
+   "RelativeDiscret": -5171
+  }
+ },
+ {
+  "id": "EndDt",
+  "parameterName": "Окончание периода",
+  "pointerToType": null,
+  "dataType": 5,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInt": null,
+    "asFloat": null,
+    "asString": null,
+    "asBoolean": null,
+    "asDateTime": "2026-10-20T00:00:00.000",
+    "asInstanceLink": null,
+    "asClassLink": null
+   }
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": "{\"OffsetDiscret\": {\"TypeId\": -1147, \"Value\": 0}, \"RelativeDiscret\": -5169}",
+  "entitiesLinksIds": [],
+  "constraintValue": {
+   "OffsetDiscret": {
+    "TypeId": -1147,
+    "Value": 0
+   },
+   "RelativeDiscret": -5169
+  }
+ },
+ {
+  "id": "bPokaz",
+  "parameterName": "Выгружать показания",
+  "pointerToType": null,
+  "dataType": 3,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInt": null,
+    "asFloat": null,
+    "asString": null,
+    "asBoolean": true,
+    "asDateTime": null,
+    "asInstanceLink": null,
+    "asClassLink": null
+   }
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": null,
+  "entitiesLinksIds": [],
+  "constraintValue": null
+ },
+ {
+  "id": "b30",
+  "parameterName": "Выгружать 30 минут",
+  "pointerToType": null,
+  "dataType": 3,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInt": null,
+    "asFloat": null,
+    "asString": null,
+    "asBoolean": true,
+    "asDateTime": null,
+    "asInstanceLink": null,
+    "asClassLink": null
+   }
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": null,
+  "entitiesLinksIds": [],
+  "constraintValue": null
+ },
+ {
+  "id": "b1h",
+  "parameterName": "Выгружать 1 час",
+  "pointerToType": null,
+  "dataType": 3,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInt": null,
+    "asFloat": null,
+    "asString": null,
+    "asBoolean": true,
+    "asDateTime": null,
+    "asInstanceLink": null,
+    "asClassLink": null
+   }
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": null,
+  "entitiesLinksIds": [],
+  "constraintValue": null
+ },
+ {
+  "id": "bNum",
+  "parameterName": "Фильтр по номерам",
+  "pointerToType": null,
+  "dataType": 3,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInt": null,
+    "asFloat": null,
+    "asString": null,
+    "asBoolean": false,
+    "asDateTime": null,
+    "asInstanceLink": null,
+    "asClassLink": null
+   }
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": null,
+  "entitiesLinksIds": [],
+  "constraintValue": null
+ },
+ {
+  "id": "bEquals",
+  "parameterName": "Точное совпадение номера",
+  "pointerToType": null,
+  "dataType": 3,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInt": null,
+    "asFloat": null,
+    "asString": null,
+    "asBoolean": false,
+    "asDateTime": null,
+    "asInstanceLink": null,
+    "asClassLink": null
+   }
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": null,
+  "entitiesLinksIds": [],
+  "constraintValue": null
+ },
+ {
+  "id": "sNum",
+  "parameterName": "Номера ПУ",
+  "pointerToType": null,
+  "dataType": 4,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {}
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": null,
+  "entitiesLinksIds": [],
+  "constraintValue": null
+ },
+ {
+  "id": "bOcrugl",
+  "parameterName": "Включить округление",
+  "pointerToType": null,
+  "dataType": 3,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {
+    "asInt": null,
+    "asFloat": null,
+    "asString": null,
+    "asBoolean": false,
+    "asDateTime": null,
+    "asInstanceLink": null,
+    "asClassLink": null
+   }
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": null,
+  "entitiesLinksIds": [],
+  "constraintValue": null
+ },
+ {
+  "id": "iZnak",
+  "parameterName": "Количество знаков (0-8)",
+  "pointerToType": null,
+  "dataType": 1,
+  "isArray": false,
+  "instancesTreeFilterDetected": false,
+  "values": [
+   {}
+  ],
+  "classifierId": null,
+  "discret": null,
+  "constraint": null,
+  "entitiesLinksIds": [],
+  "constraintValue": null
+ }
+]

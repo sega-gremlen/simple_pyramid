@@ -1,0 +1,14 @@
+[
+  {
+    "loadState": {"isWaiting": false, "addInfo": [], "lastSuccessWriteOperation": null,
+      "value": {"id": -85404, "caption": "Включено"}, "valueDt": "2026-10-20T06:45:31.352",
+      "lastSuccessReadOperation": null, "executingOperation": null, "queryForManageValue": null, "errorOperation": null},
+    "limitState": {"sync": null, "syncValueDt": "2026-10-20T06:45:30.232", "valueWithRatio": null,
+      "lastSuccessWriteOperation": null, "value": 15000.0, "valueDt": "2026-10-20T06:45:30.232",
+      "lastSuccessReadOperation": null, "executingOperation": null, "queryForManageValue": null, "errorOperation": null},
+    "maxPowerConsumption": null,
+    "meter": {"id": 21586965, "caption": "Нартис-И100 (СПОДЭС)Split, №021200000001"},
+    "id": 21586967,
+    "caption": "Самарская обл\\Жигулевское ПО/Сызранский РЭС/Сызранский р-н\\село Тестовое\\ул Примерная\\д 7\\Нартис-И100 (СПОДЭС)Split, №021200000001"
+  }
+]

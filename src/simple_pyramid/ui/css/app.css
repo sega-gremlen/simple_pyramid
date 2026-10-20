@@ -82,3 +82,11 @@ footer{display:flex; justify-content:space-between; align-items:center; gap:16px
 #er-details-text{margin-top:6px; max-height:160px; overflow:auto; padding:8px; border-radius:6px;
   background:var(--sunken); font-family:var(--mono); font-size:11px; white-space:pre-wrap;
   user-select:text; color:var(--text)}
+
+/* Блок «Нагрузка»: значение + серое время получения */
+#card-load .kv{gap:12px}
+.load-v{display:flex; align-items:center; gap:10px; justify-content:flex-end}
+.load-v .dot{display:inline-block; margin-right:6px; vertical-align:middle}
+.ts{color:var(--faint); font-weight:400; font-size:12px; font-variant-numeric:tabular-nums}
+#card-load .skeleton{min-width:5em}
+#card-load .ts.skeleton{min-width:7em}

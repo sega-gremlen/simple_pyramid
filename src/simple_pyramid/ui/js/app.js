@@ -85,10 +85,32 @@ function renderReadingsPart(r){
 const SECTION_FIELDS = {
   info: ["#m-address", "#m-account"],
   readings: ["#m-time"],
+  load: ["#m-relay", "#m-limit"],
 };
+const LOAD_FIELDS = ["#m-relay", "#m-relay-at", "#m-limit", "#m-limit-at"];
+
+// Блок «Нагрузка»: значения как пришли из Пирамиды, рядом серым — когда получены
+function renderLoad(load){
+  const relay = $("#m-relay");
+  if (load?.relay){
+    const dot = load.relayOn === true ? "ok" : load.relayOn === false ? "err" : "";
+    setValue(relay, `<span class="dot ${dot}"></span>${escHtml(load.relay)}`, true);
+  } else setValue(relay, null);
+  setValue($("#m-limit"), load?.limit ?? null);
+  setTs($("#m-relay-at"), load?.relayAt);
+  setTs($("#m-limit-at"), load?.limitAt);
+}
+
+// Серое время рядом со значением
+function setTs(el, iso){
+  setSkeleton(el, false);
+  el.textContent = iso ? fmtDateTime(iso) : "";
+  el.dataset.tip = iso ? "Когда получено значение" : "";
+}
 function renderSectionError(section, error){
   (SECTION_FIELDS[section] || []).forEach(id => setValue($(id), errHtml(error), true));
   if (section === "readings") renderReadings(null);
+  if (section === "load") ["#m-relay-at", "#m-limit-at"].forEach(id => setTs($(id), null));
 }
 
 // Пустое состояние (до первого поиска / прибор не найден) или начало загрузки
@@ -97,7 +119,7 @@ function resetMeter(loading){
   document.body.classList.toggle("state-empty", !loading);
   $("#btn-daily").disabled = true;
   $("#btn-hourly").disabled = true;
-  ["#m-model", "#m-address", "#m-account", "#m-time"].forEach(id => {
+  ["#m-model", "#m-address", "#m-account", "#m-time", ...LOAD_FIELDS].forEach(id => {
     const el = $(id);
     el.textContent = "";
     setSkeleton(el, loading);
@@ -167,6 +189,7 @@ window.onMeterPart = p => {
     case "identity": renderIdentity(p.data); break;
     case "info": renderInfo(p.data); break;
     case "readings": renderReadingsPart(p.data); break;
+    case "load": renderLoad(p.data); break;
   }
   // кнопка «Найти» снова доступна, как только пришла хотя бы основа
   if (p.section === "identity") $("#btn-find").disabled = false;

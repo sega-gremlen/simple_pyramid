@@ -81,6 +81,24 @@ function toCopyNumber(v){
   return String(v).replace(".", ",");
 }
 
+// Changelog релиза (markdown от git-cliff: "### Новое", "- пункт") → безопасный HTML
+function renderChangelog(md){
+  const lines = String(md || "").split(/\r?\n/);
+  let html = "", inList = false;
+  const closeList = () => { if (inList){ html += "</ul>"; inList = false; } };
+  for (const raw of lines){
+    const line = raw.trim();
+    if (!line) continue;
+    const h = /^#{1,6}\s+(.*)$/.exec(line);
+    const li = /^[-*]\s+(.*)$/.exec(line);
+    if (h){ closeList(); html += `<h3>${escHtml(h[1])}</h3>`; }
+    else if (li){ if (!inList){ html += "<ul>"; inList = true; } html += `<li>${escHtml(li[1])}</li>`; }
+    else { closeList(); html += `<p>${escHtml(line)}</p>`; }
+  }
+  closeList();
+  return html || naHtml("Описание изменений не указано");
+}
+
 function fmtBytes(b){
   const u=["Б","КБ","МБ","ГБ"]; let i=0;
   while(b>=1024 && i<u.length-1){ b/=1024; i++; }

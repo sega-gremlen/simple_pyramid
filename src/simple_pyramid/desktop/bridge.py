@@ -25,7 +25,13 @@ from simple_pyramid.config import Settings
 from simple_pyramid.desktop.credentials import MOCK_SERVICE, CredentialStore
 from simple_pyramid.desktop.pinger import ping_until_success
 from simple_pyramid.desktop.runner import AsyncRunner
-from simple_pyramid.desktop.updater import UpdateInfo, check_update, download_update
+from simple_pyramid.desktop.updater import (
+    SeenVersionStore,
+    UpdateInfo,
+    check_update,
+    download_update,
+    whats_new,
+)
 from simple_pyramid.domain.period import parse_period
 from simple_pyramid.services.meter_service import MeterService, MeterSession
 from simple_pyramid.services.sink import Section, Sink, StatusKind
@@ -183,6 +189,7 @@ class Api:
     def bootstrap(self) -> dict[str, Any]:
         """Первый вызов из JS: версия и попытка автовхода по сохранённым данным."""
         self._spawn("update-check", self._check_update(), on_error=lambda _: None)
+        self._spawn("whats-new", self._whats_new(), on_error=lambda _: None)
         saved = self._creds.load()
         info = {"version": display_version(), "mock": self._settings.mock}
         if saved:
@@ -396,6 +403,12 @@ class Api:
         if info:
             self._update = info
             self._sink.emit("Update", info.model_dump())
+
+    async def _whats_new(self) -> None:
+        """Первый запуск новой версии — показать, что в ней нового."""
+        info = await whats_new(self._settings, SeenVersionStore(self._settings.data_dir))
+        if info:
+            self._sink.emit("WhatsNew", info.model_dump())
 
     def start_update(self) -> None:
         """Скачать и запустить установщик новой версии."""

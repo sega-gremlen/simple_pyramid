@@ -227,3 +227,66 @@ async def test_runner_runs_coroutines():
 
     assert await asyncio.wrap_future(runner.submit(double(21))) == 42
     runner.stop()
+
+
+# ---------------------------------------------------------------- «Что нового»
+TAG_URL = "https://api.github.com/repos/sega-gremlen/simple_pyramid/releases/tags/v1.4.0"
+
+
+def test_release_tag_url(settings):
+    from simple_pyramid.desktop.updater import release_tag_url
+
+    assert release_tag_url(settings, "v1.4.0") == TAG_URL
+
+
+@respx.mock
+async def test_whats_new_shown_once(settings, tmp_path, monkeypatch):
+    from simple_pyramid.desktop.updater import SeenVersionStore, whats_new
+
+    monkeypatch.setattr("simple_pyramid.desktop.updater.is_dev_build", lambda: False)
+    route = respx.get(TAG_URL).respond(json={"tag_name": "v1.4.0", "body": "### Новое\n- Реле"})
+    store = SeenVersionStore(tmp_path)
+    info = await whats_new(settings, store, current="1.4.0")
+    assert info is not None
+    assert info.changelog == "### Новое\n- Реле"
+    assert store.last_seen() == "1.4.0"
+    assert await whats_new(settings, store, current="1.4.0") is None  # второй раз не показываем
+    assert route.call_count == 1
+
+
+@respx.mock
+async def test_whats_new_network_error_retries_later(settings, tmp_path, monkeypatch):
+    from simple_pyramid.desktop.updater import SeenVersionStore, whats_new
+
+    monkeypatch.setattr("simple_pyramid.desktop.updater.is_dev_build", lambda: False)
+    respx.get(TAG_URL).mock(side_effect=httpx.ConnectError("нет сети"))
+    store = SeenVersionStore(tmp_path)
+    assert await whats_new(settings, store, current="1.4.0") is None
+    assert store.last_seen() is None
+
+
+@respx.mock
+async def test_whats_new_empty_body(settings, tmp_path, monkeypatch):
+    from simple_pyramid.desktop.updater import SeenVersionStore, whats_new
+
+    monkeypatch.setattr("simple_pyramid.desktop.updater.is_dev_build", lambda: False)
+    respx.get(TAG_URL).respond(json={"tag_name": "v1.4.0", "body": ""})
+    store = SeenVersionStore(tmp_path)
+    assert await whats_new(settings, store, current="1.4.0") is None
+    assert store.last_seen() == "1.4.0"
+
+
+async def test_whats_new_dev_build(settings, tmp_path):
+    from simple_pyramid.desktop.updater import SeenVersionStore, whats_new
+
+    assert await whats_new(settings, SeenVersionStore(tmp_path)) is None
+
+
+def test_seen_store_broken_file(tmp_path):
+    from simple_pyramid.desktop.updater import SeenVersionStore
+
+    (tmp_path / "state.json").write_text("{not json", encoding="utf-8")
+    store = SeenVersionStore(tmp_path)
+    assert store.last_seen() is None
+    store.mark_seen("1.0.0")
+    assert store.last_seen() == "1.0.0"

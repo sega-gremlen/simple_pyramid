@@ -249,11 +249,16 @@ window.onExport = d => {
   if (d.stage === "error") show("#ov-progress", false);
 };
 
-window.onUpdate = d => {
-  $("#up-title").textContent = `Доступна версия ${d.version}`;
-  $("#up-log").textContent = d.changelog;
+function showChangelog(title, changelog, isUpdate){
+  $("#up-title").textContent = title;
+  $("#up-log").innerHTML = renderChangelog(changelog);
+  ["#up-later", "#up-now"].forEach(id => $(id).classList.toggle("hidden", !isUpdate));
+  $("#up-ok").classList.toggle("hidden", isUpdate);
   show("#ov-update", true);
-};
+}
+window.onUpdate = d => showChangelog(`Доступна версия ${d.version}`, d.changelog, true);
+// первый запуск после обновления
+window.onWhatsNew = d => showChangelog(`Что нового в версии ${d.version}`, d.changelog, false);
 window.onUpdateStatus = d => {
   $("#pr-text").textContent = d.attempt > 0 ? `${d.message} · попытка ${d.attempt}` : d.message;
 };
@@ -328,6 +333,7 @@ $("#pr-close").onclick = () => show("#ov-progress", false);
 $("#pr-open").onclick = () => { if (lastPath) api().open_folder(lastPath); };
 
 $("#up-later").onclick = () => show("#ov-update", false);
+$("#up-ok").onclick = () => show("#ov-update", false);
 $("#up-now").onclick = () => {
   show("#ov-update", false);
   $("#pr-title").textContent = "Обновление";

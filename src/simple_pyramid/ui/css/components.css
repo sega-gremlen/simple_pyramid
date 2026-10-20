@@ -204,3 +204,12 @@ span.skeleton:empty::before{content:"\00a0"; display:inline-block; min-width:6em
 /* ---------- полоса прокрутки ---------- */
 .scroll::-webkit-scrollbar{width:10px}
 .scroll::-webkit-scrollbar-thumb{background:var(--border-strong); border-radius:5px; border:3px solid var(--page)}
+
+/* ---------- changelog в окне обновления ---------- */
+.changelog{max-height:260px; overflow:auto; color:var(--text); line-height:1.5; user-select:text}
+.changelog h3{font-size:12px; font-weight:600; color:var(--muted); text-transform:uppercase;
+  letter-spacing:.04em; margin:10px 0 4px}
+.changelog h3:first-child{margin-top:0}
+.changelog ul{padding-left:18px}
+.changelog li{margin:2px 0}
+.changelog p{margin:4px 0; color:var(--muted)}

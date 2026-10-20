@@ -6,6 +6,7 @@
 """
 
 import asyncio
+import json
 import logging
 from collections.abc import Callable
 from pathlib import Path
@@ -81,6 +82,70 @@ async def check_update(
         url=release.assets[0].browser_download_url if release.assets else None,
         changelog=(release.body or "").strip(),
     )
+
+
+def release_tag_url(settings: Settings, version: str) -> str:
+    """URL релиза конкретной версии: ``…/releases/tags/v1.4.0``."""
+    base = settings.github_api.removesuffix("/latest")
+    return f"{base}/tags/v{version.lstrip('v')}"
+
+
+async def fetch_release_notes(
+    settings: Settings, version: str, *, transport: httpx.AsyncBaseTransport | None = None
+) -> str | None:
+    """Текст релиза (changelog) указанной версии или None, если не удалось получить."""
+    try:
+        async with httpx.AsyncClient(timeout=5, transport=transport) as http:
+            response = await http.get(release_tag_url(settings, version))
+            response.raise_for_status()
+        return (GithubRelease.model_validate_json(response.content).body or "").strip()
+    except (httpx.HTTPError, ValueError):
+        logger.info("Не удалось получить описание релиза %s", version, exc_info=True)
+        return None
+
+
+class SeenVersionStore:
+    """Помнит, для какой версии уже показывали «Что нового» (файл state.json в data_dir)."""
+
+    def __init__(self, data_dir: Path) -> None:
+        self._path = data_dir / "state.json"
+
+    def last_seen(self) -> str | None:
+        """Последняя версия, для которой показано «Что нового»."""
+        try:
+            data = json.loads(self._path.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            return None
+        value = data.get("last_seen_version") if isinstance(data, dict) else None
+        return str(value) if value else None
+
+    def mark_seen(self, version: str) -> None:
+        """Запоминает версию."""
+        try:
+            self._path.parent.mkdir(parents=True, exist_ok=True)
+            self._path.write_text(json.dumps({"last_seen_version": version}), encoding="utf-8")
+        except OSError:
+            logger.warning("Не удалось сохранить %s", self._path, exc_info=True)
+
+
+async def whats_new(
+    settings: Settings,
+    store: SeenVersionStore,
+    *,
+    current: str | None = None,
+    transport: httpx.AsyncBaseTransport | None = None,
+) -> UpdateInfo | None:
+    """Changelog текущей версии, если её «Что нового» ещё не показывали (только релизная сборка)."""
+    version = current or __version__
+    if is_dev_build() or store.last_seen() == version:
+        return None
+    notes = await fetch_release_notes(settings, version, transport=transport)
+    if notes is None:
+        return None  # попробуем при следующем запуске
+    store.mark_seen(version)
+    if not notes:
+        return None
+    return UpdateInfo(version=version, url=None, changelog=notes)
 
 
 async def download_update(

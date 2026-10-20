@@ -68,12 +68,37 @@
 </div>
 
 <footer>
-  <div id="status">
+  <div id="status" role="button" tabindex="0">
     <span id="status-icon"></span>
     <span id="status-text">Загрузка…</span>
   </div>
   <span id="version"></span>
+  <div id="status-history" class="hidden">
+    <div class="sh-head">История сообщений</div>
+    <div id="status-history-list" class="scroll"></div>
+  </div>
 </footer>
+
+<div class="overlay" id="ov-error">
+  <div class="modal modal-error" role="alertdialog" aria-labelledby="er-title">
+    <div class="er-head">
+      <span class="er-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5"/><path d="M12 16.5h.01"/></svg>
+      </span>
+      <h2 id="er-title">Ошибка</h2>
+    </div>
+    <div id="er-message"></div>
+    <details id="er-details">
+      <summary>Подробнее</summary>
+      <pre id="er-details-text" class="scroll"></pre>
+    </details>
+    <div class="modal-actions">
+      <button id="er-copy">Скопировать подробности</button>
+      <button class="accent" id="er-close">Закрыть</button>
+    </div>
+  </div>
+</div>
 
 <div class="overlay" id="ov-login">
   <div class="modal">

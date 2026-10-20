@@ -107,22 +107,76 @@ function setValue(el, value, isHtml = false){
 }
 
 // ---- статус-строка ------------------------------------------------
-function setStatus(text, type = 'info') {
-  const icon = $("#status-icon");
-  const txt = $("#status-text");
+// Сообщение появляется, держится STATUS_VISIBLE_MS и плавно гаснет за STATUS_FADE_MS.
+// Предупреждения и ошибки держатся дольше. Клик по строке — история сообщений.
+const STATUS_VISIBLE_MS = 4000;
+const STATUS_IMPORTANT_VISIBLE_MS = 9000;
+const STATUS_FADE_MS = 1200;
+// Обычное сообщение не перебивает свежее предупреждение раньше, чем через столько мс
+const STATUS_WARN_HOLD_MS = 2500;
+const STATUS_HISTORY_SIZE = 50;
+
+const statusHistory = [];
+let statusTimer = null, statusShownAt = 0, statusKind = "info", statusPending = null;
+
+function setStatus(text, type = 'info', {sticky = false} = {}) {
+  const now = Date.now();
+  statusHistory.unshift({text, type, at: new Date()});
+  statusHistory.length = Math.min(statusHistory.length, STATUS_HISTORY_SIZE);
+  renderStatusHistory();
+
+  // свежее предупреждение/ошибку не затираем мелочью — покажем её чуть позже
+  const important = statusKind === "warn" || statusKind === "err";
+  if (important && type !== "warn" && type !== "err" && now - statusShownAt < STATUS_WARN_HOLD_MS){
+    clearTimeout(statusPending);
+    statusPending = setTimeout(() => showStatus(text, type, sticky), STATUS_WARN_HOLD_MS - (now - statusShownAt));
+    return;
+  }
+  showStatus(text, type, sticky);
+}
+
+function showStatus(text, type, sticky){
+  const icons = {ok: '✓', err: '✕', warn: '⚠', info: '•'};
   const status = $("#status");
+  $("#status-icon").textContent = icons[type] || '';
+  $("#status-icon").className = `icon-${type}`;
+  $("#status-text").textContent = text;
+  status.title = "История сообщений";
+  statusKind = type;
+  statusShownAt = Date.now();
 
-  const icons = {ok: '✓', err: '✕', warn: '⚠', info: ''};
-
-  icon.textContent = icons[type] || '';
-  icon.className = `icon-${type}`;
-  txt.textContent = text;
-  txt.title = text;
-
-  // удаляем и сразу добавляем класс, чтобы перезапустить анимацию
-  status.classList.remove('status-updated');
+  // перезапускаем анимацию появления
+  status.style.setProperty("--status-fade", `${STATUS_FADE_MS}ms`);
+  status.classList.remove("shown", "fading");
   void status.offsetWidth; // триггерим reflow
-  status.classList.add('status-updated');
+  status.classList.add("shown");
+
+  clearTimeout(statusTimer);
+  if (sticky) return;
+  const visible = type === "warn" || type === "err" ? STATUS_IMPORTANT_VISIBLE_MS : STATUS_VISIBLE_MS;
+  statusTimer = setTimeout(() => status.classList.add("fading"), visible);
+}
+
+function renderStatusHistory(){
+  const box = $("#status-history-list");
+  if (!box) return;
+  const time = d => `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+  box.innerHTML = statusHistory.length
+    ? statusHistory.map(s => `<div class="sh-row"><span class="sh-time">${time(s.at)}</span>
+        <span class="icon-${s.type}">${{ok: '✓', err: '✕', warn: '⚠', info: '•'}[s.type] || ''}</span>
+        <span class="sh-text">${escHtml(s.text)}</span></div>`).join("")
+    : naHtml("Пока ничего не происходило");
+}
+
+// ---- окно ошибки ---------------------------------------------------
+function showError({title, message, details}){
+  $("#er-title").textContent = title || "Ошибка";
+  $("#er-message").textContent = message || "";
+  $("#er-details").classList.toggle("hidden", !details);
+  $("#er-details-text").textContent = details || "";
+  $("#er-details").open = false;
+  show("#ov-error", true);
+  $("#er-close").focus();
 }
 
 // ---- копирование по клику ------------------------------------------

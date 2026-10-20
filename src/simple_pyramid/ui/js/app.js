@@ -108,8 +108,13 @@ function resetMeter(loading){
 
 // ---- события из Python ---------------------------------------------
 window.onStatus = d => setStatus(d.text, d.kind || 'info');
-window.onError = d => setStatus(`${d.title}: ${d.message}`.replace(/\n/g, " "), 'err');
-window.onTaskLog = d => setStatus(d.text, 'info');
+// Ошибки — классическим окном; в статус-строке остаётся короткая отметка
+window.onError = d => { showError(d); setStatus(d.title, 'err'); };
+// Живой лог фоновой задачи: пока задача идёт, сообщение не гаснет
+const TASK_TITLES = {readings: "Опрос показаний", load: "Опрос реле", events: "Чтение журнала", report: "Отчёт"};
+const busySections = new Set();
+window.onTaskLog = d => setStatus(`${TASK_TITLES[d.section] || "Задача"}: ${d.text}`, 'info',
+                                  {sticky: busySections.has(d.section)});
 
 window.onAuth = d => {
   // Логин показывается в заголовке окна Windows (его ставит Python)
@@ -140,6 +145,7 @@ window.onMeterPart = p => {
 };
 
 window.onSectionBusy = d => {
+  if (d.busy) busySections.add(d.section); else busySections.delete(d.section);
   const card = {readings: "#card-readings"}[d.section];
   if (card) $(card).classList.toggle("busy", d.busy);
 };
@@ -169,13 +175,8 @@ window.onExport = d => {
     $(".spin").classList.add("hidden");
     $("#pr-actions").classList.remove("hidden");
   }
-  if (d.stage === "error"){
-    $("#pr-title").textContent = "Выгрузка не удалась";
-    $("#pr-text").textContent = d.error;
-    $(".spin").classList.add("hidden");
-    $("#pr-open").classList.add("hidden");
-    $("#pr-actions").classList.remove("hidden");
-  }
+  // причину покажет окно ошибки (событие Error)
+  if (d.stage === "error") show("#ov-progress", false);
 };
 
 window.onUpdate = d => {
@@ -268,8 +269,26 @@ $("#up-now").onclick = () => {
   api().start_update();
 };
 
+// История сообщений статус-строки
+$("#status").onclick = e => { e.stopPropagation(); $("#status-history").classList.toggle("hidden"); };
+$("#status").addEventListener("keydown", e => { if (e.key === "Enter") $("#status").click(); });
+document.addEventListener("click", e => {
+  if (!e.target.closest("#status-history")) $("#status-history").classList.add("hidden");
+});
+
+// Окно ошибки
+$("#er-close").onclick = () => show("#ov-error", false);
+$("#er-copy").onclick = () => {
+  const text = [$("#er-title").textContent, $("#er-message").textContent, $("#er-details-text").textContent]
+    .filter(Boolean).join("\n\n");
+  navigator.clipboard.writeText(text).then(() => setStatus("Подробности ошибки скопированы", 'ok'));
+};
+
 document.addEventListener("keydown", e => {
-  if (e.key === "Escape") ["#ov-export", "#ov-update"].forEach(id => show(id, false));
+  if (e.key === "Escape"){
+    ["#ov-export", "#ov-update", "#ov-error"].forEach(id => show(id, false));
+    $("#status-history").classList.add("hidden");
+  }
 });
 
 window.addEventListener("pywebviewready", async () => {

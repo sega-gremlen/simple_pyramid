@@ -342,8 +342,19 @@ class PyramidApiClient:
         
         return self._request("POST", self.meterdata_read_url, json=payload)
     
+    @staticmethod
+    def datetime_extracter(v: str) -> datetime:
+        if not v:
+            return None
+        dt_part = v.split('.')[0] # "2026-04-29T07:01:16"
+        dt = datetime.strptime(dt_part, "%Y-%m-%dT%H:%M:%S")
+        return dt
+    
     def extract_meterdata_read(self, json_data: dict):
         """Парсит JSON-ответ и извлекает дату последних показаний и сами показания прибора учета"""
+        
+        # Алиас что бы не перписывать
+        datetime_extracter = self.datetime_extracter
         
         # Извлекаем ключ: "Энергия А+ текущая, Тарифная зона \"День Двухзонный\""
         # Значения: "14167570.0" и "2025-09-24T06:31:08.498"
@@ -360,11 +371,6 @@ class PyramidApiClient:
             except TypeError:
                 return False
             
-        def datetime_extracter(v: str) -> datetime:
-            dt_part = v.split('.')[0] # "2026-04-29T07:01:16"
-            dt = datetime.strptime(dt_part, "%Y-%m-%dT%H:%M:%S")
-            return dt
-        
         # Меняем строки во float
         meter_values = {
             key: (round(float(meter_values[key][0] / 1000), 2), meter_values[key][1])
@@ -421,7 +427,7 @@ class PyramidApiClient:
         #return fine_meter_values
         
         @staticmethod
-        def define_datetime(fine_meter_values: dict, direction: str):
+        def define_meter_data(fine_meter_values: dict, direction: str):
             """
             Определяет какое из значений показаний принимать за истину.
             Пирамида такая охиренная программа, что может данные в колонках TO T1 T2 могут быть на разные даты
@@ -445,27 +451,29 @@ class PyramidApiClient:
                 fine_meter_values[direction]["TO"]["value"] = round(fine_meter_values[direction]["T1"]["value"] + fine_meter_values[direction]["T2"]["value"], 2)
                 fine_meter_values[direction]["TO"]["datetime"] = fine_meter_values[direction]["T2"]["datetime"]
                 values_datetime = fine_meter_values[direction]["T2"]["datetime"]
-            # Если TO - T1 > 24ч или TO - T2 > 24ч
-            elif (fine_meter_values[direction]["TO"]["datetime"] - fine_meter_values[direction]["T1"]["datetime"] > timedelta(hours=24) or
-            fine_meter_values[direction]["TO"]["datetime"] - fine_meter_values[direction]["T2"]["datetime"] > timedelta(hours=24)):
+            # Если (время TO - время T1) > 24ч или (время TO - время T2) > 24ч или TO - (T1 + T2) > 100
+            elif (abs(fine_meter_values[direction]["TO"]["datetime"] - fine_meter_values[direction]["T1"]["datetime"]) > timedelta(hours=24) or
+            abs(fine_meter_values[direction]["TO"]["datetime"] - fine_meter_values[direction]["T2"]["datetime"]) > timedelta(hours=24) or
+            fine_meter_values[direction]["TO"]["value"] - (fine_meter_values[direction]["T1"]["value"] + fine_meter_values[direction]["T2"]["value"]) > 100):
                 fine_meter_values[direction]["T1"]["datetime"] = None
                 fine_meter_values[direction]["T2"]["datetime"] = None
                 fine_meter_values[direction]["T1"]["value"] = None
                 fine_meter_values[direction]["T2"]["value"] = None
                 values_datetime = fine_meter_values[direction]["TO"]["datetime"]
-            # Если T1 > TO и T2 > TO и |T1 - T2| < 24ч
+            # Если |T1 - T2| < 24ч
             elif abs(fine_meter_values[direction]["T1"]["datetime"] - fine_meter_values[direction]["T2"]["datetime"] < timedelta(hours=24)):
                 fine_meter_values[direction]["TO"]["value"] = round(fine_meter_values[direction]["T1"]["value"] + fine_meter_values[direction]["T2"]["value"], 2)
                 fine_meter_values[direction]["TO"]["datetime"] = fine_meter_values[direction]["T2"]["datetime"]
                 values_datetime = fine_meter_values[direction]["T2"]["datetime"]
             else:
-                raise ValueError("Ни одно условие выбора показаний не подходит")
+                raise ValueError("Ни одно условие выбора времени не подходит")
             
             return values_datetime
         
-        a_plus_datetime = define_datetime(fine_meter_values, "A+")
-        a_minus_datetime = define_datetime(fine_meter_values, "A-")
+        a_minus_datetime = define_meter_data(fine_meter_values, "A-")
+        a_plus_datetime = define_meter_data(fine_meter_values, "A+")
         
+        # Определяемся с датой из обоих направлений
         if not a_plus_datetime and not a_minus_datetime:
             values_datetime = None
         elif a_plus_datetime and not a_minus_datetime:
@@ -671,3 +679,4 @@ class PyramidApiClient:
     
     
 backend_client = PyramidApiClient()
+print(backend_client.datetime_extracter)

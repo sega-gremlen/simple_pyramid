@@ -1,48 +1,28 @@
-# Игнорировать всё в корне и во всех подпапках
-/*
+# Окружение и секреты
+.venv/
+.env
+*.pkl
 
-# Разрешить сам .gitignore (чтобы он попал в репозиторий)
-!/.gitignore
+# Кэши Python и инструментов
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
 
-# ==============================================
-# СЮДА ВПИШИТЕ СВОИ ФАЙЛЫ (пути относительно корня)
-# ==============================================
+# Сборка PyInstaller / Inno Setup
+build/
+dist/
+/simple_pyramid/
+/*.exe
+/*.spec
+!/simple_pyramid.spec
+installer/Output/
 
-# Файлы в корне для загрузки
-!/pinger.py
-!/backend.py
-!/req.txt
-!/pyinstaller_command.txt
-!/config.py
-!/favicon.ico
-!/.github/
-!/updater.py
-!/version.py
-!/agents.md
-!/app.py
-
-# utils
-!/utils/
-/utils/*
-!/utils/pinger.py
-!/utils/xlsx_exporter.py
-!/utils/payload_builder.py
-
-# ui
-!/ui/
-!/ui/*
-!/ui/index.html
-
-# tests
-!/tests/data/
-!/tests/__init__.py
-!/tests/conftest.py
-!/tests/unit_tests.py
-
-
-#src
-!/src/
-!/src/*
-!/src/favicon.ico
-!/src/setup.iss
-!/src/MicrosoftEdgeWebview2Setup.exe
+# IDE и локальные настройки
+.idea/
+.vscode/
+.claude/settings.local.json

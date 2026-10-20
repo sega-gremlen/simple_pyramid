@@ -51,7 +51,13 @@
     </div>
   </div>
 
-  <div class="card" id="card-readings">
+  <div class="card has-corner" id="card-readings">
+    <button class="corner-btn" data-refresh="readings" data-tip="Обновить" aria-label="Обновить">
+      <svg class="ic-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+      <svg class="ic-cancel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <path d="M8 8l8 8M16 8l-8 8"/></svg>
+    </button>
     <div id="readings-head">
       <span class="card-label" style="margin:0">Показания, кВт·ч</span>
       <span class="card-label shimmer-target" style="margin:0" id="m-time"></span>
@@ -62,7 +68,13 @@
     </table>
   </div>
 
-  <div class="card" id="card-load">
+  <div class="card has-corner" id="card-load">
+    <button class="corner-btn" data-refresh="load" data-tip="Обновить" aria-label="Обновить">
+      <svg class="ic-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+      <svg class="ic-cancel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <path d="M8 8l8 8M16 8l-8 8"/></svg>
+    </button>
     <div class="card-label">Нагрузка</div>
     <div class="kv"><span class="k">Реле</span>
       <span class="v load-v"><span class="shimmer-target" id="m-relay"></span><span class="ts shimmer-target" id="m-relay-at"></span></span></div>

@@ -12,9 +12,10 @@ function renderReadings(data, loading = false){
     const cell = dir => {
       if (loading) return `<span class="cell skeleton"></span>`;
       const v = data ? data[dir][t] : null;
-      if (v === null || v === undefined) return naHtml("—");
+      // shimmer-target — мерцает при обновлении блока (старое значение под мерцанием)
+      if (v === null || v === undefined) return `<span class="shimmer-target">${naHtml("—")}</span>`;
       // В буфер — как на экране, с запятой, но без пробелов-разделителей (14167,57)
-      return `<span class="copyable" data-copy="${toCopyNumber(v)}" title="Копировать">${fmtNumber(v)}</span>`;
+      return `<span class="copyable shimmer-target" data-copy="${toCopyNumber(v)}" title="Копировать">${fmtNumber(v)}</span>`;
     };
     return `<tr><td class="t">${TARIFF_LABELS[t]}</td><td>${cell("aPlus")}</td><td>${cell("aMinus")}</td></tr>`;
   }).join("");
@@ -198,9 +199,22 @@ window.onMeterPart = p => {
 
 window.onSectionBusy = d => {
   if (d.busy) busySections.add(d.section); else busySections.delete(d.section);
-  const card = {readings: "#card-readings"}[d.section];
+  const card = {readings: "#card-readings", load: "#card-load"}[d.section];
   if (card) $(card).classList.toggle("busy", d.busy);
+  document.querySelectorAll(`[data-refresh="${d.section}"]`).forEach(btn => {
+    btn.classList.toggle("busy", d.busy);
+    btn.dataset.tip = d.busy ? "Отменить обновление" : "Обновить";
+  });
 };
+
+// ↻ — опросить прибор и обновить блок; во время опроса та же кнопка — «отменить»
+document.addEventListener("click", e => {
+  const btn = e.target.closest("[data-refresh]");
+  if (!btn || !meterLoaded) return;
+  const section = btn.dataset.refresh;
+  if (btn.classList.contains("busy")) api().cancel(section);
+  else api().refresh(section);
+});
 
 window.onPing = d => {
   const row = document.querySelector(`.route[data-id="${d.id}"]`);

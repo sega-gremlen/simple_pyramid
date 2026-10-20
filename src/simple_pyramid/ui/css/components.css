@@ -51,6 +51,24 @@ button.icon.square svg{width:16px; height:16px}
 [data-tip][data-tip-pos="bottom-end"]:hover::after{transform:translate(0, 0)}
 [data-tip=""]::after{display:none}
 
+/* ---------- круглая кнопка, «врезанная» в угол карточки (обновить блок) ----------
+   <div class="card has-corner"><button class="corner-btn" data-refresh="…">↻</button>…
+   Ореол цвета фона прячет линии рамки рядом с кнопкой: рамка подходит к ней, не касаясь.
+   .busy — идёт обновление: вместо ↻ крестик «отменить» и бегущее кольцо. */
+.card.has-corner > :nth-child(2){margin-left:12px}
+.corner-btn{position:absolute; top:-12px; left:-12px; width:26px; height:26px; padding:0; z-index:2;
+  border-radius:50%; border:none; background:var(--page); color:var(--muted); justify-content:center;
+  box-shadow:0 0 0 3px var(--page)}
+.corner-btn:hover:not(:disabled){background:var(--accent-bg); color:var(--accent)}
+.corner-btn svg{width:15px; height:15px}
+.corner-btn .ic-cancel{display:none}
+.corner-btn.busy .ic-refresh{display:none}
+.corner-btn.busy .ic-cancel{display:block}
+.corner-btn.busy{color:var(--accent)}
+.corner-btn.busy::before{content:""; position:absolute; inset:1px; border-radius:50%;
+  border:2px solid var(--accent-bg); border-top-color:var(--accent); animation:sp .9s linear infinite}
+.corner-btn.busy:hover{color:var(--err); background:var(--err-bg)}
+
 /* ---------- поля ввода ---------- */
 input{
   font:inherit; font-size:13px; color:var(--text); background:var(--card);

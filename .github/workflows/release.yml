@@ -44,12 +44,25 @@ jobs:
           if (git tag --list "v$v") { throw "Тег v$v уже существует — нет новых feat/fix коммитов?" }
           git cliff --unreleased --tag "v$v" --strip all | Out-File -FilePath CHANGELOG_RELEASE.md -Encoding utf8
           if (-not (Get-Content CHANGELOG_RELEASE.md -Raw).Trim()) { "Мелкие улучшения и исправления" | Out-File CHANGELOG_RELEASE.md -Encoding utf8 }
-          "__version__ = `"$v`"" | Out-File -FilePath src/simple_pyramid/version.py -Encoding utf8
+          # меняем только строку __version__ — остальное в version.py (is_dev_build и т.д.) нужно программе
+          $versionFile = "src/simple_pyramid/version.py"
+          $text = Get-Content $versionFile -Raw
+          $patched = $text -replace '(?m)^__version__ = "[^"]*"', "__version__ = `"$v`""
+          if ($patched -eq $text) { throw "В $versionFile не найдена строка __version__" }
+          Set-Content $versionFile $patched -NoNewline -Encoding utf8
           "version=$v" >> $env:GITHUB_OUTPUT
           Get-Content CHANGELOG_RELEASE.md
 
       - name: Установка зависимостей
         run: uv sync --locked
+
+      # после подстановки версии программа должна импортироваться — иначе exe упадёт при запуске
+      - name: Проверка версии и импортов
+        run: >-
+          uv run python -c "import simple_pyramid.desktop.window as _;
+          from simple_pyramid.version import __version__, is_dev_build;
+          assert __version__ == '${{ steps.version.outputs.version }}', __version__;
+          assert not is_dev_build(); print('version', __version__)"
 
       - name: Сборка PyInstaller
         run: uv run pyinstaller simple_pyramid.spec --noconfirm

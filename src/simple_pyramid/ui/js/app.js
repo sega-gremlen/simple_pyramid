@@ -13,7 +13,8 @@ function renderReadings(data, loading = false){
       if (loading) return `<span class="cell skeleton"></span>`;
       const v = data ? data[dir][t] : null;
       if (v === null || v === undefined) return `<span class="cell">—</span>`;
-      return `<span class="copyable" data-copy="${v}" title="Копировать">${fmtNumber(v)}</span>`;
+      // В буфер — как на экране, с запятой, но без пробелов-разделителей (14167,57)
+      return `<span class="copyable" data-copy="${toCopyNumber(v)}" title="Копировать">${fmtNumber(v)}</span>`;
     };
     return `<tr><td class="t">${TARIFF_LABELS[t]}</td><td>${cell("aPlus")}</td><td>${cell("aMinus")}</td></tr>`;
   }).join("");

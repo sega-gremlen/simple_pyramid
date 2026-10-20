@@ -76,6 +76,11 @@ function attachDateMask(input){
   });
 }
 
+// Число для буфера обмена: десятичная запятая, без разделителя тысяч (14167.57 → "14167,57")
+function toCopyNumber(v){
+  return String(v).replace(".", ",");
+}
+
 function fmtBytes(b){
   const u=["Б","КБ","МБ","ГБ"]; let i=0;
   while(b>=1024 && i<u.length-1){ b/=1024; i++; }

@@ -124,7 +124,6 @@ class PyramidClient:
             raise ConnectionFailedError(
                 "Не удалось подключиться к серверу Пирамиды", details=repr(exc)
             ) from exc
-            
         if response.is_error:
             raise AuthError("Неверный логин или пароль", details=response.text[:2000])
         data = self._parse(response, LoginResponse)

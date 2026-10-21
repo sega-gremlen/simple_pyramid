@@ -76,6 +76,7 @@ class PyramidClient:
         self._http = httpx.AsyncClient(
             base_url=settings.api_url.rstrip("/") + "/",
             verify=settings.verify_ssl,
+            trust_env=False,
             timeout=settings.request_timeout,
             transport=transport,
             headers={"Content-Type": "application/json"},
@@ -120,9 +121,16 @@ class PyramidClient:
         try:
             response = await self._http.post(endpoints.LOGIN, json=payload, params=params)
         except httpx.TransportError as exc:
+            import traceback
+            #print("TYPE:", type(exc).__name__)
+            #print("ARGS:", exc.args)
+            #print("CAUSE:", repr(exc.__cause__))
+            #print("CONTEXT:", repr(exc.__context__))
+            #traceback.print_exception(exc)
             raise ConnectionFailedError(
                 "Не удалось подключиться к серверу Пирамиды", details=repr(exc)
             ) from exc
+            
         if response.is_error:
             raise AuthError("Неверный логин или пароль", details=response.text[:2000])
         data = self._parse(response, LoginResponse)

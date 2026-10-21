@@ -29,3 +29,5 @@ installer/Output/
 
 # Локальные черновики
 /utils/
+/sandbox/
+/runtime/

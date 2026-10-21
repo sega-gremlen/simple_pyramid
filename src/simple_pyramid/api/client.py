@@ -121,7 +121,6 @@ class PyramidClient:
         try:
             response = await self._http.post(endpoints.LOGIN, json=payload, params=params)
         except httpx.TransportError as exc:
-            import traceback
             raise ConnectionFailedError(
                 "Не удалось подключиться к серверу Пирамиды", details=repr(exc)
             ) from exc
